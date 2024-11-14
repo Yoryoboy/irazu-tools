@@ -6,6 +6,7 @@ import { useFetchClickUpTasks } from "./hooks/useClickUp";
 import { getNewTasksFromMqms } from "./utils/tasksFunctions";
 
 import styles from "./App.module.css";
+import NewTasksTable from "./components/NewTasksTable";
 
 const LIST_ID = "901404730264";
 
@@ -21,7 +22,7 @@ function App() {
       <ExcelUploader setData={setMQMSTasks} />
       <TasksTable data={MQMSTasks} />
       {clickUpTasks.length > 0 ? (
-        <TasksTable data={newMqmsTasks} />
+        <NewTasksTable newMqmsTasks={newMqmsTasks} />
       ) : (
         <p>Obteniendo datos de ClickUp...</p>
       )}

@@ -348,3 +348,46 @@ export enum StatusType {
   Custom = "custom",
   Done = "done",
 }
+
+// Custom Fields Types
+
+export interface CustomFields {
+  fields: Field[];
+}
+
+export interface Field {
+  id: string;
+  name: string;
+  type: Type;
+  type_config: TypeConfig;
+  date_created: string;
+  hide_from_guests: boolean;
+  required: boolean;
+}
+
+export enum Type {
+  Date = "date",
+  DropDown = "drop_down",
+  Number = "number",
+  ShortText = "short_text",
+  Users = "users",
+}
+
+export interface TypeConfig {
+  default?: number;
+  placeholder?: null;
+  new_drop_down?: boolean;
+  options?: Option[];
+  single_user?: boolean;
+  include_groups?: null;
+  include_guests?: boolean;
+  include_team_members?: boolean;
+  sorting?: string;
+}
+
+export interface Option {
+  id: string;
+  name: string;
+  color: null | string;
+  orderindex: number;
+}
