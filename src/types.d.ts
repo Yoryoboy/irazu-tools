@@ -17,44 +17,44 @@ export interface Clickupdataresponse {
 }
 
 export interface Task {
-  id: string;
-  custom_id: string;
-  custom_item_id: number;
+  id?: string;
+  custom_id?: string;
+  custom_item_id?: number;
   name: string;
-  text_content: string;
-  description: string;
-  status: StatusClass;
-  orderindex: string;
-  date_created: string;
-  date_updated: string;
-  date_closed: null | string;
-  date_done: null | string;
-  archived: boolean;
-  creator: Creator;
-  assignees: Creator[];
-  group_assignees: unknown[];
-  watchers: Creator[];
-  checklists: Checklist[];
-  tags: unknown[];
-  parent: null;
-  top_level_parent: null;
-  priority: PriorityClass | null;
-  due_date: null;
-  start_date: null;
-  points: null;
-  time_estimate: null;
-  custom_fields: CustomField[];
-  dependencies: unknown[];
-  linked_tasks: unknown[];
-  locations: Location[];
-  team_id: string;
-  url: string;
-  sharing: Sharing;
-  permission_level: PermissionLevel;
-  list: Folder;
-  project: Folder;
-  folder: Folder;
-  space: Space;
+  text_content?: string;
+  description?: string;
+  status?: StatusClass;
+  orderindex?: string;
+  date_created?: string;
+  date_updated?: string;
+  date_closed?: null | string;
+  date_done?: null | string;
+  archived?: boolean;
+  creator?: Creator;
+  assignees?: Creator[];
+  group_assignees?: unknown[];
+  watchers?: Creator[];
+  checklists?: Checklist[];
+  tags?: unknown[];
+  parent?: null;
+  top_level_parent?: null;
+  priority?: PriorityClass | null;
+  due_date?: null;
+  start_date?: null;
+  points?: null;
+  time_estimate?: null;
+  custom_fields?: CustomField[];
+  dependencies?: unknown[];
+  linked_tasks?: unknown[];
+  locations?: Location[];
+  team_id?: string;
+  url?: string;
+  sharing?: Sharing;
+  permission_level?: PermissionLevel;
+  list?: Folder;
+  project?: Folder;
+  folder?: Folder;
+  space?: Space;
 }
 
 export interface Creator {
@@ -139,13 +139,13 @@ export enum ChecklistName {
 }
 
 export interface CustomField {
-  id: string;
-  name: CustomFieldName;
-  type: CustomFieldType;
-  type_config: TypeConfig;
-  date_created: string;
-  hide_from_guests: boolean;
-  required: boolean;
+  id?: string;
+  name?: CustomFieldName;
+  type?: CustomFieldType;
+  type_config?: TypeConfig;
+  date_created?: string;
+  hide_from_guests?: boolean;
+  required?: boolean;
   value?: Creator[] | number | string;
   value_richtext?: null;
 }
@@ -206,7 +206,7 @@ export interface TypeConfig {
   default?: number;
   placeholder?: null;
   new_drop_down?: boolean;
-  sorting?: Sorting;
+  sorting?: string;
   single_user?: boolean;
   include_groups?: null;
   include_guests?: boolean;
@@ -216,28 +216,8 @@ export interface TypeConfig {
 export interface Option {
   id: string;
   name: string;
-  color: OptionColor | null;
+  color: string | null;
   orderindex: number;
-}
-
-export enum OptionColor {
-  Bf55Ec = "#bf55ec",
-  E50000 = "#e50000",
-  E65100 = "#E65100",
-  F9D900 = "#f9d900",
-  Ff7Fab = "#FF7FAB",
-  The0231E8 = "#0231E8",
-  The02Bcd4 = "#02BCD4",
-  The09F505 = "#09f505",
-  The2Ecd6F = "#2ecd6f",
-  The3082B7 = "#3082B7",
-  The667684 = "#667684",
-  The7C4Dff = "#7C4DFF",
-}
-
-export enum Sorting {
-  Manual = "manual",
-  NameAsc = "name_asc",
 }
 
 export interface Folder {
@@ -365,29 +345,9 @@ export interface Field {
   required: boolean;
 }
 
-export enum Type {
-  Date = "date",
-  DropDown = "drop_down",
-  Number = "number",
-  ShortText = "short_text",
-  Users = "users",
-}
+export type Type = "date" | "drop_down" | "number" | "short_text" | "users";
 
-export interface TypeConfig {
-  default?: number;
-  placeholder?: null;
-  new_drop_down?: boolean;
-  options?: Option[];
-  single_user?: boolean;
-  include_groups?: null;
-  include_guests?: boolean;
-  include_team_members?: boolean;
-  sorting?: string;
-}
-
-export interface Option {
+export interface NewCustomFieldObject {
   id: string;
-  name: string;
-  color: null | string;
-  orderindex: number;
+  value: string;
 }

@@ -4,11 +4,12 @@ import { MQMSTask } from "./types.d";
 import TasksTable from "./components/TasksTable";
 import { useFetchClickUpTasks } from "./hooks/useClickUp";
 import { getNewTasksFromMqms } from "./utils/tasksFunctions";
+import { CLICKUP_LIST_IDS } from "./constants/clickUpCustomFields";
 
 import styles from "./App.module.css";
 import NewTasksTable from "./components/NewTasksTable";
 
-const LIST_ID = "901404730264";
+const LIST_ID = CLICKUP_LIST_IDS.cciBau;
 
 function App() {
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
