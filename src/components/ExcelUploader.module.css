@@ -1,0 +1,18 @@
+input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  text-align: center;
+  color: #495057;
+  box-shadow: none;
+}
+
+button {
+  padding: 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
