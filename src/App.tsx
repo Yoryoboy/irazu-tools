@@ -16,6 +16,8 @@ function App() {
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
 
+  console.log("hi");
+
   return (
     <main style={styles}>
       <ExcelUploader setData={setMQMSTasks} />
