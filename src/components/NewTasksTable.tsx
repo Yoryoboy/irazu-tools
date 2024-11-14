@@ -74,69 +74,84 @@ function getTextCustomFieldObject(
   };
 }
 
-async function postNewTasks(
-  newTasks: Task[],
-  listId: string,
-  apikey: string
-): Promise<void> {
-  for (const task of newTasks) {
-    const resp = await fetch(
-      `https://api.clickup.com/api/v2/list/${listId}/task?`,
-      {
+function postNewTasks(newTasks: Task[], listId: string, apikey: string): void {
+  Promise.allSettled(
+    newTasks.map((task) =>
+      fetch(`https://api.clickup.com/api/v2/list/${listId}/task?`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: apikey,
         },
         body: JSON.stringify(task),
-      }
-    );
+      })
+        .then((resp) => {
+          if (!resp.ok) {
+            throw new Error(
+              `Error creating task ${task.name}: ${resp.statusText}`
+            );
+          }
+          return resp.json();
+        })
+        .then((data) => {
+          console.log(`Task created: ${task.name}`, data);
+        })
+        .catch((error) => {
+          console.error(`Failed to create task: ${task.name}`, error);
+          throw error;
+        })
+    )
+  )
+    .then((results) => {
+      console.log(results);
+    })
+    .catch((error) => {
+      console.error("Error processing tasks:", error);
+    });
+}
 
-    if (!resp.ok) {
-      throw new Error(`Error creating task ${task.name}: ${resp.statusText}`);
-    }
+function getNewTask(row: MQMSTask): Task {
+  const [plantTypeUnformatted, projectType] = row.PROJECT_TYPE.split(" - ");
+  const plantType = formatString(plantTypeUnformatted);
 
-    const data = await resp.json();
-    console.log(data);
-  }
+  const plantTypeCustomFieldValue = getNewDropdownCustomFieldObject(
+    "PLANT TYPE",
+    plantType
+  );
+
+  const projectTypeCustomFieldValue = getNewDropdownCustomFieldObject(
+    "PROJECT TYPE",
+    projectType
+  );
+
+  const secondaryIdCustomFieldValue = getTextCustomFieldObject(
+    "SECONDARY ID",
+    row.SECONDARY_EXTERNAL_ID
+  );
+
+  const customFields = [
+    plantTypeCustomFieldValue,
+    projectTypeCustomFieldValue,
+    secondaryIdCustomFieldValue,
+  ];
+
+  return {
+    name: row.EXTERNAL_ID,
+    description: row.JOB_NAME,
+    custom_fields: customFields,
+  };
 }
 
 function NewTasksTable({ newMqmsTasks }: Props) {
-  const handleAction = async (row: MQMSTask) => {
-    const [plantTypeUnformatted, projectType] = row.PROJECT_TYPE.split(" - ");
-    const plantType = formatString(plantTypeUnformatted);
+  const handleAction = (row: MQMSTask) => {
+    const newTask: Task[] = [];
+    newTask.push(getNewTask(row));
+    postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+  };
 
-    const plantTypeCustomFieldValue = getNewDropdownCustomFieldObject(
-      "PLANT TYPE",
-      plantType
-    );
-
-    const projectTypeCustomFieldValue = getNewDropdownCustomFieldObject(
-      "PROJECT TYPE",
-      projectType
-    );
-
-    const secondaryIdCustomFieldValue = getTextCustomFieldObject(
-      "SECONDARY ID",
-      row.SECONDARY_EXTERNAL_ID
-    );
-
-    const customFields = [
-      plantTypeCustomFieldValue,
-      projectTypeCustomFieldValue,
-      secondaryIdCustomFieldValue,
-    ];
-
-    const newTask = [
-      {
-        name: row.EXTERNAL_ID,
-        description: row.JOB_NAME,
-        custom_fields: customFields,
-      },
-    ];
-
-    await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
-    console.log("Task created");
+  const handleSyncAll = () => {
+    const allNewTasks = newMqmsTasks.map((row) => getNewTask(row));
+    postNewTasks(allNewTasks, CLICKUP_LIST_IDS.cciBau, apikey);
   };
 
   return (
@@ -147,6 +162,7 @@ function NewTasksTable({ newMqmsTasks }: Props) {
           <button onClick={() => handleAction(row)}>Action</button>
         )}
       />
+      <button onClick={handleSyncAll}>Sincronizar todas las tareas</button>
     </div>
   );
 }
