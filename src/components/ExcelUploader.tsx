@@ -22,11 +22,11 @@ function ExcelUploader({ setData }: Props) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
-    setFile(selectedFile); // Guarda el archivo en el estado
+    setFile(selectedFile);
   };
 
   const handleProcessFile = () => {
-    if (!file) return; // Verifica que haya un archivo seleccionado
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
       const binaryStr = e.target?.result;
@@ -51,8 +51,8 @@ function ExcelUploader({ setData }: Props) {
   };
 
   function cleanData(
-    rawData: ParsedData[], // ParsedData ya definido
-    desiredKeys: (keyof MQMSTask)[] // Los keys deben ser válidos en MQMSTask
+    rawData: ParsedData[],
+    desiredKeys: (keyof MQMSTask)[]
   ): MQMSTask[] {
     return rawData.map(
       (obj) =>

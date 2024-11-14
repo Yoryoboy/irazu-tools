@@ -79,7 +79,7 @@ async function postNewTasks(
   listId: string,
   apikey: string
 ): Promise<void> {
-  newTasks.forEach(async (task) => {
+  for (const task of newTasks) {
     const resp = await fetch(
       `https://api.clickup.com/api/v2/list/${listId}/task?`,
       {
@@ -92,13 +92,17 @@ async function postNewTasks(
       }
     );
 
+    if (!resp.ok) {
+      throw new Error(`Error creating task ${task.name}: ${resp.statusText}`);
+    }
+
     const data = await resp.json();
     console.log(data);
-  });
+  }
 }
 
 function NewTasksTable({ newMqmsTasks }: Props) {
-  const handleAction = (row: MQMSTask) => {
+  const handleAction = async (row: MQMSTask) => {
     const [plantTypeUnformatted, projectType] = row.PROJECT_TYPE.split(" - ");
     const plantType = formatString(plantTypeUnformatted);
 
@@ -131,7 +135,8 @@ function NewTasksTable({ newMqmsTasks }: Props) {
       },
     ];
 
-    postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+    await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+    console.log("Task created");
   };
 
   return (
