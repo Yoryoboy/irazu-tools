@@ -22,11 +22,13 @@ function App() {
     <main style={styles}>
       <ExcelUploader setData={setMQMSTasks} />
       <TasksTable data={MQMSTasks} />
-      {clickUpTasks.length > 0 ? (
-        <NewTasksTable newMqmsTasks={newMqmsTasks} />
-      ) : (
-        <p>Obteniendo datos de ClickUp...</p>
-      )}
+      {clickUpTasks.length > 0 && newMqmsTasks.length > 0 ? (
+        <NewTasksTable
+          newMqmsTasks={newMqmsTasks}
+          setMQMSTasks={setMQMSTasks}
+        />
+      ) : null}
+      {clickUpTasks.length === 0 && <p>Obteniendo datos de ClickUp...</p>}
     </main>
   );
 }

@@ -15,6 +15,7 @@ const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
 interface Props {
   newMqmsTasks: MQMSTask[];
+  setMQMSTasks: (tasks: MQMSTask[]) => void;
 }
 
 function formatString(input: string) {
@@ -94,11 +95,17 @@ function postNewTasks(newTasks: Task[], listId: string, apikey: string): void {
           return resp.json();
         })
         .then((data) => {
-          console.log(`Task created: ${task.name}`, data);
+          return {
+            taskName: task.name,
+            clickUpTaskId: data.id,
+          };
         })
         .catch((error) => {
-          console.error(`Failed to create task: ${task.name}`, error);
-          throw error;
+          return {
+            taskName: task.name,
+            clickUpTaskId: null,
+            error: error,
+          };
         })
     )
   )
