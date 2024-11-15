@@ -18,6 +18,17 @@ interface Props {
   setMQMSTasks: (tasks: MQMSTask[]) => void;
 }
 
+export interface PostNewTaskPromise {
+  status: string;
+  value: Value;
+}
+
+export interface Value {
+  taskName: string;
+  status: string;
+  clickUpTaskId: string;
+}
+
 function formatString(input: string) {
   const regex = /(\w+)\/\s+(\w+)/; // Patrón: string/[espacio]string
   if (regex.test(input)) {
@@ -75,8 +86,12 @@ function getTextCustomFieldObject(
   };
 }
 
-function postNewTasks(newTasks: Task[], listId: string, apikey: string): void {
-  Promise.allSettled(
+async function postNewTasks(
+  newTasks: Task[],
+  listId: string,
+  apikey: string
+): Promise<PromiseSettledResult<unknown>[]> {
+  const results = await Promise.allSettled(
     newTasks.map((task) =>
       fetch(`https://api.clickup.com/api/v2/list/${listId}/task?`, {
         method: "POST",
@@ -94,27 +109,20 @@ function postNewTasks(newTasks: Task[], listId: string, apikey: string): void {
           }
           return resp.json();
         })
-        .then((data) => {
-          return {
-            taskName: task.name,
-            clickUpTaskId: data.id,
-          };
-        })
-        .catch((error) => {
-          return {
-            taskName: task.name,
-            clickUpTaskId: null,
-            error: error,
-          };
-        })
+        .then((data) => ({
+          taskName: task.name,
+          status: "success",
+          clickUpTaskId: data.id,
+        }))
+        .catch((error) => ({
+          taskName: task.name,
+          status: "failed",
+          error: error.message,
+        }))
     )
-  )
-    .then((results) => {
-      console.log(results);
-    })
-    .catch((error) => {
-      console.error("Error processing tasks:", error);
-    });
+  );
+
+  return results;
 }
 
 function getNewTask(row: MQMSTask): Task {
@@ -149,11 +157,33 @@ function getNewTask(row: MQMSTask): Task {
   };
 }
 
-function NewTasksTable({ newMqmsTasks }: Props) {
-  const handleAction = (row: MQMSTask) => {
+function NewTasksTable({ newMqmsTasks, setMQMSTasks }: Props) {
+  const handleAction = async (row: MQMSTask) => {
     const newTask: Task[] = [];
     newTask.push(getNewTask(row));
-    postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+    const results = await postNewTasks(
+      newTask,
+      CLICKUP_LIST_IDS.cciBau,
+      apikey
+    );
+
+    const failedTasks = results.filter(
+      (result) => result.status === "rejected"
+    );
+    if (failedTasks.length > 0) {
+      console.error("Error procesando tareas:", failedTasks);
+    }
+
+    const successfulTasks = results.filter(
+      (result) => result.status === "fulfilled"
+    );
+    if (successfulTasks.length > 0) {
+      console.log("Tareas procesadas:", successfulTasks);
+    }
+
+    // function updateNewMqmsTasks(newTaskName: string) {
+    //   return newMqmsTasks.filter((task) => task.EXTERNAL_ID !== newTaskName);
+    // }
   };
 
   const handleSyncAll = () => {
