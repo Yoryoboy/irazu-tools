@@ -208,16 +208,17 @@ export interface TypeConfig {
   new_drop_down?: boolean;
   sorting?: string;
   single_user?: boolean;
-  include_groups?: null;
+  include_groups?: boolean | null;
   include_guests?: boolean;
   include_team_members?: boolean;
 }
 
 export interface Option {
-  id: string;
-  name: string;
-  color: string | null;
-  orderindex: number;
+  id?: string;
+  name?: string;
+  label?: string;
+  color?: string | null;
+  orderindex?: number;
 }
 
 export interface Folder {
@@ -345,7 +346,13 @@ export interface Field {
   required: boolean;
 }
 
-export type Type = "date" | "drop_down" | "number" | "short_text" | "users";
+export type Type =
+  | "date"
+  | "drop_down"
+  | "number"
+  | "short_text"
+  | "users"
+  | "labels";
 
 export interface NewCustomFieldObject {
   id: string;

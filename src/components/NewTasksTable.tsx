@@ -7,7 +7,7 @@ import {
   Task,
 } from "../types.d";
 import {
-  CLICKUP_CUSTOM_FIELDS,
+  CLICKUP_BAU_CUSTOM_FIELDS,
   CLICKUP_LIST_IDS,
 } from "../constants/clickUpCustomFields";
 
@@ -45,7 +45,7 @@ function formatString(input: string) {
 }
 
 function getCustomFieldDetails(fieldName: string): Field {
-  const customFieldDetails = CLICKUP_CUSTOM_FIELDS.fields.find(
+  const customFieldDetails = CLICKUP_BAU_CUSTOM_FIELDS.fields.find(
     (field) => field.name === fieldName
   );
 
