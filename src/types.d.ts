@@ -356,5 +356,23 @@ export type Type =
 
 export interface NewCustomFieldObject {
   id: string;
-  value: string;
+  value: string | undfined;
 }
+
+export interface FulfilledPostNewTaskResult {
+  status: "fulfilled";
+  value: {
+    taskName: string;
+    status: "success";
+    clickUpTaskId: string;
+  };
+}
+
+export interface RejectedPostNewTaskResult {
+  status: "rejected";
+  reason: string;
+}
+
+export type PostNewTaskResult =
+  | FulfilledPostNewTaskResult
+  | RejectedPostNewTaskResult;

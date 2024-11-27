@@ -45,7 +45,6 @@ function ExcelUploader({ setData }: Props) {
         }, {} as ParsedData)
       );
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
-      console.log("Parsed data:", parsedDataCleaned);
       setData(parsedDataCleaned);
     };
     reader.readAsArrayBuffer(file);
