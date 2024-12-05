@@ -1,35 +1,50 @@
-import { useState } from "react";
-import ExcelUploader from "./components/ExcelUploader";
-import { MQMSTask } from "./types.d";
-import TasksTable from "./components/TasksTable";
-import { useFetchClickUpTasks } from "./hooks/useClickUp";
-import { getNewTasksFromMqms } from "./utils/tasksFunctions";
-import { CLICKUP_LIST_IDS } from "./constants/clickUpCustomFields";
+import { Flex, Layout } from "antd";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRouter from "./AppRouter";
 
-import styles from "./App.module.css";
-import NewTasksTable from "./components/NewTasksTable";
+const { Header, Content, Footer } = Layout;
 
-const LIST_ID = CLICKUP_LIST_IDS.cciBau;
+const headerStyle: React.CSSProperties = {
+  textAlign: "center",
+  color: "#fff",
+  height: 64,
+  paddingInline: 48,
+  lineHeight: "64px",
+  backgroundColor: "#4096ff",
+};
+
+const contentStyle: React.CSSProperties = {
+  textAlign: "center",
+  minHeight: 120,
+  lineHeight: "120px",
+};
+
+const footerStyle: React.CSSProperties = {
+  textAlign: "center",
+  color: "#fff",
+  backgroundColor: "#4096ff",
+};
+
+const layoutStyle = {
+  borderRadius: 8,
+  overflow: "hidden",
+  width: "100%",
+  height: "100vh",
+};
 
 function App() {
-  const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
-  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID);
-
-  const newMqmsTasks =
-    MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
-
   return (
-    <main style={styles}>
-      <ExcelUploader setData={setMQMSTasks} />
-      <TasksTable data={MQMSTasks} />
-      {clickUpTasks.length > 0 && newMqmsTasks.length > 0 ? (
-        <NewTasksTable
-          newMqmsTasks={newMqmsTasks}
-          setMQMSTasks={setMQMSTasks}
-        />
-      ) : null}
-      {clickUpTasks.length === 0 && <p>Obteniendo datos de ClickUp...</p>}
-    </main>
+    <Router>
+      <Flex>
+        <Layout style={layoutStyle}>
+          <Header style={headerStyle}>Header</Header>
+          <Content style={contentStyle}>
+            <AppRouter />
+          </Content>
+          <Footer style={footerStyle}>Irazu Tools</Footer>
+        </Layout>
+      </Flex>
+    </Router>
   );
 }
 

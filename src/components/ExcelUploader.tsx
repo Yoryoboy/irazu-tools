@@ -2,6 +2,7 @@ import { useState } from "react";
 import * as XLSX from "xlsx";
 import { MQMSTask, ParsedData } from "../types";
 import styles from "./ExcelUploader.module.css";
+import { Button } from "antd";
 
 const DESIRED_KEYS: (keyof MQMSTask)[] = [
   "REQUEST_ID",
@@ -73,9 +74,9 @@ function ExcelUploader({ setData }: Props) {
         accept=".xlsx, .xls"
         onChange={handleFileChange}
       />
-      <button disabled={!file} onClick={handleProcessFile}>
+      <Button type="primary" disabled={!file} onClick={handleProcessFile}>
         Procesar archivo
-      </button>
+      </Button>
     </section>
   );
 }
