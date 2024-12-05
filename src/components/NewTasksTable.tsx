@@ -1,4 +1,5 @@
-import TasksTable from "./TasksTable";
+import { Table, Button, Space } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { MQMSTask, Task, FulfilledPostNewTaskResult } from "../types.d";
 import { postNewTasks, getNewTask } from "../utils/tasksFunctions";
 import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
@@ -77,15 +78,61 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks }: Props) {
     }
   };
 
+  // Definir columnas para la tabla
+  const columns: ColumnsType<MQMSTask> = [
+    {
+      title: "JOB_NAME",
+      dataIndex: "JOB_NAME",
+      key: "JOB_NAME",
+    },
+    {
+      title: "EXTERNAL_ID",
+      dataIndex: "EXTERNAL_ID",
+      key: "EXTERNAL_ID",
+    },
+    {
+      title: "SECONDARY_EXTERNAL_ID",
+      dataIndex: "SECONDARY_EXTERNAL_ID",
+      key: "SECONDARY_EXTERNAL_ID",
+    },
+    {
+      title: "REQUEST_NAME",
+      dataIndex: "REQUEST_NAME",
+      key: "REQUEST_NAME",
+    },
+    {
+      title: "PROJECT_TYPE",
+      dataIndex: "PROJECT_TYPE",
+      key: "PROJECT_TYPE",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type="primary" onClick={() => handleAction(record)}>
+            Sync Task
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const dataSource = newMqmsTasks.map((task) => ({
+    ...task,
+    key: task.EXTERNAL_ID,
+  }));
+
   return (
     <div>
-      <TasksTable
-        data={newMqmsTasks}
-        renderAdditionalColumns={(row) => (
-          <button onClick={() => handleAction(row)}>Action</button>
-        )}
+      <Table<MQMSTask>
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
       />
-      <button onClick={handleSyncAll}>Sincronizar todas las tareas</button>
+      <Button type="primary" onClick={handleSyncAll} style={{ marginTop: 16 }}>
+        Sync All Tasks
+      </Button>
     </div>
   );
 }

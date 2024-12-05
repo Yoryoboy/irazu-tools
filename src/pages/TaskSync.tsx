@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ExcelUploader from "../components/ExcelUploader";
 import { MQMSTask } from "../types.d";
-import TasksTable from "../components/TasksTable";
 import { useFetchClickUpTasks } from "../hooks/useClickUp";
 import { getNewTasksFromMqms } from "../utils/tasksFunctions";
 import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
@@ -14,14 +13,12 @@ const LIST_ID = CLICKUP_LIST_IDS.cciBau;
 function TaskSync() {
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
   const { clickUpTasks } = useFetchClickUpTasks(LIST_ID);
-
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
 
   return (
     <Flex vertical gap="small" align="center" justify="center">
       <ExcelUploader setData={setMQMSTasks} />
-      <TasksTable data={MQMSTasks} />
       {clickUpTasks.length > 0 && newMqmsTasks.length > 0 ? (
         <NewTasksTable
           newMqmsTasks={newMqmsTasks}
