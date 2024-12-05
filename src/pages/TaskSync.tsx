@@ -6,7 +6,6 @@ import { useFetchClickUpTasks } from "../hooks/useClickUp";
 import { getNewTasksFromMqms } from "../utils/tasksFunctions";
 import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
 
-import styles from "./TaskSync.module.css";
 import NewTasksTable from "../components/NewTasksTable";
 import { Flex } from "antd";
 

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { MQMSTask, ParsedData } from "../types";
-import styles from "./ExcelUploader.module.css";
-import { Button, Flex } from "antd";
+import { Button } from "antd";
 import FileUploader from "./FileUploader";
 
 const DESIRED_KEYS: (keyof MQMSTask)[] = [
