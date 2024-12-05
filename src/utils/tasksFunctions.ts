@@ -13,6 +13,10 @@ import {
   getTextCustomFieldObject,
 } from "./helperFunctions";
 
+import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
+
+const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
+
 export function getNewTasksFromMqms(
   MQMSTasks: MQMSTask[],
   clickUpTasks: Task[]
@@ -122,3 +126,67 @@ export function getNewTask(row: MQMSTask): Task {
     custom_fields: customFields,
   };
 }
+
+export const updateNewMqmsTasks = (
+  newTaskName: string,
+  newMqmsTasks: MQMSTask[]
+) => newMqmsTasks.filter((task) => task.EXTERNAL_ID !== newTaskName);
+
+export const handleAction = async (
+  row: MQMSTask,
+  newMqmsTasks: MQMSTask[],
+  setMQMSTasks: (tasks: MQMSTask[]) => void
+) => {
+  const newTask: Task[] = [getNewTask(row)];
+  const results = await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+
+  const successfulTasks = results.filter(
+    (result): result is FulfilledPostNewTaskResult =>
+      result.status === "fulfilled"
+  );
+
+  if (successfulTasks.length > 0) {
+    console.log("Tareas procesadas:", successfulTasks);
+    setMQMSTasks(
+      updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks)
+    );
+  }
+
+  const failedTasks = results.filter((result) => result.status === "rejected");
+  if (failedTasks.length > 0) {
+    console.error("Error procesando tareas:", failedTasks);
+  }
+};
+
+export const handleSyncAll = async (
+  newMqmsTasks: MQMSTask[],
+  setMQMSTasks: (tasks: MQMSTask[]) => void
+) => {
+  const allNewTasks = newMqmsTasks.map((row) => getNewTask(row));
+  const results = await postNewTasks(
+    allNewTasks,
+    CLICKUP_LIST_IDS.cciBau,
+    apikey
+  );
+
+  const successfulTasks = results.filter(
+    (result): result is FulfilledPostNewTaskResult =>
+      result.status === "fulfilled"
+  );
+
+  if (successfulTasks.length > 0) {
+    console.log("Tareas procesadas:", successfulTasks);
+    const updatedTasks = newMqmsTasks.filter(
+      (task) =>
+        !successfulTasks.some(
+          (success) => success.value.taskName === task.EXTERNAL_ID
+        )
+    );
+    setMQMSTasks(updatedTasks);
+  }
+
+  const failedTasks = results.filter((result) => result.status === "rejected");
+  if (failedTasks.length > 0) {
+    console.error("Error procesando tareas:", failedTasks);
+  }
+};
