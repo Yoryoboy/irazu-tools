@@ -8,6 +8,7 @@ import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
 
 import styles from "./TaskSync.module.css";
 import NewTasksTable from "../components/NewTasksTable";
+import { Flex } from "antd";
 
 const LIST_ID = CLICKUP_LIST_IDS.cciBau;
 
@@ -19,7 +20,7 @@ function TaskSync() {
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
 
   return (
-    <main style={styles}>
+    <Flex vertical gap="small" align="center" justify="center">
       <ExcelUploader setData={setMQMSTasks} />
       <TasksTable data={MQMSTasks} />
       {clickUpTasks.length > 0 && newMqmsTasks.length > 0 ? (
@@ -29,7 +30,7 @@ function TaskSync() {
         />
       ) : null}
       {clickUpTasks.length === 0 && <p>Obteniendo datos de ClickUp...</p>}
-    </main>
+    </Flex>
   );
 }
 
