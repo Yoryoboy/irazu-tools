@@ -376,3 +376,49 @@ export interface RejectedPostNewTaskResult {
 export type PostNewTaskResult =
   | FulfilledPostNewTaskResult
   | RejectedPostNewTaskResult;
+
+export interface UseFilteredClickUpTasksProps {
+  teamId: string;
+  queryParams: Record<string, string>;
+}
+
+export interface UseFilteredClickUpTasksReturn<T> {
+  data: T | null;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+export interface Members {
+  user?: User;
+  invited_by?: InvitedBy;
+  can_see_time_spent?: boolean;
+  can_see_time_estimated?: boolean;
+  can_see_points_estimated?: boolean;
+  can_edit_tags?: boolean;
+  can_create_views?: boolean;
+}
+
+export interface InvitedBy {
+  id?: number;
+  username?: string;
+  color?: string;
+  email?: string;
+  initials?: string;
+  profilePicture?: null;
+  banned_date?: null;
+  status?: string;
+}
+
+export interface User {
+  id?: number;
+  username?: null | string;
+  email?: string;
+  color?: null | string;
+  profilePicture?: null | string;
+  initials?: string;
+  role?: number;
+  custom_role?: null;
+  last_active?: null | string;
+  date_joined?: null | string;
+  date_invited?: string;
+}

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import ExcelUploader from "../components/ExcelUploader";
-import { MQMSTask } from "../types.d";
-import { useFetchClickUpTasks } from "../hooks/useClickUp";
-import { getNewTasksFromMqms } from "../utils/tasksFunctions";
-import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
+import ExcelUploader from "../../components/ExcelUploader";
+import { MQMSTask } from "../../types.d";
+import { useFetchClickUpTasks } from "../../hooks/useClickUp";
+import { getNewTasksFromMqms } from "../../utils/tasksFunctions";
+import { CLICKUP_LIST_IDS } from "../../constants/clickUpCustomFields";
 
-import NewTasksTable from "../components/NewTasksTable";
+import NewTasksTable from "../../components/NewTasksTable";
 import { Flex } from "antd";
 
 const LIST_ID = CLICKUP_LIST_IDS.cciBau;
