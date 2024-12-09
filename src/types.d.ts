@@ -376,3 +376,31 @@ export interface RejectedPostNewTaskResult {
 export type PostNewTaskResult =
   | FulfilledPostNewTaskResult
   | RejectedPostNewTaskResult;
+
+export type SearchParams = {
+  page?: string;
+  order_by?: string;
+  reverse?: string;
+  subtasks?: string;
+  space_ids?: string;
+  project_ids?: string;
+  "list_ids[]"?: string;
+  statuses?: string;
+  include_closed?: string;
+  "assignees[]"?: string;
+  tags?: string;
+  due_date_gt?: string;
+  due_date_lt?: string;
+  date_created_gt?: string;
+  date_created_lt?: string;
+  date_updated_gt?: string;
+  date_updated_lt?: string;
+  date_done_gt?: string;
+  date_done_lt?: string;
+  custom_fields?: string;
+  custom_task_ids?: string;
+  team_id?: string;
+  parent?: string;
+  include_markdown_description?: string;
+  custom_items?: string;
+};

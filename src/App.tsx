@@ -10,6 +10,7 @@ const contentStyle: React.CSSProperties = {
   minHeight: 120,
   lineHeight: "120px",
   padding: 48,
+  overflow: "auto",
 };
 
 const layoutStyle = {
