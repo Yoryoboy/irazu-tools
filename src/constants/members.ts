@@ -1,6 +1,6 @@
-import { Members, User } from "../types.d";
+import { Member, User } from "../types.d";
 
-export const members: Members[] = [
+export const members: Member[] = [
   {
     user: {
       id: 82313475,

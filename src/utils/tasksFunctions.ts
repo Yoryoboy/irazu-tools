@@ -1,10 +1,12 @@
 import {
   CustomFieldName,
+  CustomField,
   MQMSTask,
   Task,
   PostNewTaskResult,
   FulfilledPostNewTaskResult,
   RejectedPostNewTaskResult,
+  SearchParams,
 } from "../types.d";
 
 import {
@@ -14,6 +16,8 @@ import {
 } from "./helperFunctions";
 
 import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
+
+import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -190,3 +194,47 @@ export const handleSyncAll = async (
     console.error("Error procesando tareas:", failedTasks);
   }
 };
+
+export async function fetchAsbuiltsByAssignee(
+  teamId: string,
+  serachParams: SearchParams,
+  apiKey: string
+): Promise<Task[]> {
+  const query = new URLSearchParams(serachParams).toString();
+
+  try {
+    const response = await fetch(
+      `https://api.clickup.com/api/v2/team/${teamId}/task?${query}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: apiKey,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Error fetching data: ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+    const { tasks } = data;
+    return tasks;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    throw error; // Importante: vuelve a lanzar el error si necesitas manejarlo en otro lugar
+  }
+}
+
+export function getCustomField(fieldName: string): CustomField {
+  const foundField = CLICKUP_HS_CUSTOM_FIELDS.fields.find(
+    (field) => field.name === fieldName
+  );
+
+  if (!foundField) {
+    throw new Error("Field with name 'SECONDARY ID' not found");
+  }
+
+  return foundField;
+}

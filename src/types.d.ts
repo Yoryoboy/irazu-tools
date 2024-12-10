@@ -138,9 +138,23 @@ export enum ChecklistName {
   OnJobStart = "On Job Start",
 }
 
+// Custom Fields Types
+
+export interface CustomFields {
+  fields: CustomField[];
+}
+
+export type Type =
+  | "date"
+  | "drop_down"
+  | "number"
+  | "short_text"
+  | "users"
+  | "labels";
+
 export interface CustomField {
   id?: string;
-  name?: CustomFieldName;
+  name?: string;
   type?: CustomFieldType;
   type_config?: TypeConfig;
   date_created?: string;
@@ -191,14 +205,6 @@ export enum CustomFieldName {
   ServiceableTciWifi29312Ea = "SERVICEABLE/TCI/WIFI / 29312 (EA)",
   StatusWS = "Status WS",
   Ticket = "TICKET",
-}
-
-export enum CustomFieldType {
-  Date = "date",
-  DropDown = "drop_down",
-  Number = "number",
-  ShortText = "short_text",
-  Users = "users",
 }
 
 export interface TypeConfig {
@@ -330,30 +336,6 @@ export enum StatusType {
   Done = "done",
 }
 
-// Custom Fields Types
-
-export interface CustomFields {
-  fields: Field[];
-}
-
-export interface Field {
-  id: string;
-  name: string;
-  type: Type;
-  type_config: TypeConfig;
-  date_created: string;
-  hide_from_guests: boolean;
-  required: boolean;
-}
-
-export type Type =
-  | "date"
-  | "drop_down"
-  | "number"
-  | "short_text"
-  | "users"
-  | "labels";
-
 export interface NewCustomFieldObject {
   id: string;
   value: string | undfined;
@@ -404,3 +386,38 @@ export type SearchParams = {
   include_markdown_description?: string;
   custom_items?: string;
 };
+
+export interface Member {
+  user?: User;
+  invited_by?: InvitedBy;
+  can_see_time_spent?: boolean;
+  can_see_time_estimated?: boolean;
+  can_see_points_estimated?: boolean;
+  can_edit_tags?: boolean;
+  can_create_views?: boolean;
+}
+
+export interface InvitedBy {
+  id?: number;
+  username?: string;
+  color?: string;
+  email?: string;
+  initials?: string;
+  profilePicture?: null;
+  banned_date?: null;
+  status?: string;
+}
+
+export interface User {
+  id?: number;
+  username?: null | string;
+  email?: string;
+  color?: null | string;
+  profilePicture?: null | string;
+  initials?: string;
+  role?: number;
+  custom_role?: null;
+  last_active?: null | string;
+  date_joined?: null | string;
+  date_invited?: string;
+}
