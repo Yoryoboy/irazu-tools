@@ -14,15 +14,15 @@ function VendorProduction() {
       {anaisAsbuiltLoading ? (
         <div>Loading...</div>
       ) : (
-        <>
-          <p>
-            trabajos asbuilt encontrados{" "}
-            {asbuiltForAnaisDelValleArchilaGonzalez.length}
-          </p>
-          <pre style={{ textAlign: "left", lineHeight: "1" }}>
-            {JSON.stringify(asbuiltForAnaisDelValleArchilaGonzalez, null, 2)}
-          </pre>
-        </>
+        <div>
+          <h1>Asbuilts for Anais Del Valle Archila Gonzalez</h1>
+          {asbuiltForAnaisDelValleArchilaGonzalez.map((task) => (
+            <div style={{ lineHeight: "1.5" }} key={task.id}>
+              <h2>{task.name}</h2>
+              <p>{task.description}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

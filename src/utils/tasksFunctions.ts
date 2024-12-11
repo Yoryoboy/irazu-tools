@@ -233,7 +233,7 @@ export function getCustomField(fieldName: string): CustomField {
   );
 
   if (!foundField) {
-    throw new Error("Field with name 'SECONDARY ID' not found");
+    throw new Error("Field with name '" + fieldName + "' not found");
   }
 
   return foundField;
