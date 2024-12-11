@@ -1,22 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { SearchParams, Task } from "../../types";
-import {
-  fetchAsbuiltsByAssignee,
-  getCustomField,
-} from "../../utils/tasksFunctions";
+import { fetchFilteredTasks, getCustomField } from "../../utils/tasksFunctions";
 
-import { CLICKUP_API_AKEY, TEAM_ID } from "../../utils/config";
+import { CLICKUP_API_AKEY, TEAM_ID, CCI_HS_LIST_ID } from "../../utils/config";
+import { vendors } from "./VendorProduction.vendors";
 
 function VendorProduction() {
   const [asbuilts, setAsbuilts] = useState<Task[]>([]);
   const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
   const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
-
+  const { anaisDelValleArchilaGonzalez } = vendors;
   const searchParams: SearchParams = useMemo(() => {
     return {
       page: "0",
-      "assignees[]": "43076422",
-      "list_ids[]": "900200859937",
+      "assignees[]": anaisDelValleArchilaGonzalez.id.toString(),
+      "list_ids[]": CCI_HS_LIST_ID,
       include_closed: "true",
       custom_fields: JSON.stringify([
         {
@@ -34,10 +32,14 @@ function VendorProduction() {
         },
       ]),
     };
-  }, [asbuiltBillingStatusField, checkedForSubcoField]);
+  }, [
+    anaisDelValleArchilaGonzalez,
+    asbuiltBillingStatusField,
+    checkedForSubcoField,
+  ]);
 
   useEffect(() => {
-    fetchAsbuiltsByAssignee(TEAM_ID, searchParams, CLICKUP_API_AKEY)
+    fetchFilteredTasks(TEAM_ID, searchParams, CLICKUP_API_AKEY)
       .then((tasks) => {
         setAsbuilts(tasks);
       })

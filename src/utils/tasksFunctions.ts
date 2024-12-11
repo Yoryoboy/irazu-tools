@@ -195,7 +195,7 @@ export const handleSyncAll = async (
   }
 };
 
-export async function fetchAsbuiltsByAssignee(
+export async function fetchFilteredTasks(
   teamId: string,
   serachParams: SearchParams,
   apiKey: string
@@ -223,7 +223,7 @@ export async function fetchAsbuiltsByAssignee(
     return tasks;
   } catch (error) {
     console.error("Error fetching tasks:", error);
-    throw error; // Importante: vuelve a lanzar el error si necesitas manejarlo en otro lugar
+    throw error;
   }
 }
 
