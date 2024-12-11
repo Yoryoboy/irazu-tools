@@ -5,12 +5,12 @@ import {
   getCustomField,
 } from "../../utils/tasksFunctions";
 
+import { CLICKUP_API_AKEY, teamId } from "../../utils/config";
+
 function VendorProduction() {
   const [asbuilts, setAsbuilts] = useState<Task[]>([]);
-
   const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
   const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
-  const teamId = "3051792";
 
   const searchParams: SearchParams = useMemo(() => {
     return {
@@ -35,14 +35,10 @@ function VendorProduction() {
         },
       ]),
     };
-  }, [teamId, asbuiltBillingStatusField, checkedForSubcoField]);
+  }, [asbuiltBillingStatusField, checkedForSubcoField]);
 
   useEffect(() => {
-    fetchAsbuiltsByAssignee(
-      teamId,
-      searchParams,
-      import.meta.env.VITE_CLICKUP_API_AKEY
-    )
+    fetchAsbuiltsByAssignee(teamId, searchParams, CLICKUP_API_AKEY)
       .then((tasks) => {
         setAsbuilts(tasks);
       })
