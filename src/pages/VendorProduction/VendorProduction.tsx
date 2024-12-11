@@ -5,7 +5,7 @@ import {
   getCustomField,
 } from "../../utils/tasksFunctions";
 
-import { CLICKUP_API_AKEY, teamId } from "../../utils/config";
+import { CLICKUP_API_AKEY, TEAM_ID } from "../../utils/config";
 
 function VendorProduction() {
   const [asbuilts, setAsbuilts] = useState<Task[]>([]);
@@ -14,7 +14,6 @@ function VendorProduction() {
 
   const searchParams: SearchParams = useMemo(() => {
     return {
-      assignee: teamId,
       page: "0",
       "assignees[]": "43076422",
       "list_ids[]": "900200859937",
@@ -38,7 +37,7 @@ function VendorProduction() {
   }, [asbuiltBillingStatusField, checkedForSubcoField]);
 
   useEffect(() => {
-    fetchAsbuiltsByAssignee(teamId, searchParams, CLICKUP_API_AKEY)
+    fetchAsbuiltsByAssignee(TEAM_ID, searchParams, CLICKUP_API_AKEY)
       .then((tasks) => {
         setAsbuilts(tasks);
       })
