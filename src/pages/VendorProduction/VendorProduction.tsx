@@ -6,7 +6,7 @@ import { CLICKUP_API_AKEY, TEAM_ID, CCI_HS_LIST_ID } from "../../utils/config";
 import { vendors } from "./VendorProduction.vendors";
 
 function VendorProduction() {
-  const [asbuilts, setAsbuilts] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
   const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
   const { anaisDelValleArchilaGonzalez } = vendors;
@@ -41,7 +41,7 @@ function VendorProduction() {
   useEffect(() => {
     fetchFilteredTasks(TEAM_ID, searchParams, CLICKUP_API_AKEY)
       .then((tasks) => {
-        setAsbuilts(tasks);
+        setFilteredTasks(tasks);
       })
       .catch((error) => {
         console.error("Error fetching tasks:", error);
@@ -50,9 +50,9 @@ function VendorProduction() {
 
   return (
     <>
-      <p>trabajos asbuilt encontrados {asbuilts.length}</p>
+      <p>trabajos asbuilt encontrados {filteredTasks.length}</p>
       <pre style={{ textAlign: "left", lineHeight: "1" }}>
-        {JSON.stringify(asbuilts, null, 2)}
+        {JSON.stringify(filteredTasks, null, 2)}
       </pre>
     </>
   );
