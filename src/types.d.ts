@@ -421,3 +421,5 @@ export interface User {
   date_joined?: null | string;
   date_invited?: string;
 }
+
+type TaskFieldValue = string | number | string[] | null;

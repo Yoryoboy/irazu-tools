@@ -3,6 +3,7 @@ import {
   asbuiltParamsForAnaisDelValleArchilaGonzalez,
   designParamsForAnaisDelValleArchilaGonzalez,
 } from "./VendorProduction.SearchParams";
+import { extractTaskFields } from "../../utils/helperFunctions";
 
 function VendorProduction() {
   const {
