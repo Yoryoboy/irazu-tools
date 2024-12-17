@@ -5,6 +5,7 @@ import { SearchParams } from "../../types";
 const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
 const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
 const designBillingStatusField = getCustomField("DESIGN BILLING STATUS");
+const designAssigneeField = getCustomField("DESIGN ASSIGNEE");
 
 // Anais Del Valle Archila Gonzalez
 
@@ -37,10 +38,14 @@ export function getAsbuiltSearchParamsForVendor(
 export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
   return {
     page: "0",
-    "assignees[]": vendorId,
     "list_ids[]": CCI_HS_LIST_ID,
     include_closed: "true",
     custom_fields: JSON.stringify([
+      {
+        field_id: designAssigneeField.id,
+        operator: "ANY",
+        value: [vendorId],
+      },
       {
         field_id: designBillingStatusField.id,
         operator: "ANY",

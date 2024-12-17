@@ -7,7 +7,7 @@ import VendorProductionTable from "./VendorProductionTable";
 import { vendors } from "./VendorProduction.vendors";
 
 function VendorProduction() {
-  const { anaisDelValleArchilaGonzalez } = vendors;
+  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
 
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
     useFilteredTasks(
@@ -21,12 +21,38 @@ function VendorProduction() {
       getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
     );
 
+  const { filteredTasks: asbuiltForBeatrizLeal } = useFilteredTasks(
+    getAsbuiltSearchParamsForVendor(beatrizLeal.id.toString())
+  );
+
+  const { filteredTasks: designForBeatrizLeal } = useFilteredTasks(
+    getDesignSearchParamsForVendor(beatrizLeal.id.toString())
+  );
+
+  const { filteredTasks: asbuiltForNathaly } = useFilteredTasks(
+    getAsbuiltSearchParamsForVendor(nathaly.id.toString())
+  );
+
+  const { filteredTasks: designForNathaly } = useFilteredTasks(
+    getDesignSearchParamsForVendor(nathaly.id.toString())
+  );
+
   return (
     <main>
       <VendorProductionTable
         asbuilts={asbuiltForAnaisDelValleArchilaGonzalez}
         designs={designForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
+      />
+      <VendorProductionTable
+        asbuilts={asbuiltForBeatrizLeal}
+        designs={designForBeatrizLeal}
+        vendor={beatrizLeal}
+      />
+      <VendorProductionTable
+        asbuilts={asbuiltForNathaly}
+        designs={designForNathaly}
+        vendor={nathaly}
       />
     </main>
   );
