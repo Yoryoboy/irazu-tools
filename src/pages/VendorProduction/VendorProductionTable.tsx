@@ -1,5 +1,6 @@
+import { Table } from "antd";
 import { Task } from "../../types";
-import { extractTaskFields } from "../../utils/helperFunctions";
+import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
 import { asbuiltFields, designFields } from "./VendorProductionTable.config";
 
 interface Props {
@@ -9,35 +10,33 @@ interface Props {
 
 function VendorProductionTable({ asbuilts, designs }: Props) {
   const asbuiltFieldsValues = asbuilts.map((asbuilt) => {
-    const projectCode = "CCI - HS ASBUILT";
+    const projectCode: string = "CCI - HS ASBUILT";
     const fieldsValues = extractTaskFields(asbuilt, asbuiltFields);
     return { ...fieldsValues, projectCode };
   });
   const designFieldsValues = designs.map((design) => {
-    const projectCode = "CCI - HS DESIGN";
+    const projectCode: string = "CCI - HS DESIGN";
     const fieldValues = extractTaskFields(design, designFields);
     return { ...fieldValues, projectCode };
   });
 
-  console.log(asbuiltFieldsValues, designFieldsValues);
+  const unifiedTasks = unifyProjects(asbuiltFieldsValues, designFieldsValues);
+
+  const columns = Object.keys(unifiedTasks[0]).map((key) => ({
+    title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalizar título
+    dataIndex: key, // Vincula la columna con el campo correspondiente
+    key: key,
+  }));
+
+  const dataSource = unifiedTasks.map((item, index) => ({
+    ...item,
+    key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
+  }));
 
   return (
-    <div>
-      <h1>Asbuilts for Anais Del Valle Archila Gonzalez</h1>
-      {asbuilts.map((asbuilt) => (
-        <div style={{ lineHeight: "1.5" }} key={asbuilt.id}>
-          <h2>{asbuilt.name}</h2>
-          <p>{asbuilt.description}</p>
-        </div>
-      ))}
-      <h1>Designs for Anais Del Valle Archila Gonzalez</h1>
-      {designs.map((design) => (
-        <div style={{ lineHeight: "1.5" }} key={design.id}>
-          <h2>{design.name}</h2>
-          <p>{design.description}</p>
-        </div>
-      ))}
-    </div>
+    <main>
+      <Table dataSource={dataSource} columns={columns} pagination={false} />
+    </main>
   );
 }
 

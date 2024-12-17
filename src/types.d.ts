@@ -423,3 +423,17 @@ export interface User {
 }
 
 type TaskFieldValue = string | number | string[] | null;
+
+export type InputObject = {
+  name: string;
+  "RECEIVED DATE": string;
+  [key: string]: string; // Permite otras propiedades
+};
+
+export type UnifiedObject = {
+  name: string;
+  receivedDate: string;
+  completionDate: string;
+  quantity: string;
+  projectCode: string;
+};

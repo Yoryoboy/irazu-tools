@@ -5,6 +5,8 @@ import {
   NewCustomFieldObject,
   Task,
   TaskFieldValue,
+  InputObject,
+  UnifiedObject,
 } from "../types.d";
 
 export function formatString(input: string) {
@@ -133,4 +135,35 @@ function isTaskFieldValue(value: unknown): value is TaskFieldValue {
     Array.isArray(value) ||
     value === null
   );
+}
+
+export function unifyProjects(
+  asbuiltArray: InputObject[],
+  designArray: InputObject[]
+): UnifiedObject[] {
+  const unifiedArray: UnifiedObject[] = [];
+
+  // Procesar ASBUILT
+  asbuiltArray.forEach((item) => {
+    unifiedArray.push({
+      name: item.name,
+      receivedDate: item["RECEIVED DATE"],
+      completionDate: item["PREASBUILT ACTUAL COMPLETION DATE "] || "",
+      quantity: item["ASBUILT ROUNDED MILES"] || "0",
+      projectCode: item.projectCode,
+    });
+  });
+
+  // Procesar DESIGN
+  designArray.forEach((item) => {
+    unifiedArray.push({
+      name: item.name,
+      receivedDate: item["RECEIVED DATE"],
+      completionDate: item["ACTUAL COMPLETION DATE"] || "",
+      quantity: item["DESIGN ROUNDED MILES"] || "0",
+      projectCode: item.projectCode,
+    });
+  });
+
+  return unifiedArray;
 }
