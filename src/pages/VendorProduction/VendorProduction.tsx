@@ -1,7 +1,7 @@
 import { useFilteredTasks } from "../../hooks/useFilteredTasks";
 import {
-  asbuiltParamsForAnaisDelValleArchilaGonzalez,
-  designParamsForAnaisDelValleArchilaGonzalez,
+  getAsbuiltSearchParamsForVendor,
+  getDesignSearchParamsForVendor,
 } from "./VendorProduction.SearchParams";
 import VendorProductionTable from "./VendorProductionTable";
 import { vendors } from "./VendorProduction.vendors";
@@ -10,10 +10,16 @@ function VendorProduction() {
   const { anaisDelValleArchilaGonzalez } = vendors;
 
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(asbuiltParamsForAnaisDelValleArchilaGonzalez);
+    useFilteredTasks(
+      getAsbuiltSearchParamsForVendor(
+        anaisDelValleArchilaGonzalez.id.toString()
+      )
+    );
 
   const { filteredTasks: designForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(designParamsForAnaisDelValleArchilaGonzalez);
+    useFilteredTasks(
+      getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+    );
 
   return (
     <main>
