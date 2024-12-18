@@ -1,13 +1,4 @@
-import {
-  CustomFieldName,
-  CustomField,
-  MQMSTask,
-  Task,
-  PostNewTaskResult,
-  FulfilledPostNewTaskResult,
-  RejectedPostNewTaskResult,
-  SearchParams,
-} from "../types.d";
+import { CustomField, Task } from "../types/Task";
 
 import {
   formatString,
@@ -18,6 +9,7 @@ import {
 import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
 
 import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
+import { SearchParams } from "../types/SearchParams";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -197,10 +189,10 @@ export const handleSyncAll = async (
 
 export async function fetchFilteredTasks(
   teamId: string,
-  serachParams: SearchParams,
+  searchParams: SearchParams,
   apiKey: string
 ): Promise<Task[]> {
-  const query = new URLSearchParams(serachParams).toString();
+  const query = new URLSearchParams(searchParams).toString();
 
   try {
     const response = await fetch(

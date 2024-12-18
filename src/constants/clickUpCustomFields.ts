@@ -1,4 +1,8 @@
-import { CustomFields } from "../types.d";
+import { CustomField } from "../types/Task";
+
+interface CustomFields {
+  fields: CustomField[];
+}
 
 export const CLICKUP_LIST_IDS = {
   cciBau: "901404730264",
