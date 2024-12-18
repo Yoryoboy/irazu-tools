@@ -1,8 +1,9 @@
 import { Table } from "antd";
-import { Task, Vendor } from "../../types";
 import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
 import { asbuiltFields, designFields } from "./VendorProductionTable.config";
 import ProductionReportGenerator from "./ProductionReportGenerator";
+import { Task } from "../../types/Task";
+import { Vendor } from "../../types/Vendor";
 
 interface Props {
   asbuilts: Task[];

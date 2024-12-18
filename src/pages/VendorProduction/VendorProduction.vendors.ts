@@ -1,4 +1,4 @@
-import { Vendor } from "../../types";
+import { Vendor } from "../../types/Vendor";
 
 export const vendors: Record<string, Vendor> = {
   anaisDelValleArchilaGonzalez: {
