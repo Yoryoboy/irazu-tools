@@ -1,8 +1,8 @@
 import { Button } from "antd";
-import { Vendor } from "../../types";
 import { DownloadOutlined } from "@ant-design/icons";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import { Vendor } from "../../types/Vendor";
 
 interface Props {
   vendor: Vendor;
