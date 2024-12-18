@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchFilteredTasks } from "../utils/tasksFunctions";
-import { SearchParams, Task } from "../types";
 import { CLICKUP_API_AKEY, TEAM_ID } from "../utils/config";
+import { SearchParams } from "../types/SearchParams";
+import { Task } from "../types/Task";
 
 export function useFilteredTasks(initialSearchParams: SearchParams) {
   const [searchParams, setSearchParams] =
