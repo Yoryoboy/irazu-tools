@@ -1,13 +1,5 @@
 import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
-import {
-  Field,
-  Option,
-  NewCustomFieldObject,
-  Task,
-  TaskFieldValue,
-  InputObject,
-  UnifiedObject,
-} from "../types.d";
+import { CustomField, NewCustomFieldObject, Option, Task } from "../types/Task";
 
 export function formatString(input: string) {
   const regex = /(\w+)\/\s+(\w+)/; // Patrón: string/[espacio]string
@@ -17,7 +9,7 @@ export function formatString(input: string) {
   return input; // Si no coincide, retorna el string original
 }
 
-export function getCustomFieldDetails(fieldName: string): Field {
+export function getCustomFieldDetails(fieldName: string): CustomField {
   const customFieldDetails = CLICKUP_BAU_CUSTOM_FIELDS.fields.find(
     (field) => field.name === fieldName
   );
@@ -29,7 +21,7 @@ export function getCustomFieldDetails(fieldName: string): Field {
 }
 
 export function getDropdownCustomFieldOption(
-  customFieldDetails: Field,
+  customFieldDetails: CustomField,
   optionName: string
 ): Option {
   const customFieldOptions = customFieldDetails.type_config?.options?.find(
@@ -46,10 +38,20 @@ export function getNewDropdownCustomFieldObject(
   optionName: string
 ): NewCustomFieldObject {
   const customFieldDetails = getCustomFieldDetails(fieldName);
+
+  if (!customFieldDetails.id) {
+    throw new Error(`Custom field ID is missing for field: ${fieldName}`);
+  }
+
   const customFieldOption = getDropdownCustomFieldOption(
     customFieldDetails,
     optionName
   );
+
+  if (!customFieldOption.id) {
+    throw new Error(`Option ID is missing for option: ${optionName}`);
+  }
+
   return {
     id: customFieldDetails.id,
     value: customFieldOption.id,
@@ -60,8 +62,13 @@ export function getTextCustomFieldObject(
   fieldName: string,
   value: string
 ): NewCustomFieldObject {
+  const fieldDetails = getCustomFieldDetails(fieldName);
+
+  if (!fieldDetails.id) {
+    throw new Error(`Field ID is missing for field: ${fieldName}`);
+  }
   return {
-    id: getCustomFieldDetails(fieldName).id,
+    id: fieldDetails.id,
     value: value,
   };
 }

@@ -133,3 +133,8 @@ export interface Folder {
 export interface Space {
   id?: string;
 }
+
+export interface NewCustomFieldObject {
+  id: string;
+  value: string;
+}
