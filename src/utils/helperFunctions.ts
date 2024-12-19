@@ -136,16 +136,6 @@ export function extractTaskFields(
   return result;
 }
 
-function isTaskFieldValue(value: unknown): value is TaskFieldValue {
-  return (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean" ||
-    Array.isArray(value) ||
-    value === null
-  );
-}
-
 export function unifyProjects(
   asbuiltArray: InputObject[],
   designArray: InputObject[]
