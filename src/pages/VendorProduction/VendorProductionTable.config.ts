@@ -1,4 +1,5 @@
 export const asbuiltFields = [
+  "id",
   "name",
   "RECEIVED DATE",
   "PREASBUILT ACTUAL COMPLETION DATE ",
@@ -6,6 +7,7 @@ export const asbuiltFields = [
 ];
 
 export const designFields = [
+  "id",
   "name",
   "RECEIVED DATE",
   "ACTUAL COMPLETION DATE",

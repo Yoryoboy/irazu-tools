@@ -147,6 +147,7 @@ export function unifyProjects(
   // Procesar ASBUILT
   asbuiltArray.forEach((item) => {
     unifiedArray.push({
+      id: item.id,
       name: item.name,
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["PREASBUILT ACTUAL COMPLETION DATE "] || "",
@@ -158,6 +159,7 @@ export function unifyProjects(
   // Procesar DESIGN
   designArray.forEach((item) => {
     unifiedArray.push({
+      id: item.id,
       name: item.name,
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["ACTUAL COMPLETION DATE"] || "",
