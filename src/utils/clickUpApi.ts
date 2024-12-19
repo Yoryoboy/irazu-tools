@@ -1,6 +1,7 @@
+import { CustomField, ExtractedTaskFieldValues } from "../types/Task";
 import { CLICKUP_API_AKEY } from "./config";
 
-export async function updateCustomFieldLabel(
+async function updateCustomFieldLabel(
   taskId: string,
   fieldId: string,
   value: string[]
@@ -34,4 +35,53 @@ export async function updateCustomFieldLabel(
 
     return { success: false, error: "Unknown error" };
   }
+}
+
+export async function updateTaskLabelForCCIHighSplit(
+  task: ExtractedTaskFieldValues,
+  customField: CustomField
+): Promise<{ status: "success" | "error"; message: string }> {
+  const { id: taskId, projectCode } = task;
+
+  // Determinar el valor basado en projectCode
+  const value =
+    projectCode === "CCI - HS ASBUILT"
+      ? ([
+          customField?.type_config?.options?.find(
+            (o) => o.label === "ASBUILT CHECKED"
+          )?.id,
+        ].filter(Boolean) as string[])
+      : projectCode === "CCI - HS DESIGN"
+      ? ([
+          customField?.type_config?.options?.find(
+            (o) => o.label === "DESIGN CHECKED"
+          )?.id,
+        ].filter(Boolean) as string[])
+      : [];
+
+  if (typeof taskId != "string") {
+    return { status: "error", message: "Task ID is not a string" };
+  }
+
+  if (!value || value.length === 0) {
+    console.error(`No valid label found for task ${taskId}`);
+    return {
+      status: "error",
+      message: `No valid label found for task ${taskId}`,
+    };
+  }
+
+  if (typeof customField.id != "string") {
+    return { status: "error", message: "Custom Field ID is not a string" };
+  }
+
+  // Llamar a la función general para realizar el fetch
+  const result = await updateCustomFieldLabel(taskId, customField.id, value);
+
+  if (!result.success) {
+    console.error(`Error updating task ${taskId}:`, result.error);
+    return { status: "error", message: `Error updating task ${taskId}:` };
+  }
+
+  return { status: "success", message: "Task label updated successfully" };
 }

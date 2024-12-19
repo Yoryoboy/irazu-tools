@@ -150,6 +150,15 @@ export interface ExtractedTaskFieldValues {
   [key: string]: string | string[] | number | User[] | undefined;
 }
 
+export interface UnifiedProject {
+  id: string;
+  name: string;
+  receivedDate: string;
+  completionDate: string;
+  quantity: string;
+  projectCode: string;
+}
+
 export interface MQMSTask {
   REQUEST_ID: string;
   JOB_NAME: string;
