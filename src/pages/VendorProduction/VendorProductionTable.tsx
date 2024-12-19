@@ -12,16 +12,11 @@ interface Props {
 }
 
 function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
-  console.log("task", asbuilts);
-  console.log("field values", asbuiltFields);
-
   const asbuiltFieldsValues = asbuilts.map((asbuilt) => {
     const projectCode: string = "CCI - HS ASBUILT";
     const fieldsValues = extractTaskFields(asbuilt, asbuiltFields);
     return { ...fieldsValues, projectCode };
   });
-
-  console.log("asbuilt fields values", asbuiltFieldsValues);
 
   const designFieldsValues = designs.map((design) => {
     const projectCode: string = "CCI - HS DESIGN";

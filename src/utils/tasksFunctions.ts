@@ -91,10 +91,6 @@ export function getNewTask(row: MQMSTask): Task {
     row.PROJECT_TYPE.split(" - ");
   const plantType = formatString(plantTypeUnformatted);
 
-  console.log("Plant Type:", plantType);
-  console.log("Project Type:", projectType);
-  console.log("Node:", nodeSegSplit);
-
   const plantTypeCustomFieldValue = getNewDropdownCustomFieldObject(
     "PLANT TYPE",
     plantType
@@ -142,7 +138,6 @@ export const handleAction = async (
   );
 
   if (successfulTasks.length > 0) {
-    console.log("Tareas procesadas:", successfulTasks);
     setMQMSTasks(
       updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks)
     );
@@ -171,7 +166,6 @@ export const handleSyncAll = async (
   );
 
   if (successfulTasks.length > 0) {
-    console.log("Tareas procesadas:", successfulTasks);
     const updatedTasks = newMqmsTasks.filter(
       (task) =>
         !successfulTasks.some(
