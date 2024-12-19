@@ -7,7 +7,7 @@ export interface Task {
   id?: string;
   custom_id?: string;
   custom_item_id?: number;
-  name?: string;
+  name: string;
   text_content?: string;
   description?: string;
   status?: Status;
@@ -141,4 +141,31 @@ export interface NewCustomFieldObject {
 
 export interface ExtractedTaskFieldValues {
   [key: string]: string | string[] | number | User[] | undefined;
+}
+
+export interface MQMSTask {
+  REQUEST_ID: string;
+  JOB_NAME: string;
+  EXTERNAL_ID: string;
+  SECONDARY_EXTERNAL_ID: string;
+  REQUEST_NAME: string;
+  PROJECT_TYPE: string;
+}
+
+export type PostNewTaskResult =
+  | FulfilledPostNewTaskResult
+  | RejectedPostNewTaskResult;
+
+export interface FulfilledPostNewTaskResult {
+  status: "fulfilled";
+  value: {
+    taskName: string;
+    status: "success";
+    clickUpTaskId: string;
+  };
+}
+
+export interface RejectedPostNewTaskResult {
+  status: "rejected";
+  reason: string;
 }

@@ -1,4 +1,11 @@
-import { CustomField, Task } from "../types/Task";
+import {
+  CustomField,
+  FulfilledPostNewTaskResult,
+  MQMSTask,
+  PostNewTaskResult,
+  RejectedPostNewTaskResult,
+  Task,
+} from "../types/Task";
 
 import {
   formatString,
@@ -21,9 +28,12 @@ export function getNewTasksFromMqms(
 
   clickUpTasks.forEach((task) => {
     const secondaryIdField = task.custom_fields?.find(
-      (field) => field.name === CustomFieldName.SecondaryID
+      (field) => field.name === "SECONDARY ID"
     );
-    const secondaryId = secondaryIdField?.value as string | undefined;
+    const secondaryId =
+      typeof secondaryIdField?.value === "string"
+        ? secondaryIdField?.value
+        : "";
 
     if (secondaryId) {
       clickUpTaskMap.set(task.name, secondaryId);
