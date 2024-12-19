@@ -137,10 +137,10 @@ export function extractTaskFields(
 }
 
 export function unifyProjects(
-  asbuiltArray: InputObject[],
-  designArray: InputObject[]
-): UnifiedObject[] {
-  const unifiedArray: UnifiedObject[] = [];
+  asbuiltArray: ExtractedTaskFieldValues[],
+  designArray: ExtractedTaskFieldValues[]
+): ExtractedTaskFieldValues[] {
+  const unifiedArray: ExtractedTaskFieldValues[] = [];
 
   // Procesar ASBUILT
   asbuiltArray.forEach((item) => {
