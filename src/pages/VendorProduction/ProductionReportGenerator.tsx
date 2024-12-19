@@ -3,16 +3,11 @@ import { DownloadOutlined } from "@ant-design/icons";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { Vendor } from "../../types/Vendor";
+import { ExtractedTaskFieldValues } from "../../types/Task";
 
 interface Props {
   vendor: Vendor;
-  tasks: {
-    name: string;
-    receivedDate: string;
-    completionDate: string;
-    quantity: string;
-    projectCode: string;
-  }[];
+  tasks: ExtractedTaskFieldValues[];
 }
 
 function ProductionReportGenerator({ vendor, tasks }: Props) {
@@ -37,11 +32,15 @@ function ProductionReportGenerator({ vendor, tasks }: Props) {
       // 4. Llenar datos desde la fila inicial
       tasks.forEach((task, index) => {
         const row = worksheet.getRow(startingRow + index);
-        row.getCell(3).value = task.projectCode; // Columna C
-        row.getCell(4).value = parseFloat(task.quantity); // Columna D
-        row.getCell(6).value = task.receivedDate; // Columna F
-        row.getCell(7).value = task.completionDate; // Columna G
-        row.getCell(8).value = task.name; // Columna H
+        row.getCell(3).value =
+          typeof task.projectCode === "string" ? task.projectCode : ""; // Columna C
+        row.getCell(4).value =
+          typeof task.quantity === "string" ? parseFloat(task.quantity) : 0; // Columna D
+        row.getCell(6).value =
+          typeof task.receivedDate === "string" ? task.receivedDate : ""; // Columna F
+        row.getCell(7).value =
+          typeof task.completionDate === "string" ? task.completionDate : ""; // Columna G
+        row.getCell(8).value = typeof task.name === "string" ? task.name : ""; // Columna H
         row.commit(); // Confirma los cambios en la fila
       });
 
