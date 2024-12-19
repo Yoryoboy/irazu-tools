@@ -54,11 +54,18 @@ export interface Status {
 
 export interface User {
   id?: number;
-  username?: string;
-  color?: string;
+  username?: string | null;
+  color?: string | null;
   initials?: string;
+  last_active?: string | null;
+  date_joined?: string | null;
+  date_invited?: string | null;
+  role?: number;
+  banned_date?: null;
+  custom_role?: null;
   email?: string;
   profilePicture?: string | null;
+  status?: string;
 }
 
 export interface Priority {

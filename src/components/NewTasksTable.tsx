@@ -1,7 +1,7 @@
 import { Table, Button } from "antd";
-import { MQMSTask } from "../types.d";
 import { getColumns } from "./tableColumns";
 import { handleSyncAll } from "../utils/tasksFunctions";
+import { MQMSTask } from "../types/Task";
 
 interface Props {
   newMqmsTasks: MQMSTask[];

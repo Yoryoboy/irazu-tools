@@ -1,7 +1,7 @@
 import { Button, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { MQMSTask } from "../types";
 import { handleAction } from "../utils/tasksFunctions";
+import { MQMSTask } from "../types/Task";
 
 // Definir columnas para la tabla
 export const getColumns = (

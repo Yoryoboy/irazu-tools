@@ -1,10 +1,12 @@
 import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
+import { members } from "../constants/members";
 import {
   CustomField,
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
   Option,
   Task,
+  User,
 } from "../types/Task";
 
 export function formatString(input: string) {
@@ -165,4 +167,8 @@ export function unifyProjects(
   });
 
   return unifiedArray;
+}
+
+export function getUser(userId: number): User {
+  return members.find((member) => member.user?.id === userId)?.user || {};
 }

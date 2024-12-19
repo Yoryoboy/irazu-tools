@@ -1,4 +1,4 @@
-import { Member, User } from "../types.d";
+import { Member } from "../types/Member";
 
 export const members: Member[] = [
   {
@@ -3544,6 +3544,3 @@ export const members: Member[] = [
   },
 ];
 
-export function getUser(userId: number): User {
-  return members.find((member) => member.user?.id === userId)?.user || {};
-}
