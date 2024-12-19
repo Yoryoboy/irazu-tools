@@ -169,3 +169,7 @@ export interface RejectedPostNewTaskResult {
   status: "rejected";
   reason: string;
 }
+
+export interface ParsedData {
+  [key: string]: string | number | null | undefined;
+}
