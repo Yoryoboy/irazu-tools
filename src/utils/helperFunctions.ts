@@ -1,5 +1,11 @@
 import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
-import { CustomField, NewCustomFieldObject, Option, Task } from "../types/Task";
+import {
+  CustomField,
+  ExtractedTaskFieldValues,
+  NewCustomFieldObject,
+  Option,
+  Task,
+} from "../types/Task";
 
 export function formatString(input: string) {
   const regex = /(\w+)\/\s+(\w+)/; // Patrón: string/[espacio]string
@@ -76,19 +82,14 @@ export function getTextCustomFieldObject(
 export function extractTaskFields(
   task: Task,
   fields: string[]
-): Record<string, TaskFieldValue> {
-  const result: Partial<Record<string, TaskFieldValue>> = {};
+): ExtractedTaskFieldValues {
+  const result: Partial<ExtractedTaskFieldValues> = {};
 
   fields.forEach((field) => {
     // Si el campo existe directamente en el objeto task
     if (field in task) {
       const value = task[field as keyof Task];
-      if (isTaskFieldValue(value)) {
-        result[field] = value;
-      } else {
-        result[field] = null;
-        console.log(`Task field ${field} is not a valid value, null assigned`);
-      }
+      result[field] = value != null ? value.toString() : "";
     } else {
       // Buscar en custom_fields si es un campo personalizado
       const customField = task.custom_fields?.find((cf) => cf.name === field);
@@ -101,7 +102,8 @@ export function extractTaskFields(
           const selectedOption = customField.type_config.options.find(
             (option) => option.orderindex === customField.value
           );
-          result[field] = selectedOption ? selectedOption.name : null; // Asignar el nombre de la opción o null
+          result[field] =
+            selectedOption != null ? selectedOption.name?.toString() : ""; // Asignar el nombre de la opción o null
         } else if (
           customField.type === "labels" &&
           customField.type_config?.options
@@ -109,23 +111,23 @@ export function extractTaskFields(
           // Si el campo es de tipo labels, mapear los IDs a sus etiquetas correspondientes
           result[field] =
             customField.value && Array.isArray(customField.value)
-              ? (customField.value as unknown[])
+              ? customField.value
                   // Filtrar para asegurarte de que son cadenas
                   .map(
                     (id) =>
                       customField.type_config?.options?.find(
                         (option) => option.id === id
-                      )?.label || null
+                      )?.label || ""
                   )
-                  .filter((label) => label !== null)
-              : null;
+                  .filter((label) => label !== "")
+              : "";
           // Filtrar valores nulos
         } else if (customField.type === "date") {
           result[field] =
-            new Date(Number(customField.value)).toLocaleDateString() || null;
+            new Date(Number(customField.value)).toLocaleDateString() || "";
         } else {
           // Para otros tipos de campos personalizados, usar el valor directamente
-          result[field] = customField.value || null;
+          result[field] = customField.value || "";
         }
       }
     }

@@ -75,7 +75,7 @@ export interface CustomField {
   type_config?: TypeConfig;
   date_created?: string;
   hide_from_guests?: boolean;
-  value?: User[] | number | string;
+  value?: User[] | number | string | null;
   value_richtext?: null;
   required?: boolean;
 }
@@ -137,4 +137,8 @@ export interface Space {
 export interface NewCustomFieldObject {
   id: string;
   value: string;
+}
+
+export interface ExtractedTaskFieldValues {
+  [key: string]: string | string[] | number | User[] | undefined;
 }
