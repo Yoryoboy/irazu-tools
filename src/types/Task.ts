@@ -166,6 +166,7 @@ export interface MQMSTask {
   SECONDARY_EXTERNAL_ID: string;
   REQUEST_NAME: string;
   PROJECT_TYPE: string;
+  NODE_NAME: string;
 }
 
 export type PostNewTaskResult =

@@ -16,6 +16,8 @@ function TaskSync() {
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
 
+  console.log("newMqmsTasks:", newMqmsTasks);
+
   return (
     <Flex vertical gap="small" align="center" justify="center">
       <ExcelUploader setData={setMQMSTasks} />

@@ -11,6 +11,7 @@ const DESIRED_KEYS: (keyof MQMSTask)[] = [
   "SECONDARY_EXTERNAL_ID",
   "REQUEST_NAME",
   "PROJECT_TYPE",
+  "NODE_NAME",
 ];
 
 interface Props {
@@ -59,9 +60,6 @@ function ExcelUploader({ setData }: Props) {
         }, {} as Partial<MQMSTask>) as MQMSTask
     );
   }
-
-  console.log(file);
-
   return (
     <>
       <FileUploader setFile={setFile} />
