@@ -34,6 +34,11 @@ export const getColumns = (
     key: "PROJECT_TYPE",
   },
   {
+    title: "NODE_NAME",
+    dataIndex: "NODE_NAME",
+    key: "NODE_NAME",
+  },
+  {
     title: "Action",
     key: "action",
     render: (_, record) => (

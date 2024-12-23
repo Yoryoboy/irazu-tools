@@ -60,6 +60,8 @@ function ExcelUploader({ setData }: Props) {
     );
   }
 
+  console.log(file);
+
   return (
     <>
       <FileUploader setFile={setFile} />
