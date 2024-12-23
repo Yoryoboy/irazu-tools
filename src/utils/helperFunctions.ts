@@ -43,7 +43,8 @@ export function getDropdownCustomFieldOption(
 
 export function getNewDropdownCustomFieldObject(
   fieldName: string,
-  optionName: string
+  optionName: string,
+  defaultValue: string
 ): NewCustomFieldObject {
   const customFieldDetails = getCustomFieldDetails(fieldName);
 
@@ -57,7 +58,10 @@ export function getNewDropdownCustomFieldObject(
   );
 
   if (!customFieldOption.id) {
-    throw new Error(`Option ID is missing for option: ${optionName}`);
+    return {
+      id: customFieldDetails.id,
+      value: defaultValue,
+    };
   }
 
   return {

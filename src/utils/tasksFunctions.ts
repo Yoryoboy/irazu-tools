@@ -97,18 +97,26 @@ export async function postNewTasks(
 }
 
 export function getNewTask(row: MQMSTask): Task {
-  const [plantTypeUnformatted, projectType, nodeSegSplit] =
+  const [plantTypeUnformatted, projectType, jobType] =
     row.PROJECT_TYPE.split(" - ");
   const plantType = formatString(plantTypeUnformatted);
 
   const plantTypeCustomFieldValue = getNewDropdownCustomFieldObject(
     "PLANT TYPE",
-    plantType
+    plantType,
+    "77b959a3-d6ee-4c4e-8d21-575559a9080a"
   );
 
   const projectTypeCustomFieldValue = getNewDropdownCustomFieldObject(
     "PROJECT TYPE",
-    projectType
+    projectType,
+    "ff865e6f-323f-49a0-bad5-9c9b439c8d64"
+  );
+
+  const jobTypeCustomFieldValue = getNewDropdownCustomFieldObject(
+    "JOB TYPE CCI",
+    jobType,
+    "81f785fe-7a17-4075-ad7b-29918a6f55ad"
   );
 
   const secondaryIdCustomFieldValue = getTextCustomFieldObject(
@@ -120,6 +128,7 @@ export function getNewTask(row: MQMSTask): Task {
     plantTypeCustomFieldValue,
     projectTypeCustomFieldValue,
     secondaryIdCustomFieldValue,
+    jobTypeCustomFieldValue,
   ];
 
   return {
@@ -140,23 +149,24 @@ export const handleAction = async (
   setMQMSTasks: (tasks: MQMSTask[]) => void
 ) => {
   const newTask: Task[] = [getNewTask(row)];
-  const results = await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+  console.log(newTask);
+  // const results = await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
 
-  const successfulTasks = results.filter(
-    (result): result is FulfilledPostNewTaskResult =>
-      result.status === "fulfilled"
-  );
+  // const successfulTasks = results.filter(
+  //   (result): result is FulfilledPostNewTaskResult =>
+  //     result.status === "fulfilled"
+  // );
 
-  if (successfulTasks.length > 0) {
-    setMQMSTasks(
-      updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks)
-    );
-  }
+  // if (successfulTasks.length > 0) {
+  //   setMQMSTasks(
+  //     updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks)
+  //   );
+  // }
 
-  const failedTasks = results.filter((result) => result.status === "rejected");
-  if (failedTasks.length > 0) {
-    console.error("Error procesando tareas:", failedTasks);
-  }
+  // const failedTasks = results.filter((result) => result.status === "rejected");
+  // if (failedTasks.length > 0) {
+  //   console.error("Error procesando tareas:", failedTasks);
+  // }
 };
 
 export const handleSyncAll = async (
