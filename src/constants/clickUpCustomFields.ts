@@ -11,6 +11,15 @@ export const CLICKUP_LIST_IDS = {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "f170ab6e-cdcc-44c6-a9f9-ef87933387dd",
+      name: "NODE",
+      type: "short_text",
+      type_config: {},
+      date_created: "1671467252944",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "4bfb304d-d253-4f53-a4e7-233aedb3b6b9",
       name: "JOB TYPE CCI",
       type: "drop_down",
