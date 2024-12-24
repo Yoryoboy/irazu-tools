@@ -4,6 +4,7 @@ import { asbuiltFields, designFields } from "./VendorProductionTable.config";
 import ProductionReportGenerator from "./ProductionReportGenerator";
 import { Task } from "../../types/Task";
 import { Vendor } from "../../types/Vendor";
+import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
 
 interface Props {
   asbuilts: Task[];
@@ -47,6 +48,7 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
       <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
       <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
+      <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
     </main>
   );
 }
