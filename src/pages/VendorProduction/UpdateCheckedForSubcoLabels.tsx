@@ -58,6 +58,8 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
     <div>
       <Button
         type="primary"
+        shape="round"
+        size="large"
         onClick={handleUpdateLabels}
         loading={loading}
         disabled={tasks.length === 0}

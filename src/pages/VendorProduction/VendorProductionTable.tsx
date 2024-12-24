@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Flex, Table } from "antd";
 import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
 import { asbuiltFields, designFields } from "./VendorProductionTable.config";
 import ProductionReportGenerator from "./ProductionReportGenerator";
@@ -47,8 +47,10 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
     <main>
       <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
-      <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
-      <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
+      <Flex justify="center" gap="small">
+        <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
+        <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
+      </Flex>
     </main>
   );
 }
