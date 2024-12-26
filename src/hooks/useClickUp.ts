@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const CLICKUP_API_AKEY = import.meta.env.VITE_CLICKUP_API_AKEY;
+import { CLICKUP_API_AKEY } from "../utils/config";
 
 import { Clickupdataresponse, Task } from "../types";
 
