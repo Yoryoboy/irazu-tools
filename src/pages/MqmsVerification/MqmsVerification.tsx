@@ -3,6 +3,7 @@ import { CLICKUP_LIST_IDS } from "../../constants/clickUpCustomFields";
 import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { SearchParams } from "../../types/SearchParams";
 import { splitTaskArray } from "../../utils/helperFunctions";
+import { useMQMS } from "../../hooks/useMQMS";
 
 function MqmsVerification() {
   const searchParams: SearchParams = useMemo(() => {
@@ -15,6 +16,10 @@ function MqmsVerification() {
     CLICKUP_LIST_IDS.cciBau,
     searchParams
   );
+
+  const { MQMSUser } = useMQMS();
+
+  console.log(MQMSUser);
 
   const listOfSentTasks = clickUpTasks.map((task) => task.name);
 
