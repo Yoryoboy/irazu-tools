@@ -178,3 +178,11 @@ export function unifyProjects(
 export function getUser(userId: number): User {
   return members.find((member) => member.user?.id === userId)?.user || {};
 }
+
+export function splitTaskArray(array: string[], chunkSize: number): string[][] {
+  const result: string[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
