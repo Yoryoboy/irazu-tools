@@ -1,70 +1,37 @@
 import { useEffect, useState } from "react";
-import { MQMSUser } from "../types/MQMS";
+import { MQMSFetchTasksResponse } from "../types/MQMS";
+import { fetchMQMSTasks } from "../utils/MQMSApi";
 
-export function useMQMS(listOfSentTasks: string[] = []) {
-  const [MQMSUser, setMQMSUser] = useState<MQMSUser | null>(null);
-
-  useEffect(() => {
-    const body = JSON.stringify({
-      username: "P3192616",
-      password: "tJKd%58LW$8D",
-    });
-
-    const url = "https://mqms.corp.chartercom.com/api/login";
-
-    async function login() {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch MQMS user");
-      }
-
-      const data = await response.json();
-      setMQMSUser(data);
-    }
-
-    login();
-  }, []);
+export function useMQMSFetchTasks(
+  accessToken: string | null,
+  listOfSentTasks: string[] = []
+) {
+  const [MQMSTasks, setMQMSTasks] = useState<MQMSFetchTasksResponse[]>([]);
 
   useEffect(() => {
-    if (!MQMSUser || listOfSentTasks.length === 0) {
+    if (!accessToken || listOfSentTasks.length === 0) {
       return;
     }
 
-    const { accessToken } = MQMSUser;
-    const body = JSON.stringify({
-      archiveBucket: "live",
-      externalID: listOfSentTasks,
-    });
-    const url =
-      "https://mqms.corp.chartercom.com/api/work-requests/search?srcTimezone=America/Buenos_Aires";
-    const headers = {
-      "Content-Type": "application/json",
-      Authorizations: `Bearer ${accessToken}`,
-    };
-
-    async function fetchMQMSTasks() {
-      const response = await fetch(url, {
-        method: "POST",
-        headers,
-        body,
+    async function fetchTasks() {
+      const body = JSON.stringify({
+        archiveBucket: "live",
+        externalID: listOfSentTasks,
       });
+      const url =
+        "https://mqms.corp.chartercom.com/api/work-requests/search?srcTimezone=America/Buenos_Aires";
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        Authorizations: `Bearer ${accessToken}`,
+      };
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch MQMS tasks");
+      if (listOfSentTasks.length <= 30) {
+        const data = await fetchMQMSTasks(headers, url, body);
+        setMQMSTasks(data);
+        return;
       }
-
-      const data = await response.json();
-      console.log(data);
     }
-    fetchMQMSTasks();
-  }, [MQMSUser, listOfSentTasks]);
+  }, [accessToken, listOfSentTasks]);
 
-  return { MQMSUser };
+  return { MQMSTasks };
 }

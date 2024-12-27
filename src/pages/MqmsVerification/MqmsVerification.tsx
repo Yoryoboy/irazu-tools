@@ -4,6 +4,7 @@ import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { SearchParams } from "../../types/SearchParams";
 import { splitTaskArray } from "../../utils/helperFunctions";
 import { useMQMS } from "../../hooks/useMQMS";
+import useMQMSAuth from "../../hooks/useMQMSAuth";
 
 function MqmsVerification() {
   const searchParams: SearchParams = useMemo(() => {
@@ -17,20 +18,10 @@ function MqmsVerification() {
     searchParams
   );
 
-  const { MQMSUser } = useMQMS();
-
-  console.log(MQMSUser);
+  const { MQMSUser } = useMQMSAuth();
 
   const listOfSentTasks = clickUpTasks.map((task) => task.name);
 
-  const listOfSentTasksChunks = useMemo(
-    () => splitTaskArray(listOfSentTasks, 30),
-    [listOfSentTasks]
-  );
-
-  console.log(listOfSentTasksChunks);
-
-  console.log(clickUpTasks.length);
   return <div></div>;
 }
 
