@@ -26,8 +26,6 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
 
   const unifiedTasks = unifyProjects(asbuiltFieldsValues, designFieldsValues);
 
-  console.log("unifiedTasks:", unifiedTasks);
-
   const columns =
     unifiedTasks.length > 0
       ? Object.keys(unifiedTasks[0]).map((key) => ({

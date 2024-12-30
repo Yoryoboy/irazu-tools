@@ -4,6 +4,8 @@ import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { SearchParams } from "../../types/SearchParams";
 import useMQMSAuth from "../../hooks/useMQMSAuth";
 import { useMQMSFetchTasks } from "../../hooks/useMQMS";
+import ComparisonTable from "./ComparisonTable";
+import { extractTaskFields } from "../../utils/helperFunctions";
 
 const searchParams: SearchParams = {
   "statuses[]": ["sent"],
@@ -22,9 +24,19 @@ function MqmsVerification() {
 
   const { MQMSTasks } = useMQMSFetchTasks(accessToken, listOfSentTasks);
 
-  console.log(MQMSTasks);
+  const sentTasks = clickUpTasks.map((task) => {
+    const taskFields = extractTaskFields(task, ["name", "SECONDARY ID"]);
+    return {
+      ...taskFields,
+    };
+  });
 
-  return <div></div>;
+  return (
+    <main>
+      <h1>Verificación de tareas enviadas</h1>
+      <ComparisonTable MQMSTasks={MQMSTasks} sentTasks={sentTasks} />
+    </main>
+  );
 }
 
 export default MqmsVerification;

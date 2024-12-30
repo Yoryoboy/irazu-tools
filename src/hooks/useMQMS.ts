@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MQMSFetchTasksResponse } from "../types/MQMS";
+import { Result } from "../types/MQMS";
 import { fetchMQMSTasks } from "../utils/MQMSApi";
 import { splitTaskArray } from "../utils/helperFunctions";
 
@@ -7,7 +7,7 @@ export function useMQMSFetchTasks(
   accessToken: string | null | undefined,
   listOfSentTasks: string[] = []
 ) {
-  const [MQMSTasks, setMQMSTasks] = useState<MQMSFetchTasksResponse[]>([]);
+  const [MQMSTasks, setMQMSTasks] = useState<Result[]>([]);
 
   useEffect(() => {
     async function fetchTasks() {
