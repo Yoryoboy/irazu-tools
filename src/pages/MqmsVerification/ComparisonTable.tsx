@@ -7,11 +7,12 @@ interface Props {
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
-  console.log(MQMSTasks, sentTasks);
   const filteredMQMSTasks = MQMSTasks.filter((task) => {
-    return sentTasks.find((sentTask) => {
-      return sentTask.name === task.secondaryExternalID;
-    });
+    return sentTasks.some(
+      (sentTask) =>
+        sentTask.name === task.externalID &&
+        sentTask["SECONDARY ID"] === task.secondaryExternalID
+    );
   });
 
   console.log(filteredMQMSTasks);
