@@ -2,25 +2,27 @@ import { useMemo } from "react";
 import { CLICKUP_LIST_IDS } from "../../constants/clickUpCustomFields";
 import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { SearchParams } from "../../types/SearchParams";
-import { splitTaskArray } from "../../utils/helperFunctions";
-import { useMQMS } from "../../hooks/useMQMS";
 import useMQMSAuth from "../../hooks/useMQMSAuth";
+import { useMQMSFetchTasks } from "../../hooks/useMQMS";
+
+const searchParams: SearchParams = {
+  "statuses[]": ["sent"],
+};
 
 function MqmsVerification() {
-  const searchParams: SearchParams = useMemo(() => {
-    return {
-      "statuses[]": ["sent"],
-    };
-  }, []);
+  const { accessToken } = useMQMSAuth();
 
   const { clickUpTasks } = useFetchClickUpTasks(
     CLICKUP_LIST_IDS.cciBau,
     searchParams
   );
+  const listOfSentTasks = useMemo(() => {
+    return clickUpTasks.map((task) => task.name);
+  }, [clickUpTasks]);
 
-  const { MQMSUser } = useMQMSAuth();
+  const { MQMSTasks } = useMQMSFetchTasks(accessToken, listOfSentTasks);
 
-  const listOfSentTasks = clickUpTasks.map((task) => task.name);
+  console.log(MQMSTasks);
 
   return <div></div>;
 }

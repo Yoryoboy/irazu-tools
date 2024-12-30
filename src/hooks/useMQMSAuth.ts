@@ -4,7 +4,7 @@ import { MQMS_PASSWORD, MQMS_USERNAME } from "../utils/config";
 
 function useMQMSAuth() {
   const [MQMSUser, setMQMSUser] = useState<MQMSUser | null>(null);
-  console.log(MQMS_USERNAME, MQMS_PASSWORD);
+  const { accessToken } = MQMSUser || {};
 
   useEffect(() => {
     const body = JSON.stringify({
@@ -34,7 +34,7 @@ function useMQMSAuth() {
     login();
   }, []);
 
-  return { MQMSUser };
+  return { MQMSUser, accessToken };
 }
 
 export default useMQMSAuth;
