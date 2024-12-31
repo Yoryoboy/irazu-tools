@@ -1,7 +1,11 @@
-import { CustomField, ExtractedTaskFieldValues } from "../types/Task";
+import {
+  CustomField,
+  ExtractedTaskFieldValues,
+  TaskLabelPayload,
+} from "../types/Task";
 import { CLICKUP_API_AKEY } from "./config";
 
-async function updateCustomFieldLabel(
+export async function updateCustomFieldLabel(
   taskId: string,
   fieldId: string,
   value: string[]
@@ -37,51 +41,64 @@ async function updateCustomFieldLabel(
   }
 }
 
-export async function updateTaskLabelForCCIHighSplit(
+export function getTaskLabelPayload(
   task: ExtractedTaskFieldValues,
   customField: CustomField
-): Promise<{ status: "success" | "error"; message: string }> {
+): TaskLabelPayload {
   const { id: taskId, projectCode } = task;
 
-  // Determinar el valor basado en projectCode
-  const value =
-    projectCode === "CCI - HS ASBUILT"
-      ? ([
-          customField?.type_config?.options?.find(
-            (o) => o.label === "ASBUILT CHECKED"
-          )?.id,
-        ].filter(Boolean) as string[])
-      : projectCode === "CCI - HS DESIGN"
-      ? ([
-          customField?.type_config?.options?.find(
-            (o) => o.label === "DESIGN CHECKED"
-          )?.id,
-        ].filter(Boolean) as string[])
-      : [];
-
   if (typeof taskId != "string") {
-    return { status: "error", message: "Task ID is not a string" };
+    throw new Error("Task ID is not a string");
   }
+
+  if (typeof projectCode != "string") {
+    return { taskId, error: "Project Code is not a string" };
+  }
+
+  // Determinar el valor basado en projectCode
+  const value = getValueForProjectCode(task, projectCode, customField);
 
   if (!value || value.length === 0) {
     console.error(`No valid label found for task ${taskId}`);
     return {
-      status: "error",
-      message: `No valid label found for task ${taskId}`,
+      taskId,
+      error: `No valid label found for task ${taskId}`,
     };
   }
 
   if (typeof customField.id != "string") {
-    return { status: "error", message: "Custom Field ID is not a string" };
+    return { taskId, error: "Custom Field ID is not a string" };
   }
 
-  // Llamar a la función general para realizar el fetch
-  const result = await updateCustomFieldLabel(taskId, customField.id, value);
+  return {
+    taskId,
+    customFieldId: customField.id,
+    value,
+  };
+}
 
-  if (!result.success) {
-    console.error(`Error updating task ${taskId}:`, result.error);
-    return { status: "error", message: `Error updating task ${taskId}:` };
+function getValueForProjectCode(
+  task: ExtractedTaskFieldValues,
+  projectCode: string,
+  customField: CustomField
+): string[] {
+  const asbuiltCheckedId = customField?.type_config?.options?.find(
+    (o) => o.label === "ASBUILT CHECKED"
+  )?.id;
+
+  const designCheckedId = customField?.type_config?.options?.find(
+    (o) => o.label === "DESIGN CHECKED"
+  )?.id;
+
+  if (
+    projectCode === "CCI - HS DESIGN" &&
+    Array.isArray(task.checkedForSubco) &&
+    task.checkedForSubco?.includes("ASBUILT CHECKED")
+  ) {
+    return [asbuiltCheckedId, designCheckedId].filter(Boolean) as string[];
+  } else if (projectCode === "CCI - HS ASBUILT") {
+    return [asbuiltCheckedId].filter(Boolean) as string[];
+  } else {
+    return [designCheckedId].filter(Boolean) as string[];
   }
-
-  return { status: "success", message: "Task label updated successfully" };
 }

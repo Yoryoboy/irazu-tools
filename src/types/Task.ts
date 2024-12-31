@@ -190,3 +190,10 @@ export interface RejectedPostNewTaskResult {
 export interface ParsedData {
   [key: string]: string | number | null | undefined;
 }
+
+export interface TaskLabelPayload {
+  taskId: string;
+  customFieldId?: string;
+  value?: string[];
+  error?: string;
+}

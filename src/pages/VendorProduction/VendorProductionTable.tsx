@@ -1,9 +1,10 @@
-import { Table } from "antd";
+import { Flex, Table } from "antd";
 import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
 import { asbuiltFields, designFields } from "./VendorProductionTable.config";
 import ProductionReportGenerator from "./ProductionReportGenerator";
 import { Task } from "../../types/Task";
 import { Vendor } from "../../types/Vendor";
+import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
 
 interface Props {
   asbuilts: Task[];
@@ -26,8 +27,6 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
 
   const unifiedTasks = unifyProjects(asbuiltFieldsValues, designFieldsValues);
 
-  console.log("unifiedTasks:", unifiedTasks);
-
   const columns =
     unifiedTasks.length > 0
       ? Object.keys(unifiedTasks[0]).map((key) => ({
@@ -46,7 +45,10 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
     <main>
       <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
-      <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
+      <Flex justify="center" gap="small">
+        <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
+        <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
+      </Flex>
     </main>
   );
 }

@@ -4,6 +4,7 @@ export const asbuiltFields = [
   "RECEIVED DATE",
   "PREASBUILT ACTUAL COMPLETION DATE ",
   "ASBUILT ROUNDED MILES",
+  "CHECKED FOR SUBCO",
 ];
 
 export const designFields = [
@@ -12,4 +13,5 @@ export const designFields = [
   "RECEIVED DATE",
   "ACTUAL COMPLETION DATE",
   "DESIGN ROUNDED MILES",
+  "CHECKED FOR SUBCO",
 ];
