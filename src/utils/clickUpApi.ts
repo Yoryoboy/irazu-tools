@@ -1,4 +1,8 @@
-import { CustomField, ExtractedTaskFieldValues } from "../types/Task";
+import {
+  CustomField,
+  ExtractedTaskFieldValues,
+  TaskLabelPayload,
+} from "../types/Task";
 import { CLICKUP_API_AKEY } from "./config";
 
 async function updateCustomFieldLabel(
@@ -37,18 +41,18 @@ async function updateCustomFieldLabel(
   }
 }
 
-export async function updateTaskLabelForCCIHighSplit(
+export function getTaskLabelPayload(
   task: ExtractedTaskFieldValues,
   customField: CustomField
-): Promise<{ status: "success" | "error"; message: string }> {
+): TaskLabelPayload {
   const { id: taskId, projectCode } = task;
 
   if (typeof taskId != "string") {
-    return { status: "error", message: "Task ID is not a string" };
+    throw new Error("Task ID is not a string");
   }
 
   if (typeof projectCode != "string") {
-    return { status: "error", message: "Project Code is not a string" };
+    return { taskId, error: "Project Code is not a string" };
   }
 
   // Determinar el valor basado en projectCode
@@ -57,25 +61,32 @@ export async function updateTaskLabelForCCIHighSplit(
   if (!value || value.length === 0) {
     console.error(`No valid label found for task ${taskId}`);
     return {
-      status: "error",
-      message: `No valid label found for task ${taskId}`,
+      taskId,
+      error: `No valid label found for task ${taskId}`,
     };
   }
 
   if (typeof customField.id != "string") {
-    return { status: "error", message: "Custom Field ID is not a string" };
+    return { taskId, error: "Custom Field ID is not a string" };
   }
 
-  // Llamar a la función general para realizar el fetch
-  const result = await updateCustomFieldLabel(taskId, customField.id, value);
-
-  if (!result.success) {
-    console.error(`Error updating task ${taskId}:`, result.error);
-    return { status: "error", message: `Error updating task ${taskId}:` };
-  }
-
-  return { status: "success", message: "Task label updated successfully" };
+  return {
+    taskId,
+    customFieldId: customField.id,
+    value,
+  };
 }
+
+//   // Llamar a la función general para realizar el fetch
+//   const result = await updateCustomFieldLabel(taskId, customField.id, value);
+
+//   if (!result.success) {
+//     console.error(`Error updating task ${taskId}:`, result.error);
+//     return { status: "error", message: `Error updating task ${taskId}:` };
+//   }
+
+//   return { status: "success", message: "Task label updated successfully" };
+// }
 
 function getValueForProjectCode(
   task: ExtractedTaskFieldValues,
