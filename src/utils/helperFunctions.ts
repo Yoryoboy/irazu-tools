@@ -6,6 +6,7 @@ import {
   NewCustomFieldObject,
   Option,
   Task,
+  TaskLabelPayload,
   User,
 } from "../types/Task";
 
@@ -175,4 +176,36 @@ export function unifyProjects(
 
 export function getUser(userId: number): User {
   return members.find((member) => member.user?.id === userId)?.user || {};
+}
+
+export function mergeTaskLabelPayload(
+  tasks: TaskLabelPayload[]
+): TaskLabelPayload[] {
+  const taskMap = new Map();
+
+  tasks.forEach((task) => {
+    const { taskId, customFieldId, value } = task;
+
+    if (!value) {
+      return;
+    }
+
+    if (!taskMap.has(taskId)) {
+      // Si el taskId no está en el Map, lo agregamos
+      taskMap.set(taskId, { customFieldId, value: new Set(value) });
+    } else {
+      // Si ya existe, fusionamos los valores
+      const existingTask = taskMap.get(taskId)!;
+      value.forEach((val: string) => existingTask.value.add(val));
+    }
+  });
+
+  // Convertir el Map de nuevo a un array de objetos con el formato requerido
+  return Array.from(taskMap.entries()).map(
+    ([taskId, { customFieldId, value }]) => ({
+      taskId,
+      customFieldId,
+      value: Array.from(value), // Convertimos el Set a un array
+    })
+  );
 }

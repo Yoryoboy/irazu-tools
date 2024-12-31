@@ -5,7 +5,7 @@ import {
 } from "../types/Task";
 import { CLICKUP_API_AKEY } from "./config";
 
-async function updateCustomFieldLabel(
+export async function updateCustomFieldLabel(
   taskId: string,
   fieldId: string,
   value: string[]
@@ -76,17 +76,6 @@ export function getTaskLabelPayload(
     value,
   };
 }
-
-//   // Llamar a la función general para realizar el fetch
-//   const result = await updateCustomFieldLabel(taskId, customField.id, value);
-
-//   if (!result.success) {
-//     console.error(`Error updating task ${taskId}:`, result.error);
-//     return { status: "error", message: `Error updating task ${taskId}:` };
-//   }
-
-//   return { status: "success", message: "Task label updated successfully" };
-// }
 
 function getValueForProjectCode(
   task: ExtractedTaskFieldValues,
