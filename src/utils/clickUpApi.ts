@@ -43,25 +43,16 @@ export async function updateTaskLabelForCCIHighSplit(
 ): Promise<{ status: "success" | "error"; message: string }> {
   const { id: taskId, projectCode } = task;
 
-  // Determinar el valor basado en projectCode
-  const value =
-    projectCode === "CCI - HS ASBUILT"
-      ? ([
-          customField?.type_config?.options?.find(
-            (o) => o.label === "ASBUILT CHECKED"
-          )?.id,
-        ].filter(Boolean) as string[])
-      : projectCode === "CCI - HS DESIGN"
-      ? ([
-          customField?.type_config?.options?.find(
-            (o) => o.label === "DESIGN CHECKED"
-          )?.id,
-        ].filter(Boolean) as string[])
-      : [];
-
   if (typeof taskId != "string") {
     return { status: "error", message: "Task ID is not a string" };
   }
+
+  if (typeof projectCode != "string") {
+    return { status: "error", message: "Project Code is not a string" };
+  }
+
+  // Determinar el valor basado en projectCode
+  const value = getValueForProjectCode(task, projectCode, customField);
 
   if (!value || value.length === 0) {
     console.error(`No valid label found for task ${taskId}`);
@@ -84,4 +75,30 @@ export async function updateTaskLabelForCCIHighSplit(
   }
 
   return { status: "success", message: "Task label updated successfully" };
+}
+
+function getValueForProjectCode(
+  task: ExtractedTaskFieldValues,
+  projectCode: string,
+  customField: CustomField
+): string[] {
+  const asbuiltCheckedId = customField?.type_config?.options?.find(
+    (o) => o.label === "ASBUILT CHECKED"
+  )?.id;
+
+  const designCheckedId = customField?.type_config?.options?.find(
+    (o) => o.label === "DESIGN CHECKED"
+  )?.id;
+
+  if (
+    projectCode === "CCI - HS DESIGN" &&
+    Array.isArray(task.checkedForSubco) &&
+    task.checkedForSubco?.includes("ASBUILT CHECKED")
+  ) {
+    return [asbuiltCheckedId, designCheckedId].filter(Boolean) as string[];
+  } else if (projectCode === "CCI - HS ASBUILT") {
+    return [asbuiltCheckedId].filter(Boolean) as string[];
+  } else {
+    return [designCheckedId].filter(Boolean) as string[];
+  }
 }

@@ -152,6 +152,7 @@ export function unifyProjects(
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["PREASBUILT ACTUAL COMPLETION DATE "] || "",
       quantity: item["ASBUILT ROUNDED MILES"] || "0",
+      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
       projectCode: item.projectCode,
     });
   });
@@ -164,6 +165,7 @@ export function unifyProjects(
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["ACTUAL COMPLETION DATE"] || "",
       quantity: item["DESIGN ROUNDED MILES"] || "0",
+      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
       projectCode: item.projectCode,
     });
   });
