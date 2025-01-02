@@ -25,7 +25,12 @@ function MqmsVerification() {
   const { MQMSTasks } = useMQMSFetchTasks(accessToken, listOfSentTasks);
 
   const sentTasks = clickUpTasks.map((task) => {
-    const taskFields = extractTaskFields(task, ["name", "SECONDARY ID"]);
+    const taskFields = extractTaskFields(task, [
+      "name",
+      "SECONDARY ID",
+      "status",
+      "assignees",
+    ]);
     return {
       ...taskFields,
     };

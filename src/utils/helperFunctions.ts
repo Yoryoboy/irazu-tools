@@ -5,6 +5,7 @@ import {
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
   Option,
+  Status,
   Task,
   User,
 } from "../types/Task";
@@ -95,7 +96,13 @@ export function extractTaskFields(
     // Si el campo existe directamente en el objeto task
     if (field in task) {
       const value = task[field as keyof Task];
-      result[field] = value != null ? value.toString() : "";
+      if (typeof value === "string") {
+        result[field] = value != null ? value.toString() : "";
+      } else if (field === "assignees" && Array.isArray(value)) {
+        result[field] = value?.map((user) => user?.username);
+      } else if (field === "status" && typeof value === "object") {
+        result[field] = (value as Status).status;
+      }
     } else {
       // Buscar en custom_fields si es un campo personalizado
       const customField = task.custom_fields?.find((cf) => cf.name === field);

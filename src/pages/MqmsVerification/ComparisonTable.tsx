@@ -1,4 +1,4 @@
-import { Data, Result } from "../../types/MQMS";
+import { Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Table } from "antd";
 
@@ -10,7 +10,10 @@ interface Props {
 interface DataSourceItem {
   key: string;
   jobID: string;
+  secondaryID: string;
   mqmsStatus: string;
+  mqmsAssignedUser: string;
+  module: string;
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
@@ -22,7 +25,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     );
   });
 
-  console.log(filteredMQMSTasks);
+  console.log("sent tasks", sentTasks);
 
   const columns =
     filteredMQMSTasks.length > 0
@@ -38,24 +41,40 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
             key: "SECONDARY ID",
           },
           {
+            title: "CLICKUP STATUS",
+            dataIndex: "clickupStatus",
+            key: "CLICKUP STATUS",
+          },
+          {
+            title: "CLICKUP ASSIGNEE",
+            dataIndex: "clickupAssignee",
+            key: "CLICKUP ASSIGNEE",
+          },
+          {
             title: "MQMS STATUS",
             dataIndex: "mqmsStatus",
             key: "MQMS STATUS",
             filters: Array.from(
-              new Set(
-                filteredMQMSTasks.map((task) => task.status) // Extraer los valores únicos de "status"
-              )
+              new Set(filteredMQMSTasks.map((task) => task.status))
             ).map((status) => ({
-              text: status, // Texto visible en el filtro
-              value: status, // Valor interno para filtrar
+              text: status,
+              value: status,
             })),
             onFilter: (value: string, record: DataSourceItem) =>
-              record.mqmsStatus === value, // Función para filtrar
+              record.mqmsStatus === value,
           },
           {
-            title: "CURRENT ASSIGNED USER",
-            dataIndex: "currentAssignedUser",
-            key: "CURRENT ASSIGNED USER",
+            title: "MQMS ASSIGNED USER",
+            dataIndex: "mqmsAssignedUser",
+            key: "MQMS ASSIGNED USER",
+            filters: Array.from(
+              new Set(filteredMQMSTasks.map((task) => task.currentAssignedUser))
+            ).map((user) => ({
+              text: user,
+              value: user,
+            })),
+            onFilter: (value: string, record: DataSourceItem) =>
+              record.mqmsAssignedUser === value,
           },
           {
             title: "MODULE",
@@ -65,13 +84,20 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         ]
       : [];
 
-  const dataSource: DataSourceItem[] = filteredMQMSTasks.map((task) => ({
+  const dataSource = filteredMQMSTasks.map((task) => ({
     key: task.uuid,
     jobID: task.externalID,
     secondaryID: task.secondaryExternalID,
+    clickupStatus: sentTasks
+      .find((sentTask) => sentTask.name === task.externalID)
+      ?.status?.toString()
+      .toUpperCase(),
+    clickupAssignee:
+      sentTasks.find((sentTask) => sentTask.name === task.externalID)
+        ?.assignees ?? "",
     mqmsStatus: task.status,
-    currentAssignedUser: task.currentAssignedUser,
-    module: task.module,
+    mqmsAssignedUser: task.currentAssignedUser ?? "",
+    module: task.module ?? "",
   }));
 
   return <Table dataSource={dataSource} columns={columns} pagination={false} />;
