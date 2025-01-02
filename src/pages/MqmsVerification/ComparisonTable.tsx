@@ -13,7 +13,7 @@ interface DataSourceItem {
   secondaryID: string;
   mqmsStatus: string;
   mqmsAssignedUser: string;
-  module: string;
+  mqmsModule: string;
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
@@ -24,8 +24,6 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         sentTask["SECONDARY ID"] === task.secondaryExternalID
     );
   });
-
-  console.log("sent tasks", sentTasks);
 
   const columns =
     filteredMQMSTasks.length > 0
@@ -78,7 +76,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
           },
           {
             title: "MODULE",
-            dataIndex: "module",
+            dataIndex: "mqmsModule",
             key: "MODULE",
           },
         ]
@@ -97,7 +95,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         ?.assignees ?? "",
     mqmsStatus: task.status,
     mqmsAssignedUser: task.currentAssignedUser ?? "",
-    module: task.module ?? "",
+    mqmsModule: task.module ?? "",
   }));
 
   return <Table dataSource={dataSource} columns={columns} pagination={false} />;
