@@ -30,19 +30,19 @@ export function useMQMSFetchTasks(
         });
         const data = await fetchMQMSTasks(headers, url, body);
         setMQMSTasks(data.data.results);
-        return;
-      }
-
-      const chunkedTasks = splitTaskArray(listOfSentTasks, 30);
-      chunkedTasks.forEach(async (chunk) => {
-        const body = JSON.stringify({
-          ...partialBody,
-          externalID: chunk.join(),
+      } else {
+        const chunkedTasks = splitTaskArray(listOfSentTasks, 30);
+        chunkedTasks.forEach(async (chunk) => {
+          const body = JSON.stringify({
+            ...partialBody,
+            externalID: chunk.join(),
+          });
+          const data = await fetchMQMSTasks(headers, url, body);
+          setMQMSTasks((prev) => [...prev, ...data.data.results]);
         });
-        const data = await fetchMQMSTasks(headers, url, body);
-        setMQMSTasks((prev) => [...prev, ...data.data.results]);
-      });
+      }
     }
+
     fetchTasks();
   }, [accessToken, listOfSentTasks]);
 
