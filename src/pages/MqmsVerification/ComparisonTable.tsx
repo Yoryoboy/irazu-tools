@@ -30,8 +30,6 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     })
   );
 
-  console.log("filteredMQMSTasks", filteredMQMSTasks);
-
   async function handleAction(record: DataSourceItem) {
     console.log(" record", record);
     const { clickUpID } = record;
@@ -44,7 +42,6 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
       console.error(result.message);
       return;
     }
-    console.log(`Task ${clickUpID} marked as approved`);
     setFilteredMQMSTasks(
       filteredMQMSTasks.filter((task) => task.uuid !== record.key)
     );
