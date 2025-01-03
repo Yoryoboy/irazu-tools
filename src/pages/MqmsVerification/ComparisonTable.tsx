@@ -30,6 +30,13 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     })
   );
 
+  const closedAndPreclosedTasks =
+    filteredMQMSTasks.length > 0
+      ? filteredMQMSTasks.filter(
+          (task) => task.status === "CLOSED" || task.status === "PRECLOSE"
+        )
+      : [];
+
   async function handleAction(record: DataSourceItem) {
     console.log(" record", record);
     const { clickUpID } = record;
@@ -45,6 +52,31 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     setFilteredMQMSTasks(
       filteredMQMSTasks.filter((task) => task.uuid !== record.key)
     );
+  }
+
+  async function handleApproveAll() {
+    const closedAndPreclosedTasksWithID = closedAndPreclosedTasks.map(
+      (task) => {
+        const sentTask = sentTasks.find(
+          (currSentTask) =>
+            currSentTask.name === task.externalID &&
+            currSentTask["SECONDARY ID"] === task.secondaryExternalID
+        );
+        return { ...task, clickUpID: sentTask?.id?.toString() };
+      }
+    );
+
+    const body = JSON.stringify({
+      status: "approved",
+    });
+
+    const results = await Promise.allSettled(
+      closedAndPreclosedTasksWithID.map((task) =>
+        changeTaskStatus(body, task.clickUpID)
+      )
+    );
+
+    console.log(results);
   }
 
   const columns =
@@ -142,7 +174,17 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         ?.id?.toString() ?? "",
   }));
 
-  return <Table dataSource={dataSource} columns={columns} pagination={false} />;
+  return (
+    <div>
+      <h2>Tasks Closed and Preclosed: {closedAndPreclosedTasks.length}</h2>
+      {closedAndPreclosedTasks.length > 0 && (
+        <Button type="primary" onClick={handleApproveAll}>
+          Approve All Closed and Preclose Tasks
+        </Button>
+      )}
+      <Table dataSource={dataSource} columns={columns} pagination={false} />
+    </div>
+  );
 }
 
 export default ComparisonTable;
