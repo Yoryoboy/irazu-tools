@@ -85,3 +85,35 @@ export async function updateTaskLabelForCCIHighSplit(
 
   return { status: "success", message: "Task label updated successfully" };
 }
+
+export async function changeTaskStatus(body: string, taskId: string) {
+  const url = `https://api.clickup.com/api/v2/task/${taskId}`;
+
+  const options = {
+    method: "PUT",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      Authorization: CLICKUP_API_AKEY,
+    },
+    body,
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(`Error updating task ${taskId}:`, errorData);
+      return { status: "error", message: `Error updating task ${taskId}:` };
+    }
+
+    return {
+      status: "success",
+      message: `Task ${taskId} status updated successfully`,
+    };
+  } catch (error) {
+    console.error(`Error updating task ${taskId}:`, error);
+    return { status: "error", message: `Error updating task ${taskId}:` };
+  }
+}

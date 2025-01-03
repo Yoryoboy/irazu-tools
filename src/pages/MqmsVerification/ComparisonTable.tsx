@@ -1,6 +1,7 @@
 import { Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
-import { Table } from "antd";
+import { Button, Space, Table } from "antd";
+import { changeTaskStatus } from "../../utils/clickUpApi";
 
 interface Props {
   MQMSTasks: Result[];
@@ -14,6 +15,7 @@ interface DataSourceItem {
   mqmsStatus: string;
   mqmsAssignedUser: string;
   mqmsModule: string;
+  clickUpID: string;
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
@@ -24,6 +26,21 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         sentTask["SECONDARY ID"] === task.secondaryExternalID
     );
   });
+
+  async function handleAction(record: DataSourceItem) {
+    const { clickUpID } = record;
+    const body = JSON.stringify({
+      status: "approved",
+    });
+    const result = await changeTaskStatus(body, clickUpID);
+
+    if (result.status === "error") {
+      console.error(result.message);
+      return;
+    }
+
+    // remove task from filteredMQMSTasks
+  }
 
   const columns =
     filteredMQMSTasks.length > 0
@@ -79,6 +96,24 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
             dataIndex: "mqmsModule",
             key: "MODULE",
           },
+          {
+            title: "ACTION",
+            key: "action",
+            render: (_, record: DataSourceItem) => (
+              <Space size="middle">
+                <Button
+                  type="primary"
+                  disabled={
+                    record.mqmsStatus !== "CLOSED" &&
+                    record.mqmsStatus !== "PRECLOSE"
+                  }
+                  onClick={() => handleAction(record)}
+                >
+                  Mark as Approved
+                </Button>
+              </Space>
+            ),
+          },
         ]
       : [];
 
@@ -96,6 +131,8 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     mqmsStatus: task.status,
     mqmsAssignedUser: task.currentAssignedUser ?? "",
     mqmsModule: task.module ?? "",
+    clickUpID:
+      sentTasks.find((sentTask) => sentTask.name === task.externalID)?.id ?? "",
   }));
 
   return <Table dataSource={dataSource} columns={columns} pagination={false} />;

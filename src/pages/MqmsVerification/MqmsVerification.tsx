@@ -26,6 +26,7 @@ function MqmsVerification() {
 
   const sentTasks = clickUpTasks.map((task) => {
     const taskFields = extractTaskFields(task, [
+      "id",
       "name",
       "SECONDARY ID",
       "status",
