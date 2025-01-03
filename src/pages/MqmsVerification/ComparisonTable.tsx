@@ -132,7 +132,9 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     mqmsAssignedUser: task.currentAssignedUser ?? "",
     mqmsModule: task.module ?? "",
     clickUpID:
-      sentTasks.find((sentTask) => sentTask.name === task.externalID)?.id ?? "",
+      sentTasks
+        .find((sentTask) => sentTask.name === task.externalID)
+        ?.id?.toString() ?? "",
   }));
 
   return <Table dataSource={dataSource} columns={columns} pagination={false} />;
