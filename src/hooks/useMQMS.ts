@@ -26,7 +26,7 @@ export function useMQMSFetchTasks(
       if (listOfSentTasks.length <= 30) {
         const body = JSON.stringify({
           ...partialBody,
-          externalID: listOfSentTasks,
+          externalID: listOfSentTasks.join(),
         });
         const data = await fetchMQMSTasks(headers, url, body);
         setMQMSTasks(data.data.results);
