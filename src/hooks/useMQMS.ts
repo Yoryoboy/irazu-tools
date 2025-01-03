@@ -17,6 +17,7 @@ export function useMQMSFetchTasks(
         return;
       }
 
+      setIsLoading(true);
       const partialBody = { archiveBucket: "live" };
       const url =
         "https://mqms.corp.chartercom.com/api/work-requests/search?srcTimezone=America/Buenos_Aires";

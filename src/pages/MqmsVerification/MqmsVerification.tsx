@@ -22,7 +22,10 @@ function MqmsVerification() {
     return clickUpTasks.map((task) => task.name);
   }, [clickUpTasks]);
 
-  const { MQMSTasks } = useMQMSFetchTasks(accessToken, listOfSentTasks);
+  const { MQMSTasks, isLoading } = useMQMSFetchTasks(
+    accessToken,
+    listOfSentTasks
+  );
 
   const sentTasks = clickUpTasks.map((task) => {
     const taskFields = extractTaskFields(task, [
@@ -39,8 +42,14 @@ function MqmsVerification() {
 
   return (
     <main>
-      <h1>Verificación de tareas enviadas</h1>
-      <ComparisonTable MQMSTasks={MQMSTasks} sentTasks={sentTasks} />
+      {isLoading ? (
+        <p>Cargando...</p>
+      ) : (
+        <>
+          <h1>Verificación de tareas enviadas</h1>
+          <ComparisonTable MQMSTasks={MQMSTasks} sentTasks={sentTasks} />
+        </>
+      )}
     </main>
   );
 }
