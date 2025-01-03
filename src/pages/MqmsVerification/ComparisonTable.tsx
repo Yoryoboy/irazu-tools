@@ -2,6 +2,7 @@ import { Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
+import { useState } from "react";
 
 interface Props {
   MQMSTasks: Result[];
@@ -19,15 +20,20 @@ interface DataSourceItem {
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
-  const filteredMQMSTasks = MQMSTasks.filter((task) => {
-    return sentTasks.some(
-      (sentTask) =>
-        sentTask.name === task.externalID &&
-        sentTask["SECONDARY ID"] === task.secondaryExternalID
-    );
-  });
+  const [filteredMQMSTasks, setFilteredMQMSTasks] = useState<Result[]>(
+    MQMSTasks.filter((task) => {
+      return sentTasks.some(
+        (sentTask) =>
+          sentTask.name === task.externalID &&
+          sentTask["SECONDARY ID"] === task.secondaryExternalID
+      );
+    })
+  );
+
+  console.log("filteredMQMSTasks", filteredMQMSTasks);
 
   async function handleAction(record: DataSourceItem) {
+    console.log(" record", record);
     const { clickUpID } = record;
     const body = JSON.stringify({
       status: "approved",
@@ -38,8 +44,10 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
       console.error(result.message);
       return;
     }
-
-    // remove task from filteredMQMSTasks
+    console.log(`Task ${clickUpID} marked as approved`);
+    setFilteredMQMSTasks(
+      filteredMQMSTasks.filter((task) => task.uuid !== record.key)
+    );
   }
 
   const columns =
