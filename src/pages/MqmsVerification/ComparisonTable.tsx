@@ -3,7 +3,7 @@ import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
 import { useState } from "react";
-import { ColumnsType } from "antd/es/table";
+import { Key } from "antd/es/table/interface";
 
 interface Props {
   MQMSTasks: Result[];
@@ -118,9 +118,9 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
               new Set(filteredMQMSTasks.map((task) => task.status))
             ).map((status) => ({
               text: status,
-              value: status,
+              value: status as Key,
             })),
-            onFilter: (value: string, record: DataSourceItem) =>
+            onFilter: (value: boolean | Key, record: DataSourceItem) =>
               record.mqmsStatus === value,
           },
           {
@@ -130,10 +130,10 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
             filters: Array.from(
               new Set(filteredMQMSTasks.map((task) => task.currentAssignedUser))
             ).map((user) => ({
-              text: user,
-              value: user,
+              text: user as string,
+              value: user as Key,
             })),
-            onFilter: (value: string, record: DataSourceItem) =>
+            onFilter: (value: boolean | Key, record: DataSourceItem) =>
               record.mqmsAssignedUser === value,
           },
           {
