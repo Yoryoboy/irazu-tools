@@ -20,25 +20,11 @@ export interface MQMSData {
 }
 
 export interface Result {
-  masterProjectName?: string;
-  constructionSubType?: string;
   uuid: string;
-  pointsRolledOver?: boolean;
   job: string;
   jobname: string;
   externalID: string;
   secondaryExternalID: string;
-  workRequestName?: string;
-  receivedDate?: Date;
-  slaDate?: Date;
-  etaDate?: Date;
-  assignedDate?: Date;
-  customerDays?: number;
-  designDays?: number;
-  ouRegion?: string;
-  ouRegionMarketUUID?: string;
-  lob?: string;
-  software?: string;
   status: string;
   currentAssignedUser?: string;
   currentAssignedUsername?: string;

@@ -62,6 +62,13 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
             currSentTask.name === task.externalID &&
             currSentTask["SECONDARY ID"] === task.secondaryExternalID
         );
+
+        if (!sentTask?.id) {
+          throw new Error(
+            `MQMS Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`
+          );
+        }
+
         return { ...task, clickUpID: sentTask?.id?.toString() };
       }
     );
