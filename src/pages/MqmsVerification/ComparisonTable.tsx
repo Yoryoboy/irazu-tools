@@ -2,8 +2,8 @@ import { Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
-import { useState } from "react";
 import { Key } from "antd/es/table/interface";
+import { useFileteredMQMSTaks } from "../../hooks/useFileteredMQMSTaks";
 
 interface Props {
   MQMSTasks: Result[];
@@ -21,22 +21,11 @@ interface DataSourceItem {
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
-  const [filteredMQMSTasks, setFilteredMQMSTasks] = useState<Result[]>(
-    MQMSTasks.filter((task) => {
-      return sentTasks.some(
-        (sentTask) =>
-          sentTask.name === task.externalID &&
-          sentTask["SECONDARY ID"] === task.secondaryExternalID
-      );
-    })
-  );
-
-  const closedAndPreclosedTasks =
-    filteredMQMSTasks.length > 0
-      ? filteredMQMSTasks.filter(
-          (task) => task.status === "CLOSED" || task.status === "PRECLOSE"
-        )
-      : [];
+  const {
+    filteredMQMSTasks,
+    setFilteredMQMSTasks,
+    closedAndPreclosedTasksWithClickUpID,
+  } = useFileteredMQMSTaks(MQMSTasks, sentTasks);
 
   async function handleAction(ClickUpTaskId: string, key: string) {
     const result = await changeTaskStatus("approved", ClickUpTaskId);
@@ -49,31 +38,9 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
   }
 
   async function handleApproveAll() {
-    const closedAndPreclosedTasksWithClickUpID = closedAndPreclosedTasks.map(
-      (task) => {
-        const sentTask = sentTasks.find(
-          (currSentTask) =>
-            currSentTask.name === task.externalID &&
-            currSentTask["SECONDARY ID"] === task.secondaryExternalID
-        );
-
-        if (!sentTask?.id) {
-          throw new Error(
-            `MQMS Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`
-          );
-        }
-
-        return { ...task, clickUpID: sentTask?.id?.toString() };
-      }
-    );
-
-    const body = JSON.stringify({
-      status: "approved",
-    });
-
     const results = await Promise.allSettled(
       closedAndPreclosedTasksWithClickUpID.map((task) =>
-        changeTaskStatus(body, task.clickUpID)
+        changeTaskStatus("approved", task.clickUpID)
       )
     );
 
@@ -180,8 +147,11 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
 
   return (
     <div>
-      <h2>Tasks Closed and Preclosed: {closedAndPreclosedTasks.length}</h2>
-      {closedAndPreclosedTasks.length > 0 && (
+      <h2>
+        Tasks Closed and Preclosed:{" "}
+        {closedAndPreclosedTasksWithClickUpID.length}
+      </h2>
+      {closedAndPreclosedTasksWithClickUpID.length > 0 && (
         <Button type="primary" onClick={handleApproveAll}>
           Approve All Closed and Preclose Tasks
         </Button>
