@@ -16,6 +16,18 @@ export function useFileteredMQMSTaks(
     })
   );
 
+  const filteredMQMSTasksWithClickUpID =
+    filteredMQMSTasks.length > 0
+      ? filteredMQMSTasks.map((task) => {
+          const sentTask = ClickUpSentTasks.find(
+            (currSentTask) =>
+              currSentTask.name === task.externalID &&
+              currSentTask["SECONDARY ID"] === task.secondaryExternalID
+          );
+          return { ...task, clickUpID: sentTask?.id?.toString() };
+        })
+      : [];
+
   const closedAndPreclosedTasks =
     filteredMQMSTasks.length > 0
       ? filteredMQMSTasks.filter(
@@ -42,7 +54,7 @@ export function useFileteredMQMSTaks(
   );
 
   return {
-    filteredMQMSTasks,
+    filteredMQMSTasksWithClickUpID,
     setFilteredMQMSTasks,
     closedAndPreclosedTasksWithClickUpID,
   };
