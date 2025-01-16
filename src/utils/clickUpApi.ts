@@ -86,8 +86,12 @@ export async function updateTaskLabelForCCIHighSplit(
   return { status: "success", message: "Task label updated successfully" };
 }
 
-export async function changeTaskStatus(body: string, taskId: string) {
+export async function changeTaskStatus(status: string, taskId: string) {
   const url = `https://api.clickup.com/api/v2/task/${taskId}`;
+
+  const body = JSON.stringify({
+    status: status,
+  });
 
   const options = {
     method: "PUT",

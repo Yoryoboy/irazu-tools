@@ -38,21 +38,14 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         )
       : [];
 
-  async function handleAction(record: DataSourceItem) {
-    console.log(" record", record);
-    const { clickUpID } = record;
-    const body = JSON.stringify({
-      status: "approved",
-    });
-    const result = await changeTaskStatus(body, clickUpID);
+  async function handleAction(ClickUpTaskId: string, key: string) {
+    const result = await changeTaskStatus("approved", ClickUpTaskId);
 
     if (result.status === "error") {
       console.error(result.message);
       return;
     }
-    setFilteredMQMSTasks(
-      filteredMQMSTasks.filter((task) => task.uuid !== record.key)
-    );
+    setFilteredMQMSTasks(filteredMQMSTasks.filter((task) => task.uuid !== key));
   }
 
   async function handleApproveAll() {
@@ -152,7 +145,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
                     record.mqmsStatus !== "CLOSED" &&
                     record.mqmsStatus !== "PRECLOSE"
                   }
-                  onClick={() => handleAction(record)}
+                  onClick={() => handleAction(record.clickUpID, record.key)}
                 >
                   Mark as Approved
                 </Button>
