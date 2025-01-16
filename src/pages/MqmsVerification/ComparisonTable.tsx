@@ -1,8 +1,9 @@
-import { ClosedAndPreclosedTasksWithClickUpID, Result } from "../../types/MQMS";
+import { Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
 import { useState } from "react";
+import { ColumnsType } from "antd/es/table";
 
 interface Props {
   MQMSTasks: Result[];
@@ -143,7 +144,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
           {
             title: "ACTION",
             key: "action",
-            render: (_, record: DataSourceItem) => (
+            render: (_: undefined, record: DataSourceItem) => (
               <Space size="middle">
                 <Button
                   type="primary"
@@ -165,10 +166,11 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     key: task.uuid,
     jobID: task.externalID,
     secondaryID: task.secondaryExternalID,
-    clickupStatus: sentTasks
-      .find((sentTask) => sentTask.name === task.externalID)
-      ?.status?.toString()
-      .toUpperCase(),
+    clickupStatus:
+      sentTasks
+        .find((sentTask) => sentTask.name === task.externalID)
+        ?.status?.toString()
+        .toUpperCase() ?? "",
     clickupAssignee:
       sentTasks.find((sentTask) => sentTask.name === task.externalID)
         ?.assignees ?? "",
@@ -180,6 +182,8 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         .find((sentTask) => sentTask.name === task.externalID)
         ?.id?.toString() ?? "",
   }));
+
+  console.log(dataSource);
 
   return (
     <div>
