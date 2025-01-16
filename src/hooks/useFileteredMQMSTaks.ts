@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Result } from "../types/MQMS";
+import { MQMSTasksWithClickUpID, Result } from "../types/MQMS";
 import { ExtractedTaskFieldValues } from "../types/Task";
 
 export function useFileteredMQMSTaks(
@@ -16,7 +16,7 @@ export function useFileteredMQMSTaks(
     })
   );
 
-  const filteredMQMSTasksWithClickUpID =
+  const filteredMQMSTasksWithClickUpID: MQMSTasksWithClickUpID[] =
     filteredMQMSTasks.length > 0
       ? filteredMQMSTasks.map((task) => {
           const sentTask = ClickUpSentTasks.find(
@@ -24,6 +24,10 @@ export function useFileteredMQMSTaks(
               currSentTask.name === task.externalID &&
               currSentTask["SECONDARY ID"] === task.secondaryExternalID
           );
+
+          if (!sentTask?.id) {
+            return { ...task, clickUpID: "" };
+          }
           return { ...task, clickUpID: sentTask?.id?.toString() };
         })
       : [];
@@ -35,8 +39,8 @@ export function useFileteredMQMSTaks(
         )
       : [];
 
-  const closedAndPreclosedTasksWithClickUpID = closedAndPreclosedTasks.map(
-    (task) => {
+  const closedAndPreclosedTasksWithClickUpID: MQMSTasksWithClickUpID[] =
+    closedAndPreclosedTasks.map((task) => {
       const sentTask = ClickUpSentTasks.find(
         (currSentTask) =>
           currSentTask.name === task.externalID &&
@@ -50,8 +54,7 @@ export function useFileteredMQMSTaks(
       }
 
       return { ...task, clickUpID: sentTask?.id?.toString() };
-    }
-  );
+    });
 
   return {
     filteredMQMSTasksWithClickUpID,

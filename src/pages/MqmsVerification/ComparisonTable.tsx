@@ -64,7 +64,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         <Button
           type="primary"
           disabled={task.status !== "CLOSED" && task.status !== "PRECLOSE"}
-          onClick={() => handleAction(task.clickUpID, task.key)}
+          onClick={() => handleAction(task.clickUpID, task.uuid)}
         >
           Mark as Approved
         </Button>
