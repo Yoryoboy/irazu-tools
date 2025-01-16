@@ -1,4 +1,4 @@
-import { Result } from "../../types/MQMS";
+import { ClosedAndPreclosedTasksWithClickUpID, Result } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
@@ -55,7 +55,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
   }
 
   async function handleApproveAll() {
-    const closedAndPreclosedTasksWithID = closedAndPreclosedTasks.map(
+    const closedAndPreclosedTasksWithClickUpID = closedAndPreclosedTasks.map(
       (task) => {
         const sentTask = sentTasks.find(
           (currSentTask) =>
@@ -71,7 +71,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     });
 
     const results = await Promise.allSettled(
-      closedAndPreclosedTasksWithID.map((task) =>
+      closedAndPreclosedTasksWithClickUpID.map((task) =>
         changeTaskStatus(body, task.clickUpID)
       )
     );

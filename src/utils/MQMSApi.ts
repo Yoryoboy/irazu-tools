@@ -1,8 +1,10 @@
+import { MQMSFetchTasksResponse } from "../types/MQMS";
+
 export async function fetchMQMSTasks(
   headers: HeadersInit,
   url: string,
   body: string
-) {
+): Promise<MQMSFetchTasksResponse> {
   const response = await fetch(url, {
     method: "POST",
     headers,

@@ -10,10 +10,10 @@ export interface MQMSUser {
 export interface MQMSFetchTasksResponse {
   status?: string;
   message?: string;
-  data?: Data;
+  data?: MQMSData;
 }
 
-export interface Data {
+export interface MQMSData {
   count?: number;
   results?: Result[];
   aggregation?: unknown[];
@@ -73,4 +73,8 @@ export interface Result {
   marketProfileUUID?: string;
   coordinatorUUID?: string;
   partialFlag?: boolean;
+}
+
+export interface ClosedAndPreclosedTasksWithClickUpID extends Result {
+  clickUpID: string;
 }

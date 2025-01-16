@@ -32,8 +32,13 @@ export function useMQMSFetchTasks(
             ...partialBody,
             externalID: listOfSentTasks.join(),
           });
-          const data = await fetchMQMSTasks(headers, url, body);
-          setMQMSTasks(data.data.results);
+          const { status, data } = await fetchMQMSTasks(headers, url, body);
+
+          if (status !== "success" || !data?.results) {
+            throw new Error("status is not 'success' or data is not defined");
+          }
+
+          setMQMSTasks(data.results);
         } else {
           const chunkedTasks = splitTaskArray(listOfSentTasks, 30);
           const allResults = await Promise.all(
@@ -42,8 +47,13 @@ export function useMQMSFetchTasks(
                 ...partialBody,
                 externalID: chunk.join(),
               });
-              const data = await fetchMQMSTasks(headers, url, body);
-              return data.data.results;
+              const { status, data } = await fetchMQMSTasks(headers, url, body);
+              if (status !== "success" || !data?.results) {
+                throw new Error(
+                  "status is not 'success' or data is not defined"
+                );
+              }
+              return data.results;
             })
           );
           setMQMSTasks(allResults.flat());
