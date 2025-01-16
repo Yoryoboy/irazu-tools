@@ -52,9 +52,9 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         .find((sentTask) => sentTask.name === task.externalID)
         ?.status?.toString()
         .toUpperCase() ?? "",
-    clickupAssignee:
-      sentTasks.find((sentTask) => sentTask.name === task.externalID)
-        ?.assignees ?? "",
+    clickupAssignee: sentTasks.find(
+      (sentTask) => sentTask.name === task.externalID
+    )?.assignees,
     mqmsStatus: task.status,
     mqmsAssignedUser: task.currentAssignedUser ?? "",
     mqmsModule: task.module ?? "",
@@ -71,6 +71,8 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
       </Space>
     ),
   }));
+
+  console.log(dataSource);
 
   return (
     <div>
