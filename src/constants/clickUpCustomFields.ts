@@ -28,6 +28,12 @@ export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
         new_drop_down: true,
         options: [
           {
+            id: "808705c7-d5cc-445a-af20-e8a7e6b3cef8",
+            name: "FIBER VERIFICATION",
+            color: null,
+            orderindex: 8,
+          },
+          {
             id: "2916fe7f-0314-4ccb-b441-a3f0f038308d",
             name: "BROWNFIELD-LINE EXTENSION STATE GRANT",
             color: null,
