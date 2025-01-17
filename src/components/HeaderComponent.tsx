@@ -14,6 +14,10 @@ function HeaderComponent() {
         <Link to="/production-contratistas">Producción de Contratistas</Link>
       ),
     },
+    {
+      key: "4",
+      label: <Link to="/mqms-verification">MQMS</Link>,
+    },
   ];
 
   const headerStyle: React.CSSProperties = {

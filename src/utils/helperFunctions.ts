@@ -5,6 +5,7 @@ import {
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
   Option,
+  Status,
   Task,
   TaskLabelPayload,
   User,
@@ -96,7 +97,13 @@ export function extractTaskFields(
     // Si el campo existe directamente en el objeto task
     if (field in task) {
       const value = task[field as keyof Task];
-      result[field] = value != null ? value.toString() : "";
+      if (typeof value === "string") {
+        result[field] = value != null ? value.toString() : "";
+      } else if (field === "assignees" && Array.isArray(value)) {
+        result[field] = value?.map((user) => user?.username);
+      } else if (field === "status" && typeof value === "object") {
+        result[field] = (value as Status).status;
+      }
     } else {
       // Buscar en custom_fields si es un campo personalizado
       const customField = task.custom_fields?.find((cf) => cf.name === field);
@@ -180,6 +187,14 @@ export function unifyProjects(
 
 export function getUser(userId: number): User {
   return members.find((member) => member.user?.id === userId)?.user || {};
+}
+
+export function splitTaskArray(array: string[], chunkSize: number): string[][] {
+  const result: string[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
 }
 
 export function mergeTaskLabelPayload(

@@ -12,7 +12,7 @@ const LIST_ID = CLICKUP_LIST_IDS.cciBau;
 
 function TaskSync() {
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
-  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID);
+  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID, {});
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
   return (
