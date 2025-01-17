@@ -89,7 +89,7 @@ export function getTextCustomFieldObject(
 
 export function extractTaskFields(
   task: Task,
-  fields: string[]
+  fields: (keyof ExtractedTaskFieldValues)[]
 ): ExtractedTaskFieldValues {
   const result: Partial<ExtractedTaskFieldValues> = {};
 
@@ -97,10 +97,12 @@ export function extractTaskFields(
     // Si el campo existe directamente en el objeto task
     if (field in task) {
       const value = task[field as keyof Task];
-      if (typeof value === "string") {
-        result[field] = value != null ? value.toString() : "";
-      } else if (field === "assignees" && Array.isArray(value)) {
-        result[field] = value?.map((user) => user?.username);
+      if (typeof value === "string" && !Array.isArray(value)) {
+        result[field] = value.toString();
+      } else if (Array.isArray(value)) {
+        result[field] = task.assignees
+          ? value?.map((user) => user?.username)
+          : "";
       } else if (field === "status" && typeof value === "object") {
         result[field] = (value as Status).status;
       }
@@ -134,14 +136,14 @@ export function extractTaskFields(
                       )?.label || ""
                   )
                   .filter((label) => label !== "")
-              : "";
+              : [];
           // Filtrar valores nulos
         } else if (customField.type === "date") {
           result[field] =
             new Date(Number(customField.value)).toLocaleDateString() || "";
         } else {
           // Para otros tipos de campos personalizados, usar el valor directamente
-          result[field] = customField.value || "";
+          result[field] = (customField.value as string) ?? "";
         }
       }
     }

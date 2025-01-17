@@ -72,8 +72,6 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     ),
   }));
 
-  console.log(dataSource);
-
   return (
     <div>
       <h2>

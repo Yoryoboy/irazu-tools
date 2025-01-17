@@ -147,7 +147,7 @@ export interface NewCustomFieldObject {
 }
 
 export interface ExtractedTaskFieldValues {
-  [key: string]: string | string[] | number | User[] | undefined;
+  [key: string]: unknown;
 }
 
 export interface UnifiedProject {
