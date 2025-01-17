@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { CLICKUP_API_AKEY } from "../utils/config";
+import { Task } from "../types/Task";
+import { SearchParams } from "../types/SearchParams";
 
-import { Clickupdataresponse, Task } from "../types";
-
-export function useFetchClickUpTasks(listId: string) {
+export function useFetchClickUpTasks(
+  listId: string,
+  SearchParams: SearchParams
+) {
   const [clickUpTasks, setClickUpTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export function useFetchClickUpTasks(listId: string) {
       do {
         const query = new URLSearchParams({
           page: page.toString(),
-          // include_closed: "true",
+          ...SearchParams,
         }).toString();
 
         try {
@@ -33,7 +36,7 @@ export function useFetchClickUpTasks(listId: string) {
             throw new Error(`Error fetching data: ${response.statusText}`);
           }
 
-          const data: Clickupdataresponse = await response.json();
+          const data = await response.json();
           allTasks = [...allTasks, ...data.tasks];
           lastPage = data.last_page;
           page += 1;
@@ -47,7 +50,7 @@ export function useFetchClickUpTasks(listId: string) {
     };
 
     fetchTasks();
-  }, [listId]);
+  }, [listId, SearchParams]);
 
   return { clickUpTasks };
 }
