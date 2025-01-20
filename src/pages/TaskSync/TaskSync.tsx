@@ -9,12 +9,16 @@ import { Flex } from "antd";
 import { MQMSTask } from "../../types/Task";
 
 const LIST_ID = CLICKUP_LIST_IDS.cciBau;
+const DEFAULT_SEARCH_PARAMS = {};
 
 function TaskSync() {
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
-  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID, {});
+  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID, DEFAULT_SEARCH_PARAMS);
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
+
+  console.log("TaskSync se ejecuta");
+
   return (
     <Flex vertical gap="small" align="center" justify="center">
       <ExcelUploader setData={setMQMSTasks} />
