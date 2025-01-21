@@ -13,8 +13,6 @@ import {
   getTextCustomFieldObject,
 } from "./helperFunctions";
 
-import { CLICKUP_LIST_IDS } from "../utils/config";
-
 import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";
 
@@ -134,6 +132,8 @@ export function getNewTask(row: MQMSTask): Task {
     row.REQUEST_ID
   );
 
+  const hubCustomFieldValue = getTextCustomFieldObject("HUB", row.HUB);
+
   const customFields = [
     plantTypeCustomFieldValue,
     projectTypeCustomFieldValue,
@@ -141,6 +141,7 @@ export function getNewTask(row: MQMSTask): Task {
     jobTypeCustomFieldValue,
     nodeNameCustomFieldValue,
     workRequestCustomFieldValue,
+    hubCustomFieldValue,
   ];
 
   return {

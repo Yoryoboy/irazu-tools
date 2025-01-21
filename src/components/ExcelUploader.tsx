@@ -12,6 +12,7 @@ const DESIRED_KEYS: (keyof MQMSTask)[] = [
   "REQUEST_NAME",
   "PROJECT_TYPE",
   "NODE_NAME",
+  "HUB",
 ];
 
 interface Props {
@@ -41,7 +42,6 @@ function ExcelUploader({ setData }: Props) {
         }, {} as ParsedData)
       );
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
-      console.log(parsedDataCleaned);
       setData(parsedDataCleaned);
     };
     reader.readAsArrayBuffer(file);

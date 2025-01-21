@@ -167,6 +167,7 @@ export interface MQMSTask {
   REQUEST_NAME: string;
   PROJECT_TYPE: string;
   NODE_NAME: string;
+  HUB: string;
 }
 
 export type PostNewTaskResult =
