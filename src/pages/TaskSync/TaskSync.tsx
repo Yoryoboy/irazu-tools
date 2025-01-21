@@ -26,6 +26,7 @@ function TaskSync({ listId, searchParams }: Props) {
         <NewTasksTable
           newMqmsTasks={newMqmsTasks}
           setMQMSTasks={setMQMSTasks}
+          listId={listId}
         />
       ) : null}
       {clickUpTasks.length === 0 && <p>Obteniendo datos de ClickUp...</p>}

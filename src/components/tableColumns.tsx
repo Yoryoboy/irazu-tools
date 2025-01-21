@@ -6,7 +6,8 @@ import { MQMSTask } from "../types/Task";
 // Definir columnas para la tabla
 export const getColumns = (
   newMqmsTasks: MQMSTask[],
-  setMQMSTasks: (tasks: MQMSTask[]) => void
+  setMQMSTasks: (tasks: MQMSTask[]) => void,
+  listId: string
 ): ColumnsType<MQMSTask> => [
   {
     title: "JOB_NAME",
@@ -45,7 +46,9 @@ export const getColumns = (
       <Space size="middle">
         <Button
           type="primary"
-          onClick={() => handleAction(record, newMqmsTasks, setMQMSTasks)}
+          onClick={() =>
+            handleAction(record, newMqmsTasks, setMQMSTasks, listId)
+          }
         >
           Sync Task
         </Button>

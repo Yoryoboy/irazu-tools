@@ -158,11 +158,12 @@ export const updateNewMqmsTasks = (
 export const handleAction = async (
   row: MQMSTask,
   newMqmsTasks: MQMSTask[],
-  setMQMSTasks: (tasks: MQMSTask[]) => void
+  setMQMSTasks: (tasks: MQMSTask[]) => void,
+  listId: string
 ) => {
   const newTask: Task[] = [getNewTask(row)];
   console.log(newTask);
-  const results = await postNewTasks(newTask, CLICKUP_LIST_IDS.cciBau, apikey);
+  const results = await postNewTasks(newTask, listId, apikey);
 
   const successfulTasks = results.filter(
     (result): result is FulfilledPostNewTaskResult =>
@@ -183,14 +184,11 @@ export const handleAction = async (
 
 export const handleSyncAll = async (
   newMqmsTasks: MQMSTask[],
-  setMQMSTasks: (tasks: MQMSTask[]) => void
+  setMQMSTasks: (tasks: MQMSTask[]) => void,
+  listId: string
 ) => {
   const allNewTasks = newMqmsTasks.map((row) => getNewTask(row));
-  const results = await postNewTasks(
-    allNewTasks,
-    CLICKUP_LIST_IDS.cciBau,
-    apikey
-  );
+  const results = await postNewTasks(allNewTasks, listId, apikey);
 
   const successfulTasks = results.filter(
     (result): result is FulfilledPostNewTaskResult =>

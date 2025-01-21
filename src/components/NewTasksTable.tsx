@@ -6,15 +6,16 @@ import { MQMSTask } from "../types/Task";
 interface Props {
   newMqmsTasks: MQMSTask[];
   setMQMSTasks: (tasks: MQMSTask[]) => void;
+  listId: string;
 }
 
-function NewTasksTable({ newMqmsTasks, setMQMSTasks }: Props) {
+function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
   const dataSource = newMqmsTasks.map((task) => ({
     ...task,
     key: task.EXTERNAL_ID,
   }));
 
-  const columns = getColumns(newMqmsTasks, setMQMSTasks);
+  const columns = getColumns(newMqmsTasks, setMQMSTasks, listId);
 
   return (
     <div>
@@ -25,7 +26,7 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks }: Props) {
       />
       <Button
         type="primary"
-        onClick={() => handleSyncAll(newMqmsTasks, setMQMSTasks)}
+        onClick={() => handleSyncAll(newMqmsTasks, setMQMSTasks, listId)}
         style={{ marginTop: 16 }}
       >
         Sync All Tasks

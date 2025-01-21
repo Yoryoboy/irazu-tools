@@ -7,6 +7,15 @@ interface CustomFields {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "c87d19db-ac1a-4fe0-9d62-7d928a41e50a",
+      name: "HUB",
+      type: "short_text",
+      type_config: {},
+      date_created: "1710939666402",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
       name: "WORK REQUEST ID",
       type: "short_text",
