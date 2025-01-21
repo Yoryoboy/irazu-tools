@@ -1,6 +1,6 @@
 import { getCustomField } from "../../utils/tasksFunctions";
-import { CCI_HS_LIST_ID } from "../../utils/config";
-import { SearchParams } from "../../types";
+import { CLICKUP_LIST_IDS } from "../../utils/config";
+import { SearchParams } from "../../types/SearchParams";
 
 const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
 const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
@@ -15,7 +15,7 @@ export function getAsbuiltSearchParamsForVendor(
   return {
     page: "0",
     "assignees[]": vendorId,
-    "list_ids[]": CCI_HS_LIST_ID,
+    "list_ids[]": CLICKUP_LIST_IDS.cciHs,
     include_closed: "true",
     custom_fields: JSON.stringify([
       {
@@ -38,7 +38,7 @@ export function getAsbuiltSearchParamsForVendor(
 export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
   return {
     page: "0",
-    "list_ids[]": CCI_HS_LIST_ID,
+    "list_ids[]": CLICKUP_LIST_IDS.cciHs,
     include_closed: "true",
     custom_fields: JSON.stringify([
       {

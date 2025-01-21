@@ -5,4 +5,7 @@ export const MQMS_PASSWORD = import.meta.env.VITE_MQMS_PASSWORD;
 
 export const TEAM_ID = "3051792";
 
-export const CCI_HS_LIST_ID = "900200859937";
+export const CLICKUP_LIST_IDS = {
+  cciBau: "901404730264",
+  cciHs: "900200859937",
+};

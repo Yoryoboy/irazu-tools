@@ -4,10 +4,6 @@ interface CustomFields {
   fields: CustomField[];
 }
 
-export const CLICKUP_LIST_IDS = {
-  cciBau: "901404730264",
-};
-
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {

@@ -13,7 +13,7 @@ import {
   getTextCustomFieldObject,
 } from "./helperFunctions";
 
-import { CLICKUP_LIST_IDS } from "../constants/clickUpCustomFields";
+import { CLICKUP_LIST_IDS } from "../utils/config";
 
 import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";

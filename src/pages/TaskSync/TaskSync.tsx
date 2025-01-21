@@ -2,18 +2,20 @@ import { useState } from "react";
 import ExcelUploader from "../../components/ExcelUploader";
 import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { getNewTasksFromMqms } from "../../utils/tasksFunctions";
-import { CLICKUP_LIST_IDS } from "../../constants/clickUpCustomFields";
 
 import NewTasksTable from "../../components/NewTasksTable";
 import { Flex } from "antd";
 import { MQMSTask } from "../../types/Task";
+import { SearchParams } from "../../types/SearchParams";
 
-const LIST_ID = CLICKUP_LIST_IDS.cciBau;
-const DEFAULT_SEARCH_PARAMS = {};
+interface Props {
+  listId: string;
+  searchParams: SearchParams;
+}
 
-function TaskSync() {
+function TaskSync({ listId, searchParams }: Props) {
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
-  const { clickUpTasks } = useFetchClickUpTasks(LIST_ID, DEFAULT_SEARCH_PARAMS);
+  const { clickUpTasks } = useFetchClickUpTasks(listId, searchParams);
   const newMqmsTasks =
     MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
 
