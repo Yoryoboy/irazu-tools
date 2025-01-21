@@ -11,6 +11,15 @@ export const CLICKUP_LIST_IDS = {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
+      name: "WORK REQUEST ID",
+      type: "short_text",
+      type_config: {},
+      date_created: "1737460847918",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "f170ab6e-cdcc-44c6-a9f9-ef87933387dd",
       name: "NODE",
       type: "short_text",

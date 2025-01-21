@@ -41,6 +41,7 @@ function ExcelUploader({ setData }: Props) {
         }, {} as ParsedData)
       );
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
+      console.log(parsedDataCleaned);
       setData(parsedDataCleaned);
     };
     reader.readAsArrayBuffer(file);
@@ -60,6 +61,7 @@ function ExcelUploader({ setData }: Props) {
         }, {} as Partial<MQMSTask>) as MQMSTask
     );
   }
+
   return (
     <>
       <FileUploader setFile={setFile} />

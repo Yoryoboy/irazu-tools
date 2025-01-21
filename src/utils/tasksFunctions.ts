@@ -129,12 +129,18 @@ export function getNewTask(row: MQMSTask): Task {
     row.NODE_NAME
   );
 
+  const workRequestCustomFieldValue = getTextCustomFieldObject(
+    "WORK REQUEST ID",
+    row.REQUEST_ID
+  );
+
   const customFields = [
     plantTypeCustomFieldValue,
     projectTypeCustomFieldValue,
     secondaryIdCustomFieldValue,
     jobTypeCustomFieldValue,
     nodeNameCustomFieldValue,
+    workRequestCustomFieldValue,
   ];
 
   return {
