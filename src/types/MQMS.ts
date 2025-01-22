@@ -33,3 +33,32 @@ export interface Result {
 export interface MQMSTasksWithClickUpID extends Result {
   clickUpID: string;
 }
+
+export interface FetchUserHierarchyResponse {
+  status: string;
+  message: string;
+  data: Data;
+}
+
+export interface Data {
+  userHierarchy: UserHierarchy[];
+}
+
+export interface UserHierarchy {
+  EMP_ID: string;
+  USERNAME: string;
+  FIRSTNAME: string;
+  LASTNAME: string;
+  SUPERVISOR_ID: string;
+  TWC: number;
+  PWC: number;
+  OC: number;
+  TSC: number;
+  CHILDREN: number;
+  SUPERVISOR_FLAG: string;
+  ROLENAME: string;
+  QUOTAPOINT: number;
+  CHILDQUOTAPOINT: number;
+  PARENTWITHCHILDREN: number;
+  CompanyName: string;
+}
