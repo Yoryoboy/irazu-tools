@@ -11,7 +11,7 @@ const searchParams: SearchParams = {
   "statuses[]": ["sent"],
 };
 
-function MqmsVerification() {
+function MqmsCheckApprovedTasks() {
   const { accessToken } = useMQMSAuth();
 
   const { clickUpTasks } = useFetchClickUpTasks(
@@ -53,4 +53,4 @@ function MqmsVerification() {
   );
 }
 
-export default MqmsVerification;
+export default MqmsCheckApprovedTasks;
