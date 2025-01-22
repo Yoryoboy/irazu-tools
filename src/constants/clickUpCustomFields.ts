@@ -42,6 +42,12 @@ export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
         new_drop_down: true,
         options: [
           {
+            id: "27a8b45a-9f76-471e-89f8-9ea8ad59b8a9",
+            name: "GREENFIELD",
+            color: null,
+            orderindex: 12,
+          },
+          {
             id: "808705c7-d5cc-445a-af20-e8a7e6b3cef8",
             name: "FIBER VERIFICATION",
             color: null,
