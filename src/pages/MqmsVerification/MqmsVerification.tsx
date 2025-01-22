@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { CLICKUP_LIST_IDS } from "../../utils/config";
 import { useFetchClickUpTasks } from "../../hooks/useClickUp";
 import { SearchParams } from "../../types/SearchParams";
-import useMQMSAuth from "../../hooks/useMQMSAuth";
+import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSFetchTasks } from "../../hooks/useMQMS";
 import ComparisonTable from "./ComparisonTable";
 import { extractTaskFields } from "../../utils/helperFunctions";

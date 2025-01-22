@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MQMSUser } from "../types/MQMS";
 import { MQMS_PASSWORD, MQMS_USERNAME } from "../utils/config";
 
-function useMQMSAuth() {
+export function useMQMSAuth() {
   const [MQMSUser, setMQMSUser] = useState<MQMSUser | null>(null);
   const { accessToken } = MQMSUser || {};
 
@@ -36,5 +36,3 @@ function useMQMSAuth() {
 
   return { MQMSUser, accessToken };
 }
-
-export default useMQMSAuth;
