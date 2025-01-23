@@ -1,8 +1,22 @@
 import { useEffect, useState } from "react";
-import { FetchStartsStopsResponse, UserHierarchy } from "../types/MQMS";
+import {
+  FetchStartsStopsResponse,
+  StartsStops,
+  taskTimeData,
+  UserHierarchy,
+} from "../types/MQMS";
+
+function filterStartsStops(
+  startsStops: StartsStops[],
+  designTeam: UserHierarchy[]
+) {
+  return startsStops.filter((startsStops) => {
+    return designTeam.find((user) => user.EMP_ID === startsStops.userUUID);
+  });
+}
 
 export function useMQMSTimetracker(
-  acessToken: string | undefined,
+  accessToken: string | undefined,
   tasksUuidList: string[],
   designTeam: UserHierarchy[]
 ) {
@@ -43,12 +57,17 @@ export function useMQMSTimetracker(
           );
         }
 
-        return data;
+        const taskTimeData: taskTimeData = {
+          taskUuid,
+          data: filterStartsStops(data, designTeam),
+        };
+
+        return taskTimeData;
       } catch (error) {
         console.error("Error fetching MQMS user hierarchy:", error);
       }
     }
-  }, []);
+  }, [designTeam, tasksUuidList, accessToken]);
 
   return {};
 }

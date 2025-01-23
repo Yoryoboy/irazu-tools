@@ -96,3 +96,8 @@ export interface ModuleToData {
   type: string;
   name: string;
 }
+
+export interface taskTimeData {
+  taskUuid: string;
+  data: StartsStops[];
+}
