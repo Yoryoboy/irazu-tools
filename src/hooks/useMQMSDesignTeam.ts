@@ -28,7 +28,9 @@ export function useMQMSDesignTeam(accessToken: string | undefined) {
         }
 
         const responseData: FetchUserHierarchyResponse = await response.json();
+
         const { status, message, data } = responseData;
+
         if (status !== "success" || !data?.userHierarchy) {
           throw new Error(
             `Failed to fetch MQMS user hierarchy: ${message || "Unknown error"}`
