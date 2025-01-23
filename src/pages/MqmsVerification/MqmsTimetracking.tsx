@@ -1,5 +1,7 @@
+import { time } from "console";
 import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../hooks/useMQMSDesignTeam";
+import { useMQMSTimetracker } from "../../hooks/useMQMSTimetracker";
 
 const userHierarchy = [
   {
@@ -364,12 +366,270 @@ const userHierarchy = [
   },
 ];
 
-function MqmsTimetracking() {
-  //   const { accessToken } = useMQMSAuth();
-  //   const { userHierarchy } = useMQMSDesignTeam(accessToken);
+const testUUID = ["a8aee9ab-f4a3-4a98-81e9-4d88cc80092f"];
 
-  if (userHierarchy.length > 0) {
-    console.log(userHierarchy);
+const tasksTimetracker = [
+  {
+    taskUuid: "a8aee9ab-f4a3-4a98-81e9-4d88cc80092f",
+    data: [
+      {
+        uuid: "755e2f88-2641-489e-aba2-e51fb2267372",
+        createdAt: "2025-01-02T14:06:10.650Z",
+        elapseTime: 428,
+        moduleUUID: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
+        oldStart: "2025-01-02T14:06:09.809Z",
+        oldStop: "2025-01-02T21:14:03.991Z",
+        start: "2025-01-02T14:06:09.809Z",
+        stop: "2025-01-02T21:14:03.991Z",
+        userUUID: "3eb8666f-ca84-4b82-ba5e-68804198e971",
+        moduleToData: [
+          {
+            uuid: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
+            type: "MDL",
+            name: "ROUTE",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "SERGIO",
+            middleName: "",
+            username: "P3194303",
+            uuid: "3eb8666f-ca84-4b82-ba5e-68804198e971",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "7ddcb9e5-d4f1-434c-bb39-016a4759b766",
+        createdAt: "2025-01-11T03:45:39.207Z",
+        elapseTime: 0,
+        moduleUUID: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
+        oldStart: "2025-01-11T03:45:39.199Z",
+        oldStop: "2025-01-11T03:45:45.675Z",
+        start: "2025-01-11T03:45:39.199Z",
+        stop: "2025-01-11T03:45:45.675Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
+            type: "MDL",
+            name: "ROUTE",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "1a96e775-9cd7-4fb4-861d-776eb7ab159a",
+        createdAt: "2025-01-11T03:45:54.538Z",
+        elapseTime: 10,
+        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+        oldStart: "2025-01-11T03:45:53.966Z",
+        oldStop: "2025-01-11T03:56:10.127Z",
+        start: "2025-01-11T03:45:53.966Z",
+        stop: "2025-01-11T03:56:10.127Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+            type: "MDL",
+            name: "COAX",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "dadf11d7-5e58-4d88-b48f-23c1c948170b",
+        createdAt: "2025-01-11T12:06:08.612Z",
+        elapseTime: 31,
+        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+        oldStart: "2025-01-11T12:06:07.816Z",
+        oldStop: "2025-01-11T12:36:43.073Z",
+        start: "2025-01-11T12:06:07.816Z",
+        stop: "2025-01-11T12:36:43.073Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+            type: "MDL",
+            name: "COAX",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "d476fbe0-7e24-4abe-829a-fa7ae0b45e30",
+        createdAt: "2025-01-13T12:51:14.135Z",
+        elapseTime: 249,
+        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+        oldStart: "2025-01-13T12:51:14.250Z",
+        oldStop: "2025-01-13T17:00:31.723Z",
+        start: "2025-01-13T12:51:14.250Z",
+        stop: "2025-01-13T17:00:31.723Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+            type: "MDL",
+            name: "COAX",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "ba922910-7d4a-4728-a52b-d1a7e478d854",
+        createdAt: "2025-01-14T11:32:23.464Z",
+        elapseTime: 4,
+        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+        oldStart: "2025-01-14T11:32:23.178Z",
+        oldStop: "2025-01-14T11:36:13.805Z",
+        start: "2025-01-14T11:32:23.178Z",
+        stop: "2025-01-14T11:36:13.805Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
+            type: "MDL",
+            name: "COAX",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "2d7ca776-adc1-4c5c-9108-2269a760cb89",
+        createdAt: "2025-01-14T11:36:21.494Z",
+        elapseTime: 1,
+        moduleUUID: "953a3846-5627-4b59-8e3f-2b5cdab3c037",
+        oldStart: "2025-01-14T11:36:21.636Z",
+        oldStop: "2025-01-14T11:36:59.730Z",
+        start: "2025-01-14T11:36:21.636Z",
+        stop: "2025-01-14T11:36:59.730Z",
+        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+        moduleToData: [
+          {
+            uuid: "953a3846-5627-4b59-8e3f-2b5cdab3c037",
+            type: "MDL",
+            name: "FIBER",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "CINDY",
+            middleName: "",
+            username: "P3207530",
+            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
+            lastName: "FLORES",
+          },
+        ],
+      },
+      {
+        uuid: "41e1a3ba-5d2c-4864-b0e3-55c0f21ab687",
+        createdAt: "2025-01-14T18:01:35.448Z",
+        elapseTime: 35,
+        moduleUUID: "bd796a5b-035b-4c42-a340-2266914e3a9d",
+        oldStart: "2025-01-14T18:01:34.187Z",
+        oldStop: "2025-01-14T18:36:53.036Z",
+        start: "2025-01-14T18:01:34.187Z",
+        stop: "2025-01-14T18:36:53.036Z",
+        userUUID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
+        moduleToData: [
+          {
+            uuid: "bd796a5b-035b-4c42-a340-2266914e3a9d",
+            type: "MDL",
+            name: "PACKAGE PREP",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "ANAIS",
+            middleName: "",
+            username: "P3194245",
+            uuid: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
+            lastName: "ESPANA",
+          },
+        ],
+      },
+      {
+        uuid: "fa7e6ed6-8a44-4c08-8c64-34ce6215a856",
+        createdAt: "2025-01-14T19:45:09.522Z",
+        elapseTime: 0,
+        moduleUUID: "bd796a5b-035b-4c42-a340-2266914e3a9d",
+        oldStart: "2025-01-14T19:45:08.121Z",
+        oldStop: "2025-01-14T19:45:12.894Z",
+        start: "2025-01-14T19:45:08.121Z",
+        stop: "2025-01-14T19:45:12.894Z",
+        userUUID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
+        moduleToData: [
+          {
+            uuid: "bd796a5b-035b-4c42-a340-2266914e3a9d",
+            type: "MDL",
+            name: "PACKAGE PREP",
+          },
+        ],
+        actionByUser: [
+          {
+            firstName: "ANAIS",
+            middleName: "",
+            username: "P3194245",
+            uuid: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
+            lastName: "ESPANA",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+function MqmsTimetracking() {
+  // const { accessToken } = useMQMSAuth();
+  //   const { userHierarchy } = useMQMSDesignTeam(accessToken);
+  // const { tasksTimetracker } = useMQMSTimetracker(
+  //   accessToken,
+  //   testUUID,
+  //   userHierarchy
+  // );
+
+  if (tasksTimetracker.length > 0) {
+    console.log(tasksTimetracker);
   }
 
   return <div>time</div>;

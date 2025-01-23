@@ -20,15 +20,12 @@ export function useMQMSTimetracker(
   tasksUuidList: string[],
   designTeam: UserHierarchy[]
 ) {
-  const [tasksTimetracker, setTasksTimetracker] = useState([]);
+  const [tasksTimetracker, setTasksTimetracker] = useState<taskTimeData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchTasksTimetracker(
-      taskUuid: string,
-      accessToken: string
-    ) {
+    async function fetchTaskTimetracker(taskUuid: string, accessToken: string) {
       const url = `https://mqms.corp.chartercom.com/api/work-requests-start-stops?workRequestUUID=${taskUuid}`;
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -67,7 +64,31 @@ export function useMQMSTimetracker(
         console.error("Error fetching MQMS user hierarchy:", error);
       }
     }
+
+    async function fetchAllTaskTimetracker() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const results = await Promise.all(
+          tasksUuidList.map((taskUuid) =>
+            fetchTaskTimetracker(taskUuid, accessToken as string)
+          )
+        );
+
+        setTasksTimetracker(results as taskTimeData[]);
+      } catch (error) {
+        setError("Error fetchinh hierarchies");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (accessToken && tasksUuidList.length > 0 && designTeam.length > 0) {
+      fetchAllTaskTimetracker();
+    }
   }, [designTeam, tasksUuidList, accessToken]);
 
-  return {};
+  return { tasksTimetracker, loading, error };
 }
