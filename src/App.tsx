@@ -1,37 +1,35 @@
-import { Flex, Layout } from "antd";
-import { BrowserRouter as Router } from "react-router-dom";
-import AppRouter from "./AppRouter";
-import HeaderComponent from "./components/HeaderComponent";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import AppLayout from "./AppLayout";
+import TaskSync from "./pages/TaskSync/TaskSync";
+import VendorProduction from "./pages/VendorProduction/VendorProduction";
+import MqmsVerification from "./pages/MqmsVerification/MqmsVerification";
 
-const { Content } = Layout;
-
-const contentStyle: React.CSSProperties = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-  padding: 48,
-  overflow: "auto",
-};
-
-const layoutStyle = {
-  overflow: "hidden",
-  width: "100%",
-  height: "100vh",
-};
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    children: [
+      {
+        path: "/",
+        element: <TaskSync />,
+      },
+      {
+        path: "/task-sync",
+        element: <TaskSync />,
+      },
+      {
+        path: "/production-contratistas",
+        element: <VendorProduction />,
+      },
+      {
+        path: "/mqms-verification",
+        element: <MqmsVerification />,
+      },
+    ],
+  },
+]);
 
 function App() {
-  return (
-    <Router>
-      <Flex>
-        <Layout style={layoutStyle}>
-          <HeaderComponent />
-          <Content style={contentStyle}>
-            <AppRouter />
-          </Content>
-        </Layout>
-      </Flex>
-    </Router>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
