@@ -2,6 +2,7 @@ import { time } from "console";
 import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../hooks/useMQMSTimetracker";
+import { useFilteredTasks } from "../../hooks/useFilteredTasks";
 
 const userHierarchy = [
   {
@@ -620,6 +621,7 @@ const tasksTimetracker = [
 ];
 
 function MqmsTimetracking() {
+  const { filteredTasks } = useFilteredTasks();
   // const { accessToken } = useMQMSAuth();
   //   const { userHierarchy } = useMQMSDesignTeam(accessToken);
   // const { tasksTimetracker } = useMQMSTimetracker(
