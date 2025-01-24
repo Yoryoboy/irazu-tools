@@ -3,6 +3,11 @@ import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../hooks/useMQMSTimetracker";
 import { useFilteredTasks } from "../../hooks/useFilteredTasks";
+import { CLICKUP_LIST_IDS } from "../../utils/config";
+import { extractTaskFields } from "../../utils/helperFunctions";
+import { useMemo } from "react";
+import { ExtractedTaskFieldValues } from "../../types/Task";
+import { TaskTimeDataWithClickUpID } from "../../types/MQMS";
 
 const userHierarchy = [
   {
@@ -369,7 +374,7 @@ const userHierarchy = [
 
 const testUUID = ["a8aee9ab-f4a3-4a98-81e9-4d88cc80092f"];
 
-const tasksTimetracker = [
+const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] = [
   {
     taskUuid: "a8aee9ab-f4a3-4a98-81e9-4d88cc80092f",
     data: [
@@ -617,22 +622,66 @@ const tasksTimetracker = [
         ],
       },
     ],
+    clickUpID: "86b32yewy",
   },
 ];
+const { cciHs } = CLICKUP_LIST_IDS;
+
+const DEFAULT_SEARCH_PARAMS = {
+  page: "0",
+  "list_ids[]": cciHs,
+  //   include_closed: "true",
+  //   "statuses[]": ["redesign sent", "redesign in qc by irazu"],
+  custom_fields: JSON.stringify([
+    // {
+    //   field_id: "ed83fc7c-baeb-4fdc-8e59-7ccbb4587cd5",
+    //   operator: "RANGE",
+    //   value: [new Date("1/1/2025").getTime(), new Date("1/31/2025").getTime()],
+    // },
+    {
+      field_id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
+      operator: "=",
+      value: testUUID[0],
+    },
+  ]),
+};
+
+const fields = ["id", "WORK REQUEST ID"];
 
 function MqmsTimetracking() {
-  const { filteredTasks } = useFilteredTasks();
+  // const { filteredTasks } = useFilteredTasks(DEFAULT_SEARCH_PARAMS);
   // const { accessToken } = useMQMSAuth();
-  //   const { userHierarchy } = useMQMSDesignTeam(accessToken);
-  // const { tasksTimetracker } = useMQMSTimetracker(
+  // const { userHierarchy } = useMQMSDesignTeam(accessToken);
+
+  // const tasks = useMemo(() => {
+  //   return filteredTasks.map((task) => extractTaskFields(task, fields));
+  // }, [filteredTasks]);
+
+  // const UuidList: string[] = useMemo(() => {
+  //   return tasks.length > 0
+  //     ? tasks.map((task) => task["WORK REQUEST ID"] as string)
+  //     : [];
+  // }, [tasks]);
+
+  // const { MQMSTasksTimetracker } = useMQMSTimetracker(
   //   accessToken,
-  //   testUUID,
+  //   UuidList,
   //   userHierarchy
   // );
 
-  if (tasksTimetracker.length > 0) {
-    console.log(tasksTimetracker);
-  }
+  // if (MQMSTasksTimetracker.length > 0) {
+  //   const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] =
+  //     MQMSTasksTimetracker.map((task) => {
+  //       const sentTask = tasks.find(
+  //         (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
+  //       );
+  //       return { ...task, clickUpID: sentTask?.id?.toString() as string };
+  //     });
+
+  //   console.log("MQMSTaskTimetrackerWithID :", MQMSTaskTimetrackerWithID);
+  // }
+
+  console.log(MQMSTaskTimetrackerWithID);
 
   return <div>time</div>;
 }

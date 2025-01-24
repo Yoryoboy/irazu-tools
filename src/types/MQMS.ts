@@ -97,7 +97,11 @@ export interface ModuleToData {
   name: string;
 }
 
-export interface taskTimeData {
+export interface TaskTimeData {
   taskUuid: string;
   data: StartsStops[];
+}
+
+export interface TaskTimeDataWithClickUpID extends TaskTimeData {
+  clickUpID: string;
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   FetchStartsStopsResponse,
   StartsStops,
-  taskTimeData,
+  TaskTimeData,
   UserHierarchy,
 } from "../types/MQMS";
 
@@ -20,7 +20,9 @@ export function useMQMSTimetracker(
   tasksUuidList: string[],
   designTeam: UserHierarchy[]
 ) {
-  const [tasksTimetracker, setTasksTimetracker] = useState<taskTimeData[]>([]);
+  const [MQMSTasksTimetracker, setMQMSTasksTimetracker] = useState<
+    TaskTimeData[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +56,7 @@ export function useMQMSTimetracker(
           );
         }
 
-        const taskTimeData: taskTimeData = {
+        const taskTimeData: TaskTimeData = {
           taskUuid,
           data: filterStartsStops(data, designTeam),
         };
@@ -76,7 +78,7 @@ export function useMQMSTimetracker(
           )
         );
 
-        setTasksTimetracker(results as taskTimeData[]);
+        setMQMSTasksTimetracker(results as TaskTimeData[]);
       } catch (error) {
         setError("Error fetchinh hierarchies");
         console.error(error);
@@ -90,5 +92,5 @@ export function useMQMSTimetracker(
     }
   }, [designTeam, tasksUuidList, accessToken]);
 
-  return { tasksTimetracker, loading, error };
+  return { MQMSTasksTimetracker, loading, error };
 }
