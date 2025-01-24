@@ -30,6 +30,7 @@ export interface Task {
   start_date?: null;
   points?: null;
   time_estimate?: null;
+  time_spent?: number;
   custom_fields?: CustomField[];
   dependencies?: unknown[];
   linked_tasks?: LinkedTask[];

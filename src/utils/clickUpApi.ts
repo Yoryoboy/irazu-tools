@@ -3,7 +3,7 @@ import {
   ExtractedTaskFieldValues,
   TaskLabelPayload,
 } from "../types/Task";
-import { CLICKUP_API_AKEY } from "./config";
+import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
 
 export async function updateCustomFieldLabel(
   taskId: string,
@@ -136,5 +136,43 @@ export async function changeTaskStatus(status: string, taskId: string) {
   } catch (error) {
     console.error(`Error updating task ${taskId}:`, error);
     return { status: "error", message: `Error updating task ${taskId}:` };
+  }
+}
+
+export async function createNewtimeEntry(payload: {
+  clickUpID: string;
+  start: number;
+  stop: number;
+}) {
+  const URL = `https://api.clickup.com/api/v2/team/${TEAM_ID}/time_entries`;
+  const options = {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      Authorization: CLICKUP_API_AKEY,
+    },
+    body: JSON.stringify({
+      tid: payload.clickUpID,
+      start: payload.start,
+      stop: payload.stop,
+    }),
+  };
+
+  try {
+    const response = await fetch(URL, options);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(`Error creating new time entry:`, errorData);
+      return { status: "error", message: `Error creating new time entry:` };
+    }
+
+    console.log(
+      `New time entry created successfully for task ${payload.clickUpID}`
+    );
+  } catch (error) {
+    console.error(`Error creating new time entry:`, error);
+    return { status: "error", message: `Error creating new time entry:` };
   }
 }

@@ -1,5 +1,6 @@
 import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 import { members } from "../constants/members";
+import { TaskTimeDataWithClickUpID } from "../types/MQMS";
 import {
   CustomField,
   ExtractedTaskFieldValues,
@@ -229,4 +230,18 @@ export function mergeTaskLabelPayload(
       value: Array.from(value), // Convertimos el Set a un array
     })
   );
+}
+
+export function getTimetrackingPayloadForTask(
+  tasksList: TaskTimeDataWithClickUpID
+) {
+  const { clickUpID, data } = tasksList;
+  const payload = data.map((time) => {
+    return {
+      clickUpID,
+      start: new Date(time.start).getTime(),
+      stop: new Date(time.stop).getTime(),
+    };
+  });
+  return payload.filter((payload) => payload.start < payload.stop);
 }

@@ -1,689 +1,95 @@
-import { time } from "console";
 import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../hooks/useMQMSTimetracker";
 import { useFilteredTasks } from "../../hooks/useFilteredTasks";
 import { CLICKUP_LIST_IDS } from "../../utils/config";
-import { extractTaskFields } from "../../utils/helperFunctions";
+import {
+  extractTaskFields,
+  getTimetrackingPayloadForTask,
+} from "../../utils/helperFunctions";
 import { useMemo } from "react";
-import { ExtractedTaskFieldValues } from "../../types/Task";
 import { TaskTimeDataWithClickUpID } from "../../types/MQMS";
+import { createNewtimeEntry } from "../../utils/clickUpApi";
 
-const userHierarchy = [
-  {
-    EMP_ID: "d1425720-916f-4e82-b4c7-4a624bbc9289",
-    USERNAME: "P3192616",
-    FIRSTNAME: "JORGE",
-    LASTNAME: "DIAZ",
-    SUPERVISOR_ID: "2374fc13-288c-4ea4-82ee-a04e2470e54c",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 18,
-    SUPERVISOR_FLAG: "1",
-    ROLENAME: "Design Manager",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    USERNAME: "P3194245",
-    FIRSTNAME: "ANAIS",
-    LASTNAME: "ESPANA",
-    SUPERVISOR_ID: "d1425720-916f-4e82-b4c7-4a624bbc9289",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 17,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "PRODUCTION SUPERVISOR",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    USERNAME: "P3194245",
-    FIRSTNAME: "ANAIS",
-    LASTNAME: "ESPANA",
-    SUPERVISOR_ID: "d1425720-916f-4e82-b4c7-4a624bbc9289",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 17,
-    SUPERVISOR_FLAG: "1",
-    ROLENAME: "PRODUCTION SUPERVISOR",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "d617e4b5-02f3-43e4-ae6c-dfbd573e1040",
-    USERNAME: "P3021550",
-    FIRSTNAME: "EFRAIN",
-    LASTNAME: "CAMACHO",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "e53b3641-cbbb-4472-9b81-96a83e949d9c",
-    USERNAME: "P3181615",
-    FIRSTNAME: "ANDREA",
-    LASTNAME: "ALAMO",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-    USERNAME: "P3207530",
-    FIRSTNAME: "CINDY",
-    LASTNAME: "FLORES",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "d7a795e3-8e3e-458b-8cad-f6ad81aea0ca",
-    USERNAME: "P3220478",
-    FIRSTNAME: "CARLOS",
-    LASTNAME: "MARIN",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "DESIGNER IN TRAINING 0",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "0d369873-bc21-4995-a064-0eb18ff19196",
-    USERNAME: "P3220480",
-    FIRSTNAME: "MELISA",
-    LASTNAME: "ALVAREZ",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "968129ab-06eb-45d3-9617-e46c3d629417",
-    USERNAME: "P3192618",
-    FIRSTNAME: "LUCAS",
-    LASTNAME: "SAULQUIN",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "3cb009df-3302-46e9-99f2-446ba7852d42",
-    USERNAME: "P3213686",
-    FIRSTNAME: "CRISTIAN",
-    LASTNAME: "BAUTISTA",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "3eb8666f-ca84-4b82-ba5e-68804198e971",
-    USERNAME: "P3194303",
-    FIRSTNAME: "SERGIO",
-    LASTNAME: "FLORES",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "c2ae831c-b9db-43ee-b9f0-f032c09e1ff1",
-    USERNAME: "P3205000",
-    FIRSTNAME: "JOAQUÍN",
-    LASTNAME: "GARCÍA",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "DESIGNER IN TRAINING 0",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "d002a7f2-ef9d-45df-af65-1ecb27442e4d",
-    USERNAME: "P3213684",
-    FIRSTNAME: "ANDRES",
-    LASTNAME: "RODRIGUEZ",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "5eae4b8e-ff58-450e-99d2-09e2d3454d16",
-    USERNAME: "P3194301",
-    FIRSTNAME: "ENRIQUE",
-    LASTNAME: "FLORES",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "8e81d272-9a99-4c9d-9c25-7b356fe9264e",
-    USERNAME: "P3194246",
-    FIRSTNAME: "KATHERINE",
-    LASTNAME: "GONZALEZ",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "fdc1a99b-71e2-45fa-8a9f-194d71be4a6d",
-    USERNAME: "P3204998",
-    FIRSTNAME: "CÉSAR",
-    LASTNAME: "ALVARADO",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "a3fc1304-d914-4134-b6f9-68c90de557b9",
-    USERNAME: "P3205001",
-    FIRSTNAME: "GERARDO",
-    LASTNAME: "FERNÁNDEZ",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Designer I",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "b2672082-6497-43de-b5cb-d57caf439da3",
-    USERNAME: "P3261127",
-    FIRSTNAME: "ANDREINA",
-    LASTNAME: "GARCIA",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "a9fd8123-6b2a-413d-9459-f10ffbd492e7",
-    USERNAME: "P3225599",
-    FIRSTNAME: "ELIAS",
-    LASTNAME: "GIMENEZ",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "Design Support",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-  {
-    EMP_ID: "62d76027-b4a6-46c5-9fcf-cf888d948709",
-    USERNAME: "P3261126",
-    FIRSTNAME: "RAMON",
-    LASTNAME: "AGUIRRE",
-    SUPERVISOR_ID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-    TWC: 0,
-    PWC: 0,
-    OC: 0,
-    TSC: 0,
-    CHILDREN: 0,
-    SUPERVISOR_FLAG: "2",
-    ROLENAME: "DESIGNER IN TRAINING 0",
-    QUOTAPOINT: 0,
-    CHILDQUOTAPOINT: 0,
-    PARENTWITHCHILDREN: 0,
-    CompanyName: "SUB-CONTRACTOR: CCI",
-  },
-];
-
-const testUUID = ["a8aee9ab-f4a3-4a98-81e9-4d88cc80092f"];
-
-const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] = [
-  {
-    taskUuid: "a8aee9ab-f4a3-4a98-81e9-4d88cc80092f",
-    data: [
-      {
-        uuid: "755e2f88-2641-489e-aba2-e51fb2267372",
-        createdAt: "2025-01-02T14:06:10.650Z",
-        elapseTime: 428,
-        moduleUUID: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
-        oldStart: "2025-01-02T14:06:09.809Z",
-        oldStop: "2025-01-02T21:14:03.991Z",
-        start: "2025-01-02T14:06:09.809Z",
-        stop: "2025-01-02T21:14:03.991Z",
-        userUUID: "3eb8666f-ca84-4b82-ba5e-68804198e971",
-        moduleToData: [
-          {
-            uuid: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
-            type: "MDL",
-            name: "ROUTE",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "SERGIO",
-            middleName: "",
-            username: "P3194303",
-            uuid: "3eb8666f-ca84-4b82-ba5e-68804198e971",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "7ddcb9e5-d4f1-434c-bb39-016a4759b766",
-        createdAt: "2025-01-11T03:45:39.207Z",
-        elapseTime: 0,
-        moduleUUID: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
-        oldStart: "2025-01-11T03:45:39.199Z",
-        oldStop: "2025-01-11T03:45:45.675Z",
-        start: "2025-01-11T03:45:39.199Z",
-        stop: "2025-01-11T03:45:45.675Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "3fd362fc-4eea-4740-b595-16a871e8ebbd",
-            type: "MDL",
-            name: "ROUTE",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "1a96e775-9cd7-4fb4-861d-776eb7ab159a",
-        createdAt: "2025-01-11T03:45:54.538Z",
-        elapseTime: 10,
-        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-        oldStart: "2025-01-11T03:45:53.966Z",
-        oldStop: "2025-01-11T03:56:10.127Z",
-        start: "2025-01-11T03:45:53.966Z",
-        stop: "2025-01-11T03:56:10.127Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-            type: "MDL",
-            name: "COAX",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "dadf11d7-5e58-4d88-b48f-23c1c948170b",
-        createdAt: "2025-01-11T12:06:08.612Z",
-        elapseTime: 31,
-        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-        oldStart: "2025-01-11T12:06:07.816Z",
-        oldStop: "2025-01-11T12:36:43.073Z",
-        start: "2025-01-11T12:06:07.816Z",
-        stop: "2025-01-11T12:36:43.073Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-            type: "MDL",
-            name: "COAX",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "d476fbe0-7e24-4abe-829a-fa7ae0b45e30",
-        createdAt: "2025-01-13T12:51:14.135Z",
-        elapseTime: 249,
-        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-        oldStart: "2025-01-13T12:51:14.250Z",
-        oldStop: "2025-01-13T17:00:31.723Z",
-        start: "2025-01-13T12:51:14.250Z",
-        stop: "2025-01-13T17:00:31.723Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-            type: "MDL",
-            name: "COAX",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "ba922910-7d4a-4728-a52b-d1a7e478d854",
-        createdAt: "2025-01-14T11:32:23.464Z",
-        elapseTime: 4,
-        moduleUUID: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-        oldStart: "2025-01-14T11:32:23.178Z",
-        oldStop: "2025-01-14T11:36:13.805Z",
-        start: "2025-01-14T11:32:23.178Z",
-        stop: "2025-01-14T11:36:13.805Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "4f40ff29-e07a-435c-a8d0-7ce5dbedf892",
-            type: "MDL",
-            name: "COAX",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "2d7ca776-adc1-4c5c-9108-2269a760cb89",
-        createdAt: "2025-01-14T11:36:21.494Z",
-        elapseTime: 1,
-        moduleUUID: "953a3846-5627-4b59-8e3f-2b5cdab3c037",
-        oldStart: "2025-01-14T11:36:21.636Z",
-        oldStop: "2025-01-14T11:36:59.730Z",
-        start: "2025-01-14T11:36:21.636Z",
-        stop: "2025-01-14T11:36:59.730Z",
-        userUUID: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-        moduleToData: [
-          {
-            uuid: "953a3846-5627-4b59-8e3f-2b5cdab3c037",
-            type: "MDL",
-            name: "FIBER",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "CINDY",
-            middleName: "",
-            username: "P3207530",
-            uuid: "1710ebe9-bd80-496a-8672-7a4ccd8a041f",
-            lastName: "FLORES",
-          },
-        ],
-      },
-      {
-        uuid: "41e1a3ba-5d2c-4864-b0e3-55c0f21ab687",
-        createdAt: "2025-01-14T18:01:35.448Z",
-        elapseTime: 35,
-        moduleUUID: "bd796a5b-035b-4c42-a340-2266914e3a9d",
-        oldStart: "2025-01-14T18:01:34.187Z",
-        oldStop: "2025-01-14T18:36:53.036Z",
-        start: "2025-01-14T18:01:34.187Z",
-        stop: "2025-01-14T18:36:53.036Z",
-        userUUID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-        moduleToData: [
-          {
-            uuid: "bd796a5b-035b-4c42-a340-2266914e3a9d",
-            type: "MDL",
-            name: "PACKAGE PREP",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "ANAIS",
-            middleName: "",
-            username: "P3194245",
-            uuid: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-            lastName: "ESPANA",
-          },
-        ],
-      },
-      {
-        uuid: "fa7e6ed6-8a44-4c08-8c64-34ce6215a856",
-        createdAt: "2025-01-14T19:45:09.522Z",
-        elapseTime: 0,
-        moduleUUID: "bd796a5b-035b-4c42-a340-2266914e3a9d",
-        oldStart: "2025-01-14T19:45:08.121Z",
-        oldStop: "2025-01-14T19:45:12.894Z",
-        start: "2025-01-14T19:45:08.121Z",
-        stop: "2025-01-14T19:45:12.894Z",
-        userUUID: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-        moduleToData: [
-          {
-            uuid: "bd796a5b-035b-4c42-a340-2266914e3a9d",
-            type: "MDL",
-            name: "PACKAGE PREP",
-          },
-        ],
-        actionByUser: [
-          {
-            firstName: "ANAIS",
-            middleName: "",
-            username: "P3194245",
-            uuid: "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d",
-            lastName: "ESPANA",
-          },
-        ],
-      },
-    ],
-    clickUpID: "86b32yewy",
-  },
-];
-const { cciHs } = CLICKUP_LIST_IDS;
+const { cciHs, cciBau } = CLICKUP_LIST_IDS;
 
 const DEFAULT_SEARCH_PARAMS = {
   page: "0",
-  "list_ids[]": cciHs,
-  //   include_closed: "true",
-  //   "statuses[]": ["redesign sent", "redesign in qc by irazu"],
+  "list_ids[]": cciBau,
+  include_closed: "true",
+  "assignees[]": "82212594",
+  "statuses[]": ["approved"],
   custom_fields: JSON.stringify([
     // {
     //   field_id: "ed83fc7c-baeb-4fdc-8e59-7ccbb4587cd5",
     //   operator: "RANGE",
     //   value: [new Date("1/1/2025").getTime(), new Date("1/31/2025").getTime()],
     // },
-    {
-      field_id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
-      operator: "=",
-      value: testUUID[0],
-    },
+    // {
+    //   field_id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
+    //   operator: "IS NULL",
+    // },
   ]),
 };
 
 const fields = ["id", "WORK REQUEST ID"];
 
 function MqmsTimetracking() {
-  // const { filteredTasks } = useFilteredTasks(DEFAULT_SEARCH_PARAMS);
-  // const { accessToken } = useMQMSAuth();
-  // const { userHierarchy } = useMQMSDesignTeam(accessToken);
+  const { filteredTasks } = useFilteredTasks(DEFAULT_SEARCH_PARAMS);
+  const { accessToken } = useMQMSAuth();
+  const { userHierarchy } = useMQMSDesignTeam(accessToken);
 
-  // const tasks = useMemo(() => {
-  //   return filteredTasks.map((task) => extractTaskFields(task, fields));
-  // }, [filteredTasks]);
+  const tasks = useMemo(() => {
+    return filteredTasks
+      .filter((task) => !task.time_spent)
+      .map((task) => extractTaskFields(task, fields));
+  }, [filteredTasks]);
 
-  // const UuidList: string[] = useMemo(() => {
-  //   return tasks.length > 0
-  //     ? tasks.map((task) => task["WORK REQUEST ID"] as string)
-  //     : [];
-  // }, [tasks]);
+  const UuidList: string[] = useMemo(() => {
+    return tasks.length > 0
+      ? tasks.map((task) => task["WORK REQUEST ID"] as string)
+      : [];
+  }, [tasks]);
 
-  // const { MQMSTasksTimetracker } = useMQMSTimetracker(
-  //   accessToken,
-  //   UuidList,
-  //   userHierarchy
-  // );
+  const { MQMSTasksTimetracker } = useMQMSTimetracker(
+    accessToken,
+    UuidList,
+    userHierarchy
+  );
 
-  // if (MQMSTasksTimetracker.length > 0) {
-  //   const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] =
-  //     MQMSTasksTimetracker.map((task) => {
-  //       const sentTask = tasks.find(
-  //         (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
-  //       );
-  //       return { ...task, clickUpID: sentTask?.id?.toString() as string };
-  //     });
+  const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] =
+    MQMSTasksTimetracker.map((task) => {
+      const sentTask = tasks.find(
+        (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
+      );
+      return { ...task, clickUpID: sentTask?.id?.toString() as string };
+    });
 
-  //   console.log("MQMSTaskTimetrackerWithID :", MQMSTaskTimetrackerWithID);
-  // }
+  if (MQMSTaskTimetrackerWithID.length > 0) {
+    console.log("MQMSTaskTimetrackerWithID :", MQMSTaskTimetrackerWithID);
+  }
+  const payloads: {
+    clickUpID: string;
+    start: number;
+    stop: number;
+  }[] = MQMSTaskTimetrackerWithID.slice(0, 20)
+    .map((task) => getTimetrackingPayloadForTask(task))
+    .flat();
 
-  console.log(MQMSTaskTimetrackerWithID);
+  if (payloads.length > 0) {
+    console.log("payloads", payloads);
+  }
+  function handleClick() {
+    payloads.forEach((payload) => {
+      createNewtimeEntry(payload);
+    });
+  }
 
-  return <div>time</div>;
+  return (
+    <div>
+      <button onClick={handleClick}>Create new time entry</button>
+    </div>
+  );
 }
 
 export default MqmsTimetracking;
