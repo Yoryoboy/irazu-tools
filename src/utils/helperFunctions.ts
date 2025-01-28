@@ -235,13 +235,53 @@ export function mergeTaskLabelPayload(
 export function getTimetrackingPayloadForTask(
   tasksList: TaskTimeDataWithClickUpID
 ) {
-  const { clickUpID, data } = tasksList;
+  const { clickUpID, assignee, data } = tasksList;
   const payload = data.map((time) => {
     return {
       clickUpID,
+      assignee,
       start: new Date(time.start).getTime(),
       stop: new Date(time.stop).getTime(),
     };
   });
   return payload.filter((payload) => payload.start < payload.stop);
+}
+
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+export async function sendBatchedRequests<T, R>(
+  payloads: T[],
+  batchSize: number,
+  postRequestCallback: (payload: T) => Promise<R>
+): Promise<R[]> {
+  const batches = chunkArray(payloads, batchSize);
+  const results: R[] = [];
+
+  for (let i = 0; i < batches.length; i++) {
+    console.log(`Sending batch ${i + 1} of ${batches.length}...`);
+
+    // Envía todas las solicitudes del lote en paralelo
+    const batchResults = await Promise.all(
+      batches[i].map((payload) => postRequestCallback(payload))
+    );
+
+    results.push(...batchResults);
+
+    console.log(`Batch ${i + 1} sent successfully.`);
+
+    // Esperar 60 segundos antes de enviar el siguiente lote
+    if (i < batches.length - 1) {
+      console.log("Waiting 60 seconds before sending the next batch...");
+      await new Promise((resolve) => setTimeout(resolve, 60000)); // Espera 60 segundos
+    }
+  }
+
+  console.log("All batches sent successfully!");
+  return results;
 }

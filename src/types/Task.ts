@@ -199,3 +199,36 @@ export interface TaskLabelPayload {
   value?: string[];
   error?: string;
 }
+
+export interface newTimeEntryPayload {
+  clickUpID: string;
+  assignee: number;
+  start: number;
+  stop: number;
+}
+
+export interface CreateNewTimeEntryData {
+  data: Data;
+}
+
+export interface Data {
+  id: string;
+  task: Task;
+  wid: string;
+  user: User;
+  billable: boolean;
+  start: number;
+  end: number;
+  duration: number;
+  description: string;
+  tags: string[];
+  at: number;
+  is_locked: boolean;
+  task_location: unknown;
+}
+
+export interface CreateNewTimeEntryResponse {
+  status: string;
+  data?: CreateNewTimeEntryData;
+  message?: string;
+}

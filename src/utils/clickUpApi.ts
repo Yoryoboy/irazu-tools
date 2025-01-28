@@ -1,6 +1,9 @@
 import {
+  CreateNewTimeEntryData,
+  CreateNewTimeEntryResponse,
   CustomField,
   ExtractedTaskFieldValues,
+  newTimeEntryPayload,
   TaskLabelPayload,
 } from "../types/Task";
 import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
@@ -139,11 +142,9 @@ export async function changeTaskStatus(status: string, taskId: string) {
   }
 }
 
-export async function createNewtimeEntry(payload: {
-  clickUpID: string;
-  start: number;
-  stop: number;
-}) {
+export async function createNewtimeEntry(
+  payload: newTimeEntryPayload
+): Promise<CreateNewTimeEntryResponse> {
   const URL = `https://api.clickup.com/api/v2/team/${TEAM_ID}/time_entries`;
   const options = {
     method: "POST",
@@ -154,6 +155,7 @@ export async function createNewtimeEntry(payload: {
     },
     body: JSON.stringify({
       tid: payload.clickUpID,
+      assignee: payload.assignee,
       start: payload.start,
       stop: payload.stop,
     }),
@@ -161,6 +163,7 @@ export async function createNewtimeEntry(payload: {
 
   try {
     const response = await fetch(URL, options);
+    const responseData: CreateNewTimeEntryData = await response.json();
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -171,6 +174,12 @@ export async function createNewtimeEntry(payload: {
     console.log(
       `New time entry created successfully for task ${payload.clickUpID}`
     );
+
+    return {
+      status: "success",
+      message: `New time entry created successfully for task ${payload.clickUpID}`,
+      data: responseData,
+    };
   } catch (error) {
     console.error(`Error creating new time entry:`, error);
     return { status: "error", message: `Error creating new time entry:` };

@@ -104,4 +104,5 @@ export interface TaskTimeData {
 
 export interface TaskTimeDataWithClickUpID extends TaskTimeData {
   clickUpID: string;
+  assignee: number;
 }
