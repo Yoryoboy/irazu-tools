@@ -14,13 +14,13 @@ interface Props {
 
 function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
   const asbuiltFieldsValues = asbuilts.map((asbuilt) => {
-    const projectCode: string = "CCI - HS ASBUILT";
+    const projectCode = "CCI - HS ASBUILT";
     const fieldsValues = extractTaskFields(asbuilt, asbuiltFields);
     return { ...fieldsValues, projectCode };
   });
 
   const designFieldsValues = designs.map((design) => {
-    const projectCode: string = "CCI - HS DESIGN";
+    const projectCode = "CCI - HS DESIGN";
     const fieldValues = extractTaskFields(design, designFields);
     return { ...fieldValues, projectCode };
   });
@@ -30,15 +30,15 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
   const columns =
     unifiedTasks.length > 0
       ? Object.keys(unifiedTasks[0]).map((key) => ({
-          title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalizar título
-          dataIndex: key, // Vincula la columna con el campo correspondiente
+          title: key.charAt(0).toUpperCase() + key.slice(1),
+          dataIndex: key,
           key: key,
         }))
       : [];
 
   const dataSource = unifiedTasks.map((item, index) => ({
     ...item,
-    key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
+    key: `${item.name}-${index}`,
   }));
 
   return (

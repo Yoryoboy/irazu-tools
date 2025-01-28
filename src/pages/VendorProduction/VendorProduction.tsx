@@ -7,6 +7,7 @@ import VendorProductionTable from "./VendorProductionTable";
 import { vendors } from "./VendorProduction.vendors";
 
 function VendorProduction() {
+  // const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
   const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
 
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
@@ -57,5 +58,7 @@ function VendorProduction() {
     </main>
   );
 }
+
+export async function loader() {}
 
 export default VendorProduction;

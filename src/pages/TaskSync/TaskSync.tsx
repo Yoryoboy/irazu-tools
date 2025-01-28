@@ -36,7 +36,7 @@ export async function loader() {
   try {
     const clickUpTasks = await fetchTasks(LIST_ID, DEFAULT_SEARCH_PARAMS);
     return clickUpTasks;
-  } catch (error: any) {
+  } catch (error) {
     throw new Response(error.message, {
       status: 500,
       statusText: "Internal Server Error",
