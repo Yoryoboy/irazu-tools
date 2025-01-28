@@ -13,7 +13,10 @@ import {
   getTextCustomFieldObject,
 } from "./helperFunctions";
 
-import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
+import {
+  CLICKUP_BAU_CUSTOM_FIELDS,
+  CLICKUP_HS_CUSTOM_FIELDS,
+} from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
@@ -245,9 +248,9 @@ export async function fetchFilteredTasks(
 }
 
 export function getCustomField(fieldName: string): CustomField {
-  const foundField = CLICKUP_HS_CUSTOM_FIELDS.fields.find(
-    (field) => field.name === fieldName
-  );
+  const foundField =
+    CLICKUP_HS_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName) ||
+    CLICKUP_BAU_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName);
 
   if (!foundField) {
     throw new Error("Field with name '" + fieldName + "' not found");

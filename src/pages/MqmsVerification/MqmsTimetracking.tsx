@@ -2,7 +2,6 @@ import { useMQMSAuth } from "../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../hooks/useMQMSTimetracker";
 import { useFilteredTasks } from "../../hooks/useFilteredTasks";
-import { CLICKUP_LIST_IDS } from "../../utils/config";
 import {
   extractTaskFields,
   getTimetrackingPayloadForTask,
@@ -15,33 +14,14 @@ import {
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
 } from "../../types/Task";
-
-const { cciBau } = CLICKUP_LIST_IDS;
-
-const DEFAULT_SEARCH_PARAMS = {
-  page: "0",
-  "list_ids[]": cciBau,
-  include_closed: "true",
-  // "assignees[]": "82212594",
-  "statuses[]": ["approved"],
-  custom_fields: JSON.stringify([
-    // {
-    //   field_id: "ed83fc7c-baeb-4fdc-8e59-7ccbb4587cd5",
-    //   operator: "RANGE",
-    //   value: [new Date("1/1/2025").getTime(), new Date("1/31/2025").getTime()],
-    // },
-    {
-      field_id: "618dff50-c93b-4914-9bb3-4c2ec84a91f1",
-      operator: "=",
-      value: "8fe6da48-00b5-42d6-b480-732ffcbb6280",
-    },
-  ]),
-};
+import { APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS } from "./MqmsTimetracking.SearchParams";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
 
 function MqmsTimetracking() {
-  const { filteredTasks } = useFilteredTasks(DEFAULT_SEARCH_PARAMS);
+  const { filteredTasks } = useFilteredTasks(
+    APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
+  );
   const { accessToken } = useMQMSAuth();
   const { userHierarchy } = useMQMSDesignTeam(accessToken);
 
