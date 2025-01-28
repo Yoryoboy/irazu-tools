@@ -26,9 +26,7 @@ function MqmsTimetracking() {
   const { userHierarchy } = useMQMSDesignTeam(accessToken);
 
   const tasks = useMemo(() => {
-    return filteredTasks
-      .filter((task) => !task.time_spent)
-      .map((task) => extractTaskFields(task, fields));
+    return filteredTasks.map((task) => extractTaskFields(task, fields));
   }, [filteredTasks]);
 
   const UuidList: string[] = useMemo(() => {
