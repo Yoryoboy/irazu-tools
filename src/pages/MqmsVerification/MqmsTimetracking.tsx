@@ -92,7 +92,6 @@ function MqmsTimetracking() {
     if (payloads.length > 0) {
       console.log(`Starting to send ${payloads.length} payloads...`);
 
-      // Llama a la función con un tamaño de lote de 90
       sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
         payloads,
         90,

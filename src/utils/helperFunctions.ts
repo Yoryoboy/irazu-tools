@@ -266,7 +266,6 @@ export async function sendBatchedRequests<T, R>(
   for (let i = 0; i < batches.length; i++) {
     console.log(`Sending batch ${i + 1} of ${batches.length}...`);
 
-    // Envía todas las solicitudes del lote en paralelo
     const batchResults = await Promise.all(
       batches[i].map((payload) => postRequestCallback(payload))
     );
@@ -275,10 +274,9 @@ export async function sendBatchedRequests<T, R>(
 
     console.log(`Batch ${i + 1} sent successfully.`);
 
-    // Esperar 60 segundos antes de enviar el siguiente lote
     if (i < batches.length - 1) {
       console.log("Waiting 60 seconds before sending the next batch...");
-      await new Promise((resolve) => setTimeout(resolve, 60000)); // Espera 60 segundos
+      await new Promise((resolve) => setTimeout(resolve, 60000));
     }
   }
 
