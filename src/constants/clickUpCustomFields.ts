@@ -7,6 +7,15 @@ interface CustomFields {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "e4ae3c81-f4cd-4e07-a8c1-0e50490e6bdb",
+      name: "Timetracked",
+      type: "checkbox",
+      type_config: {},
+      date_created: "1738076374692",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "c87d19db-ac1a-4fe0-9d62-7d928a41e50a",
       name: "HUB",
       type: "short_text",
