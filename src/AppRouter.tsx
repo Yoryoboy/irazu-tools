@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import VendorProduction from "./pages/VendorProduction/VendorProduction";
 import TaskSyncListSelector from "./pages/TaskSync/TaskSyncListSelector";
 import MqmsVerificationSelector from "./pages/MqmsVerification/MqmsVerificationSelector";
-import MqmsCheckApprovedTasks from "./pages/MqmsVerification/MqmsCheckApprovedTasks";
 import MqmsTimetracking from "./pages/MqmsVerification/MqmsTimetracking";
+import MqmsListConfigForCheckApproved from "./pages/MqmsVerification/MqmsListConfigForCheckApproved";
 
 function AppRouter() {
   return (
@@ -14,7 +14,7 @@ function AppRouter() {
       <Route path="/mqms-verification" element={<MqmsVerificationSelector />}>
         <Route
           path="check-approved-tasks"
-          element={<MqmsCheckApprovedTasks />}
+          element={<MqmsListConfigForCheckApproved />}
         />
         <Route path="timetracking" element={<MqmsTimetracking />} />
       </Route>
