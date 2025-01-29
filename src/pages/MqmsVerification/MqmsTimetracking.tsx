@@ -15,6 +15,7 @@ import {
   newTimeEntryPayload,
 } from "../../types/Task";
 import { APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS } from "./MqmsTimetracking.SearchParams";
+import useBulkTasksTimeStatus from "../../hooks/useBulkTasksTimeStatus";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
 
@@ -35,6 +36,12 @@ function MqmsTimetracking() {
       : [];
   }, [tasks]);
 
+  const idsList: string[] = useMemo(() => {
+    return tasks.length > 0 ? tasks.map((task) => task.id as string) : [];
+  }, [tasks]);
+
+  const { timeStatus } = useBulkTasksTimeStatus(idsList);
+
   const { MQMSTasksTimetracker } = useMQMSTimetracker(
     accessToken,
     UuidList,
@@ -54,8 +61,9 @@ function MqmsTimetracking() {
       return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
     });
 
-  if (MQMSTaskTimetrackerWithID.length > 0) {
+  if (MQMSTaskTimetrackerWithID.length > 0 && timeStatus.length > 0) {
     console.log("MQMSTaskTimetrackerWithID :", MQMSTaskTimetrackerWithID);
+    console.log("timeStatus :", timeStatus);
   }
 
   const payloads: newTimeEntryPayload[] = MQMSTaskTimetrackerWithID.map(

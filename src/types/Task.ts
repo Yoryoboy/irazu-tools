@@ -232,3 +232,27 @@ export interface CreateNewTimeEntryResponse {
   data?: CreateNewTimeEntryData;
   message?: string;
 }
+
+export interface FecthBulkTasksTimeStatusResponse {
+  current_status: CurrentStatus;
+  status_history: StatusHistory[];
+}
+
+export interface CurrentStatus {
+  status: string;
+  color: string;
+  total_time: TotalTime;
+}
+
+export interface TotalTime {
+  by_minute: number;
+  since: string;
+}
+
+export interface StatusHistory {
+  status: string;
+  color: string;
+  type: string;
+  total_time: TotalTime;
+  orderindex?: number;
+}
