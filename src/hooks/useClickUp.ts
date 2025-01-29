@@ -16,14 +16,21 @@ export function useFetchClickUpTasks(
       let lastPage = false;
 
       do {
-        const query = new URLSearchParams({
-          page: page.toString(),
-          ...SearchParams,
-        }).toString();
+        // Construcción manual de la query string
+        const query = new URLSearchParams();
+        query.append("page", page.toString());
+
+        Object.entries(SearchParams).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((item) => query.append(key, item)); // Agregar múltiples valores con la misma clave
+          } else {
+            query.append(key, value.toString());
+          }
+        });
 
         try {
           const response = await fetch(
-            `https://api.clickup.com/api/v2/list/${listId}/task?${query}`,
+            `https://api.clickup.com/api/v2/list/${listId}/task?${query.toString()}`,
             {
               method: "GET",
               headers: {
