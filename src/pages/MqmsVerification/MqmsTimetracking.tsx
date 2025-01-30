@@ -30,11 +30,18 @@ const validStatuses = [
 ];
 
 function MqmsTimetracking() {
-  const { filteredTasks } = useFilteredTasks(
+  const { filteredTasks: hsFilteredTasks } = useFilteredTasks(
+    HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
+  );
+  const { filteredTasks: bauFilteredTasks } = useFilteredTasks(
     BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
   );
   const { accessToken } = useMQMSAuth();
   const { userHierarchy } = useMQMSDesignTeam(accessToken);
+
+  const filteredTasks = useMemo(() => {
+    return [...hsFilteredTasks, ...bauFilteredTasks];
+  }, [hsFilteredTasks, bauFilteredTasks]);
 
   const tasks = useMemo(() => {
     return filteredTasks.map((task) => extractTaskFields(task, fields));

@@ -23,6 +23,10 @@ export const HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS = {
   "statuses[]": ["approved"],
   custom_fields: JSON.stringify([
     {
+      field_id: getCustomField("WORK REQUEST ID").id,
+      operator: "IS NOT NULL",
+    },
+    {
       field_id: getCustomField("Timetracked").id,
       operator: "IS NULL",
     },
