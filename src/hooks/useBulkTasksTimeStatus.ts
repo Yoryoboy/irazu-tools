@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { CLICKUP_API_AKEY } from "../utils/config";
-import { FecthBulkTasksTimeStatusResponse } from "../types/Task";
+import {
+  BulkTasksTimeStatus,
+  FecthBulkTasksTimeStatusResponse,
+} from "../types/Task";
 
 function useBulkTasksTimeStatus(idsList: string[]) {
   const [tasksTimeTimeStatus, setTasksTimeTimeStatus] =
@@ -43,7 +46,7 @@ function useBulkTasksTimeStatus(idsList: string[]) {
     }
   }, [idsQueryString]);
 
-  const timeStatus = tasksTimeTimeStatus
+  const timeStatus: BulkTasksTimeStatus[] = tasksTimeTimeStatus
     ? Object.keys(tasksTimeTimeStatus).map((id) => {
         return {
           task_id: id,

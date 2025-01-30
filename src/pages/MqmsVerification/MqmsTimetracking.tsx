@@ -11,13 +11,22 @@ import { useMemo } from "react";
 import { TaskTimeDataWithClickUpID } from "../../types/MQMS";
 import { createNewtimeEntry } from "../../utils/clickUpApi";
 import {
+  BulkTasksTimeStatus,
   CreateNewTimeEntryResponse,
+  ExtractedTaskFieldValues,
   newTimeEntryPayload,
 } from "../../types/Task";
 import { APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS } from "./MqmsTimetracking.SearchParams";
 import useBulkTasksTimeStatus from "../../hooks/useBulkTasksTimeStatus";
+import { getTimeSpentInStatusPayloads } from "../../utils/tasksFunctions";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
+const validStatuses = [
+  "asbuilt in qc by irazu",
+  "design in qc by irazu",
+  "redesign in qc by irazu",
+  "internal qc",
+];
 
 function MqmsTimetracking() {
   const { filteredTasks } = useFilteredTasks(
@@ -61,17 +70,36 @@ function MqmsTimetracking() {
       return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
     });
 
-  if (MQMSTaskTimetrackerWithID.length > 0 && timeStatus.length > 0) {
-    console.log("MQMSTaskTimetrackerWithID :", MQMSTaskTimetrackerWithID);
+  const payloadsWithMQMSTime: newTimeEntryPayload[] =
+    MQMSTaskTimetrackerWithID.map((task) =>
+      getTimetrackingPayloadForTask(task)
+    ).flat();
+
+  const TimeSpentInStatusPayloads =
+    timeStatus.length > 0 && payloadsWithMQMSTime.length > 0
+      ? getTimeSpentInStatusPayloads(
+          validStatuses,
+          timeStatus,
+          payloadsWithMQMSTime
+        )
+      : [];
+
+  if (timeStatus.length > 0 && payloadsWithMQMSTime.length > 0) {
+    console.log("payloadsWithMQMSTime :", payloadsWithMQMSTime);
     console.log("timeStatus :", timeStatus);
   }
 
-  const payloads: newTimeEntryPayload[] = MQMSTaskTimetrackerWithID.map(
-    (task) => getTimetrackingPayloadForTask(task)
-  ).flat();
+  if (TimeSpentInStatusPayloads.length > 0) {
+    console.log("TimeSpentInStatusPayloads :", TimeSpentInStatusPayloads);
+  }
+
+  const payloads =
+    payloadsWithMQMSTime && TimeSpentInStatusPayloads
+      ? [...payloadsWithMQMSTime, ...TimeSpentInStatusPayloads]
+      : [];
 
   if (payloads.length > 0) {
-    console.log("payloads", payloads);
+    console.log("payloads :", payloads);
   }
 
   function handleClick() {

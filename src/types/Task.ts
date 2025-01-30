@@ -204,7 +204,15 @@ export interface newTimeEntryPayload {
   clickUpID: string;
   assignee: number;
   start: number;
-  stop: number;
+  stop?: number;
+  duration?: number;
+  tags?: Tag[];
+}
+
+export interface Tag {
+  name: string;
+  tag_fg: string;
+  tag_bg: string;
 }
 
 export interface CreateNewTimeEntryData {
@@ -236,6 +244,10 @@ export interface CreateNewTimeEntryResponse {
 export interface FecthBulkTasksTimeStatusResponse {
   current_status: CurrentStatus;
   status_history: StatusHistory[];
+}
+
+export interface BulkTasksTimeStatus extends FecthBulkTasksTimeStatusResponse {
+  task_id: string;
 }
 
 export interface CurrentStatus {

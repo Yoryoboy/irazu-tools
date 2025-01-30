@@ -1,7 +1,9 @@
 import {
+  BulkTasksTimeStatus,
   CustomField,
   FulfilledPostNewTaskResult,
   MQMSTask,
+  newTimeEntryPayload,
   PostNewTaskResult,
   RejectedPostNewTaskResult,
   Task,
@@ -257,4 +259,45 @@ export function getCustomField(fieldName: string): CustomField {
   }
 
   return foundField;
+}
+
+export function getTimeSpentInStatusPayloads(
+  validStatuses: string[],
+  timeStatus: BulkTasksTimeStatus[],
+  payloadsWithMQMSTime: newTimeEntryPayload[]
+): newTimeEntryPayload[] {
+  const payloads = timeStatus
+    .map((task) => {
+      const clickUpID = task.task_id;
+      const partialPayload = task.status_history
+        .flat()
+        .filter((status) => validStatuses.includes(status.status))
+        .map((time) => {
+          return {
+            clickUpID,
+            start: Number(time.total_time.since),
+            duration: time.total_time.by_minute * 60000,
+          };
+        });
+
+      return partialPayload;
+    })
+    .flat();
+
+  return payloads.map((payload) => {
+    const assignee = payloadsWithMQMSTime.find(
+      (t) => t.clickUpID === payload.clickUpID
+    );
+    return {
+      assignee: assignee ? assignee.assignee : 0,
+      ...payload,
+      tags: [
+        {
+          name: "qc time",
+          tag_bg: "#e93d82",
+          tag_fg: "#e93d82",
+        },
+      ],
+    };
+  });
 }

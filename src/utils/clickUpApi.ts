@@ -158,6 +158,8 @@ export async function createNewtimeEntry(
       assignee: payload.assignee,
       start: payload.start,
       stop: payload.stop,
+      duration: payload.duration,
+      tags: payload.tags,
     }),
   };
 

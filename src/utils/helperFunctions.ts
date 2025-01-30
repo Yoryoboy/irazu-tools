@@ -242,6 +242,7 @@ export function getTimetrackingPayloadForTask(
       assignee,
       start: new Date(time.start).getTime(),
       stop: new Date(time.stop).getTime(),
+      tags: [{ name: "mqms time", tag_bg: "#6E56CF", tag_fg: "#6E56CF" }],
     };
   });
   return payload.filter((payload) => payload.start < payload.stop);
