@@ -11,12 +11,13 @@ import { useMemo } from "react";
 import { TaskTimeDataWithClickUpID } from "../../types/MQMS";
 import { createNewtimeEntry } from "../../utils/clickUpApi";
 import {
-  BulkTasksTimeStatus,
   CreateNewTimeEntryResponse,
-  ExtractedTaskFieldValues,
   newTimeEntryPayload,
 } from "../../types/Task";
-import { APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS } from "./MqmsTimetracking.SearchParams";
+import {
+  BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS,
+  HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS,
+} from "./MqmsTimetracking.SearchParams";
 import useBulkTasksTimeStatus from "../../hooks/useBulkTasksTimeStatus";
 import { getTimeSpentInStatusPayloads } from "../../utils/tasksFunctions";
 
@@ -30,7 +31,7 @@ const validStatuses = [
 
 function MqmsTimetracking() {
   const { filteredTasks } = useFilteredTasks(
-    APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
+    BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
   );
   const { accessToken } = useMQMSAuth();
   const { userHierarchy } = useMQMSDesignTeam(accessToken);
