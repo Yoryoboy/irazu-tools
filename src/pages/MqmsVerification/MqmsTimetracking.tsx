@@ -26,7 +26,7 @@ const validStatuses = [
   "asbuilt in qc by irazu",
   "design in qc by irazu",
   "redesign in qc by irazu",
-  "internal qc",
+  "ready for qc",
 ];
 
 function MqmsTimetracking() {
