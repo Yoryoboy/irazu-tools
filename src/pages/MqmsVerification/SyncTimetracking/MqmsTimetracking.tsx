@@ -20,14 +20,9 @@ import {
 } from "../../../utils/tasksFunctions";
 import { useMemo } from "react";
 import { useCombinedFilteredTasks } from "./useCombinedFilteredTasks";
+import { useTimetrackingPayloads } from "./useTimetrackingPayloads";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
-const validStatuses = [
-  "asbuilt in qc by irazu",
-  "design in qc by irazu",
-  "redesign in qc by irazu",
-  "ready for qc",
-];
 
 function MqmsTimetracking() {
   const { filteredTasks } = useCombinedFilteredTasks();
@@ -51,8 +46,6 @@ function MqmsTimetracking() {
   const idsList =
     tasks.length > 0 ? tasks.map((task) => task.id as string) : [];
 
-  const { timeStatus } = useBulkTasksTimeStatus(idsList);
-
   const { MQMSTasksTimetracker } = useMQMSTimetracker(
     accessToken,
     UuidList,
@@ -65,33 +58,10 @@ function MqmsTimetracking() {
     filteredTasks
   );
 
-  const payloadsWithMQMSTime: newTimeEntryPayload[] =
-    MQMSTaskTimetrackerWithID.map((task) =>
-      getTimetrackingPayloadForTask(task)
-    ).flat();
-
-  const TimeSpentInStatusPayloads =
-    timeStatus.length > 0 && payloadsWithMQMSTime.length > 0
-      ? getTimeSpentInStatusPayloads(
-          validStatuses,
-          timeStatus,
-          payloadsWithMQMSTime
-        )
-      : [];
-
-  if (timeStatus.length > 0 && payloadsWithMQMSTime.length > 0) {
-    console.log("payloadsWithMQMSTime :", payloadsWithMQMSTime);
-    console.log("timeStatus :", timeStatus);
-  }
-
-  if (TimeSpentInStatusPayloads.length > 0) {
-    console.log("TimeSpentInStatusPayloads :", TimeSpentInStatusPayloads);
-  }
-
-  const payloads =
-    payloadsWithMQMSTime && TimeSpentInStatusPayloads
-      ? [...payloadsWithMQMSTime, ...TimeSpentInStatusPayloads]
-      : [];
+  const { payloads } = useTimetrackingPayloads(
+    idsList,
+    MQMSTaskTimetrackerWithID
+  );
 
   if (payloads.length > 0) {
     console.log("payloads :", payloads);
