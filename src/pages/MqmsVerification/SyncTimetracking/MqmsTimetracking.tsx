@@ -1,7 +1,6 @@
 import { useMQMSAuth } from "../../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../../hooks/useMQMSTimetracker";
-import { useFilteredTasks } from "../../../hooks/useFilteredTasks";
 import {
   extractTaskFields,
   getTimetrackingPayloadForTask,
@@ -13,13 +12,14 @@ import {
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
 } from "../../../types/Task";
-import {
-  BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS,
-  HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS,
-} from "./MqmsTimetracking.SearchParams";
+
 import useBulkTasksTimeStatus from "../../../hooks/useBulkTasksTimeStatus";
-import { getTimeSpentInStatusPayloads } from "../../../utils/tasksFunctions";
+import {
+  checkMissingWorkRequestID,
+  getTimeSpentInStatusPayloads,
+} from "../../../utils/tasksFunctions";
 import { useMemo } from "react";
+import { useCombinedFilteredTasks } from "./useCombinedFilteredTasks";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
 const validStatuses = [
@@ -30,33 +30,11 @@ const validStatuses = [
 ];
 
 function MqmsTimetracking() {
-  const { filteredTasks: hsFilteredTasks } = useFilteredTasks(
-    HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
-  );
-  const { filteredTasks: bauFilteredTasks } = useFilteredTasks(
-    BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS
-  );
+  const { filteredTasks } = useCombinedFilteredTasks();
   const { accessToken } = useMQMSAuth();
   const { userHierarchy } = useMQMSDesignTeam(accessToken);
 
-  const filteredTasks = useMemo(() => {
-    return [...hsFilteredTasks, ...bauFilteredTasks];
-  }, [bauFilteredTasks, hsFilteredTasks]);
-
-  const taskIsMissingWorkRequestID =
-    filteredTasks.length > 0
-      ? filteredTasks.some((task) => {
-          const workRequestID = task?.custom_fields?.find(
-            (field) => field.name === "WORK REQUEST ID"
-          );
-
-          if (!workRequestID?.value) {
-            console.log(`Missing Work Request ID for task ${task.name}`);
-          }
-
-          return !workRequestID?.value;
-        })
-      : true;
+  const taskIsMissingWorkRequestID = checkMissingWorkRequestID(filteredTasks);
 
   const tasks = useMemo(() => {
     return filteredTasks.length > 0

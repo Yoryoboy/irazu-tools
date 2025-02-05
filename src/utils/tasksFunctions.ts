@@ -301,3 +301,19 @@ export function getTimeSpentInStatusPayloads(
     };
   });
 }
+
+export function checkMissingWorkRequestID(tasks: Task[]): boolean {
+  return tasks.length > 0
+    ? tasks.some((task) => {
+        const workRequestID = task?.custom_fields?.find(
+          (field) => field.name === "WORK REQUEST ID"
+        );
+
+        if (!workRequestID?.value) {
+          console.log(`Missing Work Request ID for task ${task.name}`);
+        }
+
+        return !workRequestID?.value;
+      })
+    : true;
+}
