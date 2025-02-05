@@ -1,5 +1,5 @@
-import { CLICKUP_LIST_IDS } from "../../utils/config";
-import { getCustomField } from "../../utils/tasksFunctions";
+import { CLICKUP_LIST_IDS } from "../../../utils/config";
+import { getCustomField } from "../../../utils/tasksFunctions";
 
 const { cciBau, cciHs } = CLICKUP_LIST_IDS;
 

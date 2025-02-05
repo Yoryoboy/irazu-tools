@@ -1,5 +1,5 @@
 import { Key } from "antd/es/table/interface";
-import { Result } from "../../types/MQMS";
+import { Result } from "../../../types/MQMS";
 
 export function createColumnsForComparisonTable(filteredMQMSTasks: Result[]) {
   const columns =

@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import VendorProduction from "./pages/VendorProduction/VendorProduction";
 import TaskSyncListSelector from "./pages/TaskSync/TaskSyncListSelector";
 import MqmsVerificationSelector from "./pages/MqmsVerification/MqmsVerificationSelector";
-import MqmsCheckApprovedTasks from "./pages/MqmsVerification/MqmsCheckApprovedTasks";
-import MqmsTimetracking from "./pages/MqmsVerification/MqmsTimetracking";
+import MqmsTimetracking from "./pages/MqmsVerification/SyncTimetracking/MqmsTimetracking";
+import MqmsCheckApprovedTasks from "./pages/MqmsVerification/ApprovedTasks/MqmsCheckApprovedTasks";
 
 function AppRouter() {
   return (
