@@ -3,6 +3,9 @@ import { getCustomField } from "../../utils/tasksFunctions";
 
 const { cciBau, cciHs } = CLICKUP_LIST_IDS;
 
+const TIMETRACKED_FIELD_ID = getCustomField("Timetracked").id;
+const WORK_REQUEST_FIELD_ID = getCustomField("WORK REQUEST ID").id;
+
 export const BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS = {
   page: "0",
   "list_ids[]": cciBau,
@@ -10,7 +13,7 @@ export const BAU_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS = {
   "statuses[]": ["approved"],
   custom_fields: JSON.stringify([
     {
-      field_id: getCustomField("Timetracked").id,
+      field_id: TIMETRACKED_FIELD_ID,
       operator: "IS NULL",
     },
   ]),
@@ -23,11 +26,11 @@ export const HS_APPROVED_TIME_NOT_TRACKED_SEARCH_PARAMS = {
   "statuses[]": ["approved"],
   custom_fields: JSON.stringify([
     {
-      field_id: getCustomField("WORK REQUEST ID").id,
+      field_id: WORK_REQUEST_FIELD_ID,
       operator: "IS NOT NULL",
     },
     {
-      field_id: getCustomField("Timetracked").id,
+      field_id: TIMETRACKED_FIELD_ID,
       operator: "IS NULL",
     },
   ]),

@@ -7,7 +7,6 @@ import {
   getTimetrackingPayloadForTask,
   sendBatchedRequests,
 } from "../../utils/helperFunctions";
-import { useMemo } from "react";
 import { TaskTimeDataWithClickUpID } from "../../types/MQMS";
 import { createNewtimeEntry } from "../../utils/clickUpApi";
 import {
@@ -20,6 +19,7 @@ import {
 } from "./MqmsTimetracking.SearchParams";
 import useBulkTasksTimeStatus from "../../hooks/useBulkTasksTimeStatus";
 import { getTimeSpentInStatusPayloads } from "../../utils/tasksFunctions";
+import { useMemo } from "react";
 
 const fields = ["id", "WORK REQUEST ID", "assignees"];
 const validStatuses = [
@@ -41,21 +41,37 @@ function MqmsTimetracking() {
 
   const filteredTasks = useMemo(() => {
     return [...hsFilteredTasks, ...bauFilteredTasks];
-  }, [hsFilteredTasks, bauFilteredTasks]);
+  }, [bauFilteredTasks, hsFilteredTasks]);
+
+  const taskIsMissingWorkRequestID =
+    filteredTasks.length > 0
+      ? filteredTasks.some((task) => {
+          const workRequestID = task?.custom_fields?.find(
+            (field) => field.name === "WORK REQUEST ID"
+          );
+
+          if (!workRequestID?.value) {
+            console.log(`Missing Work Request ID for task ${task.name}`);
+          }
+
+          return !workRequestID?.value;
+        })
+      : true;
 
   const tasks = useMemo(() => {
-    return filteredTasks.map((task) => extractTaskFields(task, fields));
+    return filteredTasks.length > 0
+      ? filteredTasks.map((task) => extractTaskFields(task, fields))
+      : [];
   }, [filteredTasks]);
 
-  const UuidList: string[] = useMemo(() => {
-    return tasks.length > 0
+  const UuidList = useMemo(() => {
+    return !taskIsMissingWorkRequestID
       ? tasks.map((task) => task["WORK REQUEST ID"] as string)
       : [];
-  }, [tasks]);
+  }, [tasks, taskIsMissingWorkRequestID]);
 
-  const idsList: string[] = useMemo(() => {
-    return tasks.length > 0 ? tasks.map((task) => task.id as string) : [];
-  }, [tasks]);
+  const idsList =
+    tasks.length > 0 ? tasks.map((task) => task.id as string) : [];
 
   const { timeStatus } = useBulkTasksTimeStatus(idsList);
 
