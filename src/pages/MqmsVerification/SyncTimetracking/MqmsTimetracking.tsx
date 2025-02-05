@@ -3,7 +3,6 @@ import { useMQMSDesignTeam } from "../../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../../hooks/useMQMSTimetracker";
 import {
   extractTaskFields,
-  getTimetrackingPayloadForTask,
   sendBatchedRequests,
 } from "../../../utils/helperFunctions";
 import { createNewtimeEntry } from "../../../utils/clickUpApi";
@@ -12,11 +11,9 @@ import {
   newTimeEntryPayload,
 } from "../../../types/Task";
 
-import useBulkTasksTimeStatus from "../../../hooks/useBulkTasksTimeStatus";
 import {
   checkMissingWorkRequestID,
   getMQMSTaskTimetrackerWithID,
-  getTimeSpentInStatusPayloads,
 } from "../../../utils/tasksFunctions";
 import { useMemo } from "react";
 import { useCombinedFilteredTasks } from "./useCombinedFilteredTasks";
