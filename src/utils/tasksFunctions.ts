@@ -1,6 +1,7 @@
 import {
   BulkTasksTimeStatus,
   CustomField,
+  ExtractedTaskFieldValues,
   FulfilledPostNewTaskResult,
   MQMSTask,
   newTimeEntryPayload,
@@ -20,6 +21,7 @@ import {
   CLICKUP_HS_CUSTOM_FIELDS,
 } from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";
+import { TaskTimeData, TaskTimeDataWithClickUpID } from "../types/MQMS";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -316,4 +318,22 @@ export function checkMissingWorkRequestID(tasks: Task[]): boolean {
         return !workRequestID?.value;
       })
     : true;
+}
+
+export function getMQMSTaskTimetrackerWithID(
+  MQMSTasksTimetracker: TaskTimeData[],
+  tasks: ExtractedTaskFieldValues[],
+  filteredTasks: Task[]
+): TaskTimeDataWithClickUpID[] {
+  return MQMSTasksTimetracker.map((task) => {
+    const sentTask = tasks.find(
+      (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
+    );
+    return { ...task, clickUpID: sentTask?.id?.toString() as string };
+  }).map((task) => {
+    const sentTask = filteredTasks.find(
+      (sentTask) => sentTask.id === task.clickUpID
+    );
+    return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
+  });
 }

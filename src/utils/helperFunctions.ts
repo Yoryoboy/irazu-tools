@@ -5,6 +5,7 @@ import {
   CustomField,
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
+  newTimeEntryPayload,
   Option,
   Status,
   Task,
@@ -234,7 +235,7 @@ export function mergeTaskLabelPayload(
 
 export function getTimetrackingPayloadForTask(
   tasksList: TaskTimeDataWithClickUpID
-) {
+): newTimeEntryPayload[] {
   const { clickUpID, assignee, data } = tasksList;
   const payload = data.map((time) => {
     return {

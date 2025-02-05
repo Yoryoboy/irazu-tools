@@ -6,7 +6,6 @@ import {
   getTimetrackingPayloadForTask,
   sendBatchedRequests,
 } from "../../../utils/helperFunctions";
-import { TaskTimeDataWithClickUpID } from "../../../types/MQMS";
 import { createNewtimeEntry } from "../../../utils/clickUpApi";
 import {
   CreateNewTimeEntryResponse,
@@ -16,6 +15,7 @@ import {
 import useBulkTasksTimeStatus from "../../../hooks/useBulkTasksTimeStatus";
 import {
   checkMissingWorkRequestID,
+  getMQMSTaskTimetrackerWithID,
   getTimeSpentInStatusPayloads,
 } from "../../../utils/tasksFunctions";
 import { useMemo } from "react";
@@ -59,18 +59,11 @@ function MqmsTimetracking() {
     userHierarchy
   );
 
-  const MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[] =
-    MQMSTasksTimetracker.map((task) => {
-      const sentTask = tasks.find(
-        (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
-      );
-      return { ...task, clickUpID: sentTask?.id?.toString() as string };
-    }).map((task) => {
-      const sentTask = filteredTasks.find(
-        (sentTask) => sentTask.id === task.clickUpID
-      );
-      return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
-    });
+  const MQMSTaskTimetrackerWithID = getMQMSTaskTimetrackerWithID(
+    MQMSTasksTimetracker,
+    tasks,
+    filteredTasks
+  );
 
   const payloadsWithMQMSTime: newTimeEntryPayload[] =
     MQMSTaskTimetrackerWithID.map((task) =>
