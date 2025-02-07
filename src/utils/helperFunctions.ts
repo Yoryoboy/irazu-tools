@@ -143,6 +143,11 @@ export function extractTaskFields(
         } else if (customField.type === "date") {
           result[field] =
             new Date(Number(customField.value)).toLocaleDateString() || "";
+        } else if (customField.type === "users") {
+          result[field] =
+            customField.value && Array.isArray(customField.value)
+              ? customField.value.map((user) => user?.id)
+              : "";
         } else {
           // Para otros tipos de campos personalizados, usar el valor directamente
           result[field] = (customField.value as string) ?? "";
