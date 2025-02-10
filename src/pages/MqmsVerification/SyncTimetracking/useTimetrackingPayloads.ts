@@ -1,6 +1,9 @@
 import useBulkTasksTimeStatus from "../../../hooks/useBulkTasksTimeStatus";
 import { TaskTimeDataWithClickUpID } from "../../../types/MQMS";
-import { newTimeEntryPayload } from "../../../types/Task";
+import {
+  ExtractedTaskFieldValues,
+  newTimeEntryPayload,
+} from "../../../types/Task";
 import { getTimetrackingPayloadForTask } from "../../../utils/helperFunctions";
 import { getTimeSpentInStatusPayloads } from "../../../utils/tasksFunctions";
 
@@ -13,7 +16,8 @@ const validStatuses = [
 
 export function useTimetrackingPayloads(
   idsList: string[],
-  MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[]
+  MQMSTaskTimetrackerWithID: TaskTimeDataWithClickUpID[],
+  extractedTaskFieldValues: ExtractedTaskFieldValues[]
 ) {
   const { timeStatus } = useBulkTasksTimeStatus(idsList);
 
@@ -27,7 +31,7 @@ export function useTimetrackingPayloads(
       ? getTimeSpentInStatusPayloads(
           validStatuses,
           timeStatus,
-          payloadsWithMQMSTime
+          extractedTaskFieldValues
         )
       : [];
 

@@ -207,6 +207,7 @@ export interface newTimeEntryPayload {
   stop?: number;
   duration?: number;
   tags?: Tag[];
+  status?: string;
 }
 
 export interface Tag {

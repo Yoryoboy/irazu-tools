@@ -266,9 +266,9 @@ export function getCustomField(fieldName: string): CustomField {
 export function getTimeSpentInStatusPayloads(
   validStatuses: string[],
   timeStatus: BulkTasksTimeStatus[],
-  payloadsWithMQMSTime: newTimeEntryPayload[]
+  extractedTaskFieldValues: ExtractedTaskFieldValues[]
 ): newTimeEntryPayload[] {
-  const payloads = timeStatus
+  const payloads: Partial<newTimeEntryPayload>[] = timeStatus
     .map((task) => {
       const clickUpID = task.task_id;
       const partialPayload = task.status_history
@@ -279,6 +279,7 @@ export function getTimeSpentInStatusPayloads(
             clickUpID,
             start: Number(time.total_time.since),
             duration: time.total_time.by_minute * 60000,
+            status: time.status,
           };
         });
 
@@ -286,12 +287,13 @@ export function getTimeSpentInStatusPayloads(
     })
     .flat();
 
-  return payloads.map((payload) => {
-    const assignee = payloadsWithMQMSTime.find(
-      (t) => t.clickUpID === payload.clickUpID
-    );
+  const payloadWithQcer = addQcerToTaskByStatus(
+    payloads,
+    extractedTaskFieldValues
+  );
+
+  const QcPayloads = payloadWithQcer.map((payload) => {
     return {
-      assignee: assignee ? assignee.assignee : 0,
       ...payload,
       tags: [
         {
@@ -302,6 +304,52 @@ export function getTimeSpentInStatusPayloads(
       ],
     };
   });
+
+  return QcPayloads;
+}
+
+function addQcerToTaskByStatus(
+  payloads: Partial<newTimeEntryPayload>[],
+  extractedTaskFieldValues: ExtractedTaskFieldValues[]
+): Partial<newTimeEntryPayload>[] {
+  const payloadWithQcer: Partial<newTimeEntryPayload>[] = payloads.map(
+    (payload) => {
+      const taskField = extractedTaskFieldValues.find(
+        (t) => t.id === payload.clickUpID
+      ) as ExtractedTaskFieldValues;
+
+      switch (payload.status) {
+        case "asbuilt in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["PREASBUILT QC BY"][0] || 0,
+          };
+
+        case "design in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["DESIGN QC BY"][0] || 0,
+          };
+
+        case "redesign in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["REDESIGN QC BY"][0] || 0,
+          };
+
+        case "ready for qc":
+          return {
+            ...payload,
+            assignee: taskField["QC PERFORMED BY"][0] || 0,
+          };
+
+        default:
+          return payload;
+      }
+    }
+  );
+
+  return payloadWithQcer;
 }
 
 export function checkMissingWorkRequestID(tasks: Task[]): boolean {

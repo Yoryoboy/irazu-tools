@@ -26,153 +26,8 @@ const fields = [
   "QC PERFORMED BY",
   "PREASBUILT QC BY",
   "DESIGN QC BY",
+  "REDESIGN QC BY",
 ];
-
-// const payloads: newTimeEntryPayload[] = [
-//   {
-//     clickUpID: "86b3m45c0",
-//     assignee: 82237767,
-//     start: 1737571534842,
-//     stop: 1737574464365,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3m45c0",
-//     assignee: 82237767,
-//     start: 1737574477161,
-//     stop: 1737574482231,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3m45c0",
-//     assignee: 82237767,
-//     start: 1737574494052,
-//     stop: 1737574507499,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3gexbv",
-//     assignee: 82237767,
-//     start: 1736858026292,
-//     stop: 1736859522730,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3gexbv",
-//     assignee: 82237767,
-//     start: 1736859536581,
-//     stop: 1736859651351,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3gexbt",
-//     assignee: 82237767,
-//     start: 1736856286357,
-//     stop: 1736857747418,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3gexbt",
-//     assignee: 82237767,
-//     start: 1736857760751,
-//     stop: 1736857933149,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3gexbt",
-//     assignee: 82237767,
-//     start: 1736857945809,
-//     stop: 1736857946100,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3fg92g",
-//     assignee: 82237767,
-//     start: 1736772516388,
-//     stop: 1736774348513,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3fg92g",
-//     assignee: 82237767,
-//     start: 1736774360847,
-//     stop: 1736774474005,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-//   {
-//     clickUpID: "86b3fg92g",
-//     assignee: 82237767,
-//     start: 1736774497334,
-//     stop: 1736774502922,
-//     tags: [
-//       {
-//         name: "mqms time",
-//         tag_bg: "#6E56CF",
-//         tag_fg: "#6E56CF",
-//       },
-//     ],
-//   },
-// ];
 
 function MqmsTimetracking() {
   const { filteredTasks } = useCombinedFilteredTasks();
@@ -214,7 +69,8 @@ function MqmsTimetracking() {
 
   const { payloads } = useTimetrackingPayloads(
     idsList,
-    MQMSTaskTimetrackerWithID
+    MQMSTaskTimetrackerWithID,
+    tasks
   );
 
   if (payloads.length > 0) {
