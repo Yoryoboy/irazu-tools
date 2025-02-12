@@ -27,7 +27,7 @@ export function useMQMSFetchTasks(
       };
 
       try {
-        if (listOfSentTasks.length <= 30) {
+        if (listOfSentTasks.length <= 10) {
           const body = JSON.stringify({
             ...partialBody,
             externalID: listOfSentTasks.join(),
@@ -40,7 +40,7 @@ export function useMQMSFetchTasks(
 
           setMQMSTasks(data.results);
         } else {
-          const chunkedTasks = splitTaskArray(listOfSentTasks, 30);
+          const chunkedTasks = splitTaskArray(listOfSentTasks, 10);
           const allResults = await Promise.all(
             chunkedTasks.map(async (chunk) => {
               const body = JSON.stringify({
