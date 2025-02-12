@@ -18,6 +18,7 @@ import {
 import { useMemo } from "react";
 import { useCombinedFilteredTasks } from "./useCombinedFilteredTasks";
 import { useTimetrackingPayloads } from "./useTimetrackingPayloads";
+import TimetrackingTable from "./TimetrackingTable";
 
 const fields = [
   "id",
@@ -29,7 +30,7 @@ const fields = [
   "REDESIGN QC BY",
 ];
 
-const payloads = [
+const payloads: newTimeEntryPayload[] = [
   {
     clickUpID: "86b3rmbyb",
     assignee: 49692417,
@@ -1011,6 +1012,7 @@ function MqmsTimetracking() {
 
   return (
     <div>
+      <TimetrackingTable payloads={payloads} />
       <button onClick={handleClick}>Create new time entry</button>
     </div>
   );
