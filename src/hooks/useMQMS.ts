@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Result, TaskDatum } from "../types/MQMS";
-import { fetchMQMSTaskByUuid, fetchMQMSTasks } from "../utils/MQMSApi";
-import { splitTaskArray } from "../utils/helperFunctions";
+import { TaskDatum } from "../types/MQMS";
+import { fetchMQMSTaskByUuid } from "../utils/MQMSApi";
 
 const BASE_URL = "https://mqms.corp.chartercom.com/api/work-requests/";
 

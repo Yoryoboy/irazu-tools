@@ -1,10 +1,9 @@
-import { Result, TaskDatum } from "../../types/MQMS";
+import { TaskDatum } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
 import { useFileteredMQMSTaks } from "../../hooks/useFileteredMQMSTaks";
 import { createColumnsForComparisonTable } from "./ComparionTable.columns";
-import { validateHeaderName } from "http";
 
 interface Props {
   MQMSTasks: TaskDatum[];
@@ -36,8 +35,6 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
 
     console.log(results);
   }
-
-  console.log("FilteredMQMSTasksWithClickUpID", filteredMQMSTasksWithClickUpID);
 
   const columns = createColumnsForComparisonTable(
     filteredMQMSTasksWithClickUpID

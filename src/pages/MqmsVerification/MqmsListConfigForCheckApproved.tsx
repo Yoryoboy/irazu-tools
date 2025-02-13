@@ -33,12 +33,12 @@ function MqmsListConfigForCheckApproved() {
               clickUpTasks={bauClickUpTasks}
             />
           )}
-          {/* {hsClickUpTasks.length > 0 && (
+          {hsClickUpTasks.length > 0 && (
             <MqmsCheckApprovedTasks
               accessToken={accessToken}
               clickUpTasks={hsClickUpTasks}
             />
-          )} */}
+          )}
         </div>
       )}
     </>

@@ -47,14 +47,11 @@ function MqmsCheckApprovedTasks({ accessToken, clickUpTasks }: Props) {
       });
   }, [sentTasks]);
 
-  console.log("listOfSentTasks: ", listOfSentTasks);
-
   const { MQMSTasks, MQMSTasksRejected, isLoading } = useMQMSFetchTasks(
     accessToken,
     listOfSentTasks
   );
 
-  console.log("MQMSTasks: ", MQMSTasks);
   console.log("MQMSTasksRejected: ", MQMSTasksRejected);
 
   return (
