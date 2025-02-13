@@ -23,19 +23,25 @@ function MqmsListConfigForCheckApproved() {
     hsSearchParams
   );
 
-  console.log(hsClickUpTasks.length);
-
   return (
-    <div>
-      <MqmsCheckApprovedTasks
-        accessToken={accessToken}
-        clickUpTasks={bauClickUpTasks}
-      />
-      <MqmsCheckApprovedTasks
-        accessToken={accessToken}
-        clickUpTasks={hsClickUpTasks}
-      />
-    </div>
+    <>
+      {accessToken && (
+        <div>
+          {bauClickUpTasks.length > 0 && (
+            <MqmsCheckApprovedTasks
+              accessToken={accessToken}
+              clickUpTasks={bauClickUpTasks}
+            />
+          )}
+          {/* {hsClickUpTasks.length > 0 && (
+            <MqmsCheckApprovedTasks
+              accessToken={accessToken}
+              clickUpTasks={hsClickUpTasks}
+            />
+          )} */}
+        </div>
+      )}
+    </>
   );
 }
 

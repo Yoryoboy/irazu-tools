@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { Result } from "../types/MQMS";
-import { fetchMQMSTasks } from "../utils/MQMSApi";
+import { Result, TaskDatum } from "../types/MQMS";
+import { fetchMQMSTaskByUuid, fetchMQMSTasks } from "../utils/MQMSApi";
 import { splitTaskArray } from "../utils/helperFunctions";
+
+const BASE_URL = "https://mqms.corp.chartercom.com/api/work-requests/";
 
 export function useMQMSFetchTasks(
   accessToken: string | null | undefined,
   listOfSentTasks: string[] = []
 ) {
-  const [MQMSTasks, setMQMSTasks] = useState<Result[]>([]);
+  const [MQMSTasks, setMQMSTasks] = useState<TaskDatum[]>([]);
+  const [MQMSTasksRejected, setMQMSTasksRejected] = useState<
+    { status: string; uuid: string }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,46 +23,43 @@ export function useMQMSFetchTasks(
       }
 
       setIsLoading(true);
-      const partialBody = { archiveBucket: "live" };
-      const url =
-        "https://mqms.corp.chartercom.com/api/work-requests/search?srcTimezone=America/Buenos_Aires";
       const headers: HeadersInit = {
         "Content-Type": "application/json",
         Authorizations: accessToken,
       };
 
       try {
-        if (listOfSentTasks.length <= 10) {
-          const body = JSON.stringify({
-            ...partialBody,
-            externalID: listOfSentTasks.join(),
-          });
-          const { status, data } = await fetchMQMSTasks(headers, url, body);
+        const allResults = await Promise.allSettled(
+          listOfSentTasks.map(async (uuid) => {
+            const url = `${BASE_URL}${uuid}`;
+            const { status, data } = await fetchMQMSTaskByUuid(headers, url);
+            if (status !== "success" || !data) {
+              throw new Error("status is not 'success' or data is not defined");
+            }
 
-          if (status !== "success" || !data?.results) {
-            throw new Error("status is not 'success' or data is not defined");
+            if (data.length === 0) {
+              return {
+                status: "UUID_NOT_FOUND",
+                uuuid: uuid,
+              };
+            }
+            return data;
+          })
+        );
+
+        const fulfilledResults: TaskDatum[][] = [];
+        const rejectedResults: { status: string; uuid: string }[] = [];
+
+        allResults.forEach((result) => {
+          if (result.value.status !== "UUID_NOT_FOUND") {
+            fulfilledResults.push(result.value);
+          } else {
+            rejectedResults.push(result.value);
           }
+        });
 
-          setMQMSTasks(data.results);
-        } else {
-          const chunkedTasks = splitTaskArray(listOfSentTasks, 10);
-          const allResults = await Promise.all(
-            chunkedTasks.map(async (chunk) => {
-              const body = JSON.stringify({
-                ...partialBody,
-                externalID: chunk.join(),
-              });
-              const { status, data } = await fetchMQMSTasks(headers, url, body);
-              if (status !== "success" || !data?.results) {
-                throw new Error(
-                  "status is not 'success' or data is not defined"
-                );
-              }
-              return data.results;
-            })
-          );
-          setMQMSTasks(allResults.flat());
-        }
+        setMQMSTasks(fulfilledResults.flat());
+        setMQMSTasksRejected(rejectedResults.flat());
       } catch (error) {
         console.error("Error fetching MQMS tasks:", error);
       } finally {
@@ -68,5 +70,5 @@ export function useMQMSFetchTasks(
     fetchTasks();
   }, [accessToken, listOfSentTasks]);
 
-  return { MQMSTasks, isLoading };
+  return { MQMSTasks, MQMSTasksRejected, isLoading };
 }
