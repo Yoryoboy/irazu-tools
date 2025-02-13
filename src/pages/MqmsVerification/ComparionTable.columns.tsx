@@ -1,7 +1,9 @@
 import { Key } from "antd/es/table/interface";
-import { Result } from "../../types/MQMS";
+import { TaskDatum } from "../../types/MQMS";
 
-export function createColumnsForComparisonTable(filteredMQMSTasks: Result[]) {
+export function createColumnsForComparisonTable(
+  filteredMQMSTasks: TaskDatum[]
+) {
   const columns =
     filteredMQMSTasks.length > 0
       ? [
@@ -30,10 +32,10 @@ export function createColumnsForComparisonTable(filteredMQMSTasks: Result[]) {
             dataIndex: "mqmsStatus",
             key: "MQMS STATUS",
             filters: Array.from(
-              new Set(filteredMQMSTasks.map((task) => task.status))
+              new Set(filteredMQMSTasks.map((task) => task.status.name))
             ).map((status) => ({
               text: status,
-              value: status as Key,
+              value: status,
             })),
             onFilter: (
               value: boolean | Key,
@@ -45,10 +47,15 @@ export function createColumnsForComparisonTable(filteredMQMSTasks: Result[]) {
             dataIndex: "mqmsAssignedUser",
             key: "MQMS ASSIGNED USER",
             filters: Array.from(
-              new Set(filteredMQMSTasks.map((task) => task.currentAssignedUser))
+              new Set(
+                filteredMQMSTasks.map(
+                  (task) =>
+                    `${task.currentAssignedUser.firstName} ${task.currentAssignedUser.lastName}`
+                )
+              )
             ).map((user) => ({
-              text: user as string,
-              value: user as Key,
+              text: user,
+              value: user,
             })),
             onFilter: (
               value: boolean | Key,

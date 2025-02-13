@@ -35,7 +35,7 @@ export interface TaskDatum {
   rejectApproval: boolean;
   pointsRolledOver: boolean;
   pointsUpdated: boolean;
-  createdBy: Coordinator;
+  createdBy: User;
   prism_QC: number;
   createdAt: Date;
   numberOfFile: number;
@@ -52,13 +52,13 @@ export interface TaskDatum {
   plantTypeUUID: JobTypeUUID;
   projectTypeUUID: JobTypeUUID;
   jobTypeUUID: JobTypeUUID;
-  coordinator: Coordinator;
+  coordinator: User;
   priority: string;
   lobUUID: string;
   lobName: string;
   softwareName: string;
-  currentAssignedModule: unknown;
-  currentAssignedUser: CurrentAssignedUser;
+  currentAssignedModule: JobTypeUUID;
+  currentAssignedUser: User;
   prismURL: string;
   isActivePrismUrl: boolean;
   assignedDate: null;
@@ -81,13 +81,13 @@ export interface Location {
   coordinates: number[];
 }
 
-export interface Coordinator {
+export interface User {
   uuid: string;
   firstName: string;
   lastName: string;
   username: string;
-  name?: string;
-  middleName?: string;
+  name: string;
+  middleName: string;
 }
 
 export interface CurrentAssignedUser {
@@ -121,8 +121,8 @@ export interface WorkFlow {
   moduleWeightage: number;
   completed: boolean;
   moduleObj: JobTypeUUID;
-  createdByObj: Coordinator;
-  assignedUser: Coordinator;
+  createdByObj: User;
+  assignedUser: User;
 }
 
 export interface FetchMQMSTaskByNameResponse {
@@ -148,7 +148,7 @@ export interface Result {
   module: string;
 }
 
-export interface MQMSTasksWithClickUpID extends Result {
+export interface MQMSTasksWithClickUpID extends TaskDatum {
   clickUpID: string;
 }
 

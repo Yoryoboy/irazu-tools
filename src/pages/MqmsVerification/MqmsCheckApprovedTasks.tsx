@@ -59,14 +59,14 @@ function MqmsCheckApprovedTasks({ accessToken, clickUpTasks }: Props) {
 
   return (
     <main>
-      {/* {isLoading ? (
+      {isLoading ? (
         <p>Cargando...</p>
       ) : (
         <>
           <h1>Verificación de tareas enviadas</h1>
           <ComparisonTable MQMSTasks={MQMSTasks} sentTasks={sentTasks} />
         </>
-      )} */}
+      )}
     </main>
   );
 }

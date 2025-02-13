@@ -1,32 +1,30 @@
-import { Result } from "../../types/MQMS";
+import { Result, TaskDatum } from "../../types/MQMS";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../utils/clickUpApi";
 import { useFileteredMQMSTaks } from "../../hooks/useFileteredMQMSTaks";
 import { createColumnsForComparisonTable } from "./ComparionTable.columns";
+import { validateHeaderName } from "http";
 
 interface Props {
-  MQMSTasks: Result[];
+  MQMSTasks: TaskDatum[];
   sentTasks: ExtractedTaskFieldValues[];
 }
 
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
   const {
     filteredMQMSTasksWithClickUpID,
-    setFilteredMQMSTasks,
     closedAndPreclosedTasksWithClickUpID,
   } = useFileteredMQMSTaks(MQMSTasks, sentTasks);
 
-  async function handleAction(ClickUpTaskId: string, key: string) {
+  async function handleAction(ClickUpTaskId: string, uuid: string) {
+    console.log(uuid);
     const result = await changeTaskStatus("approved", ClickUpTaskId);
 
     if (result.status === "error") {
       console.error(result.message);
       return;
     }
-    setFilteredMQMSTasks(
-      filteredMQMSTasksWithClickUpID.filter((task) => task.uuid !== key)
-    );
   }
 
   async function handleApproveAll() {
@@ -38,6 +36,8 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
 
     console.log(results);
   }
+
+  console.log("FilteredMQMSTasksWithClickUpID", filteredMQMSTasksWithClickUpID);
 
   const columns = createColumnsForComparisonTable(
     filteredMQMSTasksWithClickUpID
@@ -55,15 +55,17 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     clickupAssignee: sentTasks.find(
       (sentTask) => sentTask.name === task.externalID
     )?.assignees,
-    mqmsStatus: task.status,
-    mqmsAssignedUser: task.currentAssignedUser ?? "",
-    mqmsModule: task.module ?? "",
+    mqmsStatus: task.status.name,
+    mqmsAssignedUser: `${task.currentAssignedUser.firstName} ${task.currentAssignedUser.lastName}`,
+    mqmsModule: task.currentAssignedModule.name ?? "",
     clickUpID: task.clickUpID ?? "",
     action: (
       <Space size="middle">
         <Button
           type="primary"
-          disabled={task.status !== "CLOSED" && task.status !== "PRECLOSE"}
+          disabled={
+            task.status.name !== "CLOSED" && task.status.name !== "PRECLOSE"
+          }
           onClick={() => handleAction(task.clickUpID, task.uuid)}
         >
           Mark as Approved

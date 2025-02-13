@@ -1,28 +1,15 @@
-import { useState } from "react";
-import { MQMSTasksWithClickUpID, Result } from "../types/MQMS";
+import { MQMSTasksWithClickUpID, TaskDatum } from "../types/MQMS";
 import { ExtractedTaskFieldValues } from "../types/Task";
 
 export function useFileteredMQMSTaks(
-  MQMSTasks: Result[],
+  MQMSTasks: TaskDatum[],
   ClickUpSentTasks: ExtractedTaskFieldValues[]
 ) {
-  const [filteredMQMSTasks, setFilteredMQMSTasks] = useState<Result[]>(
-    MQMSTasks.filter((task) => {
-      return ClickUpSentTasks.some(
-        (sentTask) =>
-          sentTask.name === task.externalID &&
-          sentTask["SECONDARY ID"] === task.secondaryExternalID
-      );
-    })
-  );
-
   const filteredMQMSTasksWithClickUpID: MQMSTasksWithClickUpID[] =
-    filteredMQMSTasks.length > 0
-      ? filteredMQMSTasks.map((task) => {
+    MQMSTasks.length > 0
+      ? MQMSTasks.map((task) => {
           const sentTask = ClickUpSentTasks.find(
-            (currSentTask) =>
-              currSentTask.name === task.externalID &&
-              currSentTask["SECONDARY ID"] === task.secondaryExternalID
+            (currSentTask) => currSentTask["WORK REQUEST ID"] === task.uuid
           );
 
           if (!sentTask?.id) {
@@ -33,9 +20,10 @@ export function useFileteredMQMSTaks(
       : [];
 
   const closedAndPreclosedTasks =
-    filteredMQMSTasks.length > 0
-      ? filteredMQMSTasks.filter(
-          (task) => task.status === "CLOSED" || task.status === "PRECLOSE"
+    MQMSTasks.length > 0
+      ? MQMSTasks.filter(
+          (task) =>
+            task.status.name === "CLOSED" || task.status.name === "PRECLOSE"
         )
       : [];
 
@@ -58,7 +46,6 @@ export function useFileteredMQMSTaks(
 
   return {
     filteredMQMSTasksWithClickUpID,
-    setFilteredMQMSTasks,
     closedAndPreclosedTasksWithClickUpID,
   };
 }
