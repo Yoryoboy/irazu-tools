@@ -994,28 +994,9 @@ function MqmsTimetracking() {
   //   console.log("payloads :", payloads);
   // }
 
-  function handleClick() {
-    if (payloads.length > 0) {
-      //   console.log(`Starting to send ${payloads.length} payloads...`);
-
-      //   sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
-      //     payloads,
-      //     90,
-      //     createNewtimeEntry
-      //   ).catch((error) => {
-      //     console.error("Error sending batched requests:", error);
-      //   });
-      // } else {
-      //   console.log("No payloads to send.");
-
-      console.log("payloads :", payloads);
-    }
-  }
-
   return (
     <div>
       <TimetrackingTable payloads={payloads} />
-      <button onClick={handleClick}>Create new time entry</button>
     </div>
   );
 }

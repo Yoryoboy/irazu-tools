@@ -2,6 +2,7 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { newTimeEntryPayload } from "../../../types/Task";
 import { useState } from "react";
 import { getRowsforMUITable } from "./TimetrackingTable.functions";
+import { Button, Flex, Statistic } from "antd";
 
 interface Props {
   payloads: newTimeEntryPayload[];
@@ -15,6 +16,7 @@ const columns: GridColDef[] = [
 
 function TimetrackingTable({ payloads }: Props) {
   const rows = getRowsforMUITable(payloads);
+
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>([]);
   const selectedPayloads =
@@ -26,21 +28,34 @@ function TimetrackingTable({ payloads }: Props) {
 
   console.log("selectedPayloads :", selectedPayloads);
   console.log("rows :", rows);
-  console.log("payloads :", payloads);
 
   return (
-    <DataGrid
-      columns={columns}
-      rows={rows}
-      rowCount={rows?.length ?? 0}
-      paginationMode="server"
-      onRowSelectionModelChange={(newRowSelectionModel) => {
-        setRowSelectionModel(newRowSelectionModel);
-      }}
-      rowSelectionModel={rowSelectionModel}
-      checkboxSelection
-      disableRowSelectionOnClick
-    />
+    <section>
+      <Flex align="center" justify="space-between" style={{ marginTop: 50 }}>
+        <Statistic title="Payloads en total" value={payloads.length} />
+        <Statistic
+          title="Payloads seleccionados"
+          value={selectedPayloads.length}
+        />
+      </Flex>
+
+      <Button type="primary">Sincronizar tareas seleccionadas</Button>
+
+      <article>
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          rowCount={rows?.length ?? 0}
+          paginationMode="server"
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
+          }}
+          rowSelectionModel={rowSelectionModel}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </article>
+    </section>
   );
 }
 

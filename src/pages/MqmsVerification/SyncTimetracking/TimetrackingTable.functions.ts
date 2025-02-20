@@ -28,3 +28,21 @@ export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
 
   return testRow;
 }
+
+export function handleClick(payloads: newTimeEntryPayload[]) {
+  if (payloads.length > 0) {
+    //   console.log(`Starting to send ${payloads.length} payloads...`);
+
+    //   sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
+    //     payloads,
+    //     90,
+    //     createNewtimeEntry
+    //   ).catch((error) => {
+    //     console.error("Error sending batched requests:", error);
+    //   });
+    // } else {
+    //   console.log("No payloads to send.");
+
+    console.log("payloads :", payloads);
+  }
+}
