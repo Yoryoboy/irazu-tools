@@ -1,4 +1,9 @@
-import { newTimeEntryPayload } from "../../../types/Task";
+import {
+  CreateNewTimeEntryResponse,
+  newTimeEntryPayload,
+} from "../../../types/Task";
+import { createNewtimeEntry } from "../../../utils/clickUpApi";
+import { sendBatchedRequests } from "../../../utils/helperFunctions";
 
 export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
   const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
@@ -29,20 +34,25 @@ export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
   return testRow;
 }
 
-export function handleClick(payloads: newTimeEntryPayload[]) {
+export function handleClick(
+  payloads: newTimeEntryPayload[],
+  setLocalPayloads: React.Dispatch<React.SetStateAction<newTimeEntryPayload[]>>
+) {
   if (payloads.length > 0) {
-    //   console.log(`Starting to send ${payloads.length} payloads...`);
+    console.log(`Starting to send ${payloads.length} payloads...`);
 
-    //   sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
-    //     payloads,
-    //     90,
-    //     createNewtimeEntry
-    //   ).catch((error) => {
-    //     console.error("Error sending batched requests:", error);
-    //   });
-    // } else {
-    //   console.log("No payloads to send.");
+    sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
+      payloads,
+      90,
+      createNewtimeEntry
+    ).catch((error) => {
+      console.error("Error sending batched requests:", error);
+    });
 
-    console.log("payloads :", payloads);
+    setLocalPayloads((prevState) =>
+      prevState.filter((payload) => !payloads.includes(payload))
+    );
+  } else {
+    console.log("No payloads to send.");
   }
 }

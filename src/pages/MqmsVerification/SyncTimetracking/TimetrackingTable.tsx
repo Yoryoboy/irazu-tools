@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { newTimeEntryPayload } from "../../../types/Task";
-import { useState } from "react";
-import { getRowsforMUITable } from "./TimetrackingTable.functions";
+import { useEffect, useState } from "react";
+import { getRowsforMUITable, handleClick } from "./TimetrackingTable.functions";
 import { Button, Flex, Statistic } from "antd";
 
 interface Props {
@@ -15,31 +15,42 @@ const columns: GridColDef[] = [
 ];
 
 function TimetrackingTable({ payloads }: Props) {
-  const rows = getRowsforMUITable(payloads);
+  console.log(payloads);
+  const [localPayloads, setLocalPayloads] = useState<newTimeEntryPayload[]>([]);
+  const rows = getRowsforMUITable(localPayloads);
+
+  useEffect(() => {
+    if (payloads.length > 0) {
+      setLocalPayloads(payloads); // Almacena los datos una vez que el hook los obtiene
+    }
+  }, [payloads]);
 
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>([]);
   const selectedPayloads =
     rowSelectionModel.length > 0
-      ? payloads.filter((payload) =>
+      ? localPayloads.filter((payload) =>
           rowSelectionModel.includes(payload.clickUpID)
         )
       : [];
 
-  console.log("selectedPayloads :", selectedPayloads);
-  console.log("rows :", rows);
-
   return (
     <section>
       <Flex align="center" justify="space-between" style={{ marginTop: 50 }}>
-        <Statistic title="Payloads en total" value={payloads.length} />
+        <Statistic title="Tareas" value={rows.length} />
+        <Statistic title="Payloads en total" value={localPayloads.length} />
         <Statistic
           title="Payloads seleccionados"
           value={selectedPayloads.length}
         />
       </Flex>
 
-      <Button type="primary">Sincronizar tareas seleccionadas</Button>
+      <Button
+        type="primary"
+        onClick={() => handleClick(selectedPayloads, setLocalPayloads)}
+      >
+        Sincronizar tareas seleccionadas
+      </Button>
 
       <article>
         <DataGrid
