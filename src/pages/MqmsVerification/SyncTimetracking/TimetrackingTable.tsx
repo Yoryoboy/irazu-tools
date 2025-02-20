@@ -1,6 +1,6 @@
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { newTimeEntryPayload } from "../../../types/Task";
-import test from "node:test";
+import { useState } from "react";
 
 interface Props {
   payloads: newTimeEntryPayload[];
@@ -8,7 +8,6 @@ interface Props {
 
 function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
   const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
-  console.log(groupedPayload);
 
   const testRow = [];
 
@@ -38,7 +37,19 @@ function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
 
 function TimetrackingTable({ payloads }: Props) {
   const rows = getRowsforMUITable(payloads);
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>([]);
+  const selectedPayloads =
+    rowSelectionModel.length > 0
+      ? payloads.filter((payload) =>
+          rowSelectionModel.includes(payload.clickUpID)
+        )
+      : [];
+  console.log("selectedPayloads :", selectedPayloads);
+
   console.log("rows :", rows);
+  console.log("payloads :", payloads);
+
   const columns: GridColDef[] = [
     { field: "clickUpID", headerName: "ClickUpID", width: 150 },
     { field: "designDuration", headerName: " Design Duration", width: 150 },
@@ -51,14 +62,10 @@ function TimetrackingTable({ payloads }: Props) {
       rows={rows}
       rowCount={rows?.length ?? 0}
       paginationMode="server"
-      initialState={{
-        pagination: {
-          paginationModel: {
-            pageSize: 5,
-          },
-        },
+      onRowSelectionModelChange={(newRowSelectionModel) => {
+        setRowSelectionModel(newRowSelectionModel);
       }}
-      pageSizeOptions={[5]}
+      rowSelectionModel={rowSelectionModel}
       checkboxSelection
       disableRowSelectionOnClick
     />
