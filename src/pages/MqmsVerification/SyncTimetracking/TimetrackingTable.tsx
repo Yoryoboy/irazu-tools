@@ -15,7 +15,6 @@ const columns: GridColDef[] = [
 ];
 
 function TimetrackingTable({ payloads }: Props) {
-  console.log(payloads);
   const [localPayloads, setLocalPayloads] = useState<newTimeEntryPayload[]>([]);
   const rows = getRowsforMUITable(localPayloads);
 
