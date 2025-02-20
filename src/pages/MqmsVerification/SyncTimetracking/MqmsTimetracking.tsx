@@ -1,15 +1,7 @@
 import { useMQMSAuth } from "../../../hooks/useMQMSAuth";
 import { useMQMSDesignTeam } from "../../../hooks/useMQMSDesignTeam";
 import { useMQMSTimetracker } from "../../../hooks/useMQMSTimetracker";
-import {
-  extractTaskFields,
-  sendBatchedRequests,
-} from "../../../utils/helperFunctions";
-import { createNewtimeEntry } from "../../../utils/clickUpApi";
-import {
-  CreateNewTimeEntryResponse,
-  newTimeEntryPayload,
-} from "../../../types/Task";
+import { extractTaskFields } from "../../../utils/helperFunctions";
 
 import {
   checkMissingWorkRequestID,
