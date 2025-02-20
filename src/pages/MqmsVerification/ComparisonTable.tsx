@@ -14,16 +14,24 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
   const {
     filteredMQMSTasksWithClickUpID,
     closedAndPreclosedTasksWithClickUpID,
+    setFilteredMQMSTasksWithClickUpID,
+    setClosedAndPreclosedTasks,
   } = useFileteredMQMSTaks(MQMSTasks, sentTasks);
 
   async function handleAction(ClickUpTaskId: string, uuid: string) {
-    console.log(uuid);
     const result = await changeTaskStatus("approved", ClickUpTaskId);
 
     if (result.status === "error") {
       console.error(result.message);
       return;
     }
+
+    setFilteredMQMSTasksWithClickUpID(
+      filteredMQMSTasksWithClickUpID.filter((task) => task.uuid !== uuid)
+    );
+    setClosedAndPreclosedTasks(
+      closedAndPreclosedTasksWithClickUpID.filter((task) => task.uuid !== uuid)
+    );
   }
 
   async function handleApproveAll() {
@@ -34,6 +42,21 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     );
 
     console.log(results);
+
+    setFilteredMQMSTasksWithClickUpID(
+      filteredMQMSTasksWithClickUpID.filter((task) => {
+        return !closedAndPreclosedTasksWithClickUpID.some(
+          (closedAndPreclosedTask) => closedAndPreclosedTask.uuid === task.uuid
+        );
+      })
+    );
+    setClosedAndPreclosedTasks(
+      closedAndPreclosedTasksWithClickUpID.filter((task) => {
+        return !closedAndPreclosedTasksWithClickUpID.some(
+          (closedAndPreclosedTask) => closedAndPreclosedTask.uuid === task.uuid
+        );
+      })
+    );
   }
 
   const columns = createColumnsForComparisonTable(

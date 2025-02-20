@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MQMSTasksWithClickUpID, TaskDatum } from "../types/MQMS";
 import { ExtractedTaskFieldValues } from "../types/Task";
 
@@ -5,27 +6,27 @@ export function useFileteredMQMSTaks(
   MQMSTasks: TaskDatum[],
   ClickUpSentTasks: ExtractedTaskFieldValues[]
 ) {
-  const filteredMQMSTasksWithClickUpID: MQMSTasksWithClickUpID[] =
-    MQMSTasks.length > 0
-      ? MQMSTasks.map((task) => {
-          const sentTask = ClickUpSentTasks.find(
-            (currSentTask) => currSentTask["WORK REQUEST ID"] === task.uuid
-          );
+  const [filteredMQMSTasksWithClickUpID, setFilteredMQMSTasksWithClickUpID] =
+    useState<MQMSTasksWithClickUpID[]>(
+      MQMSTasks.map((task) => {
+        const sentTask = ClickUpSentTasks.find(
+          (currSentTask) => currSentTask["WORK REQUEST ID"] === task.uuid
+        );
 
-          if (!sentTask?.id) {
-            return { ...task, clickUpID: "" };
-          }
-          return { ...task, clickUpID: sentTask?.id?.toString() };
-        })
-      : [];
+        if (!sentTask?.id) {
+          return { ...task, clickUpID: "" };
+        }
+        return { ...task, clickUpID: sentTask?.id?.toString() };
+      })
+    );
 
-  const closedAndPreclosedTasks =
-    MQMSTasks.length > 0
-      ? MQMSTasks.filter(
-          (task) =>
-            task.status.name === "CLOSED" || task.status.name === "PRECLOSE"
-        )
-      : [];
+  const [closedAndPreclosedTasks, setClosedAndPreclosedTasks] = useState<
+    TaskDatum[]
+  >(
+    MQMSTasks.filter(
+      (task) => task.status.name === "CLOSED" || task.status.name === "PRECLOSE"
+    )
+  );
 
   const closedAndPreclosedTasksWithClickUpID: MQMSTasksWithClickUpID[] =
     closedAndPreclosedTasks.map((task) => {
@@ -46,6 +47,8 @@ export function useFileteredMQMSTaks(
 
   return {
     filteredMQMSTasksWithClickUpID,
+    setFilteredMQMSTasksWithClickUpID,
     closedAndPreclosedTasksWithClickUpID,
+    setClosedAndPreclosedTasks,
   };
 }
