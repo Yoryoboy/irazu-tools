@@ -13,7 +13,8 @@ export const vendors: Record<string, Vendor> = {
     last_active: "1733493514826",
     date_joined: "1645726537024",
     date_invited: "1644501013523",
-    reportTemplatePath: "IRAZU - Planilla Produccion - ANAIS ARCHILA.xlsx",
+    reportTemplatePath:
+      "excel_templates/IRAZU - Planilla Produccion - ANAIS ARCHILA.xlsx",
   },
   beatrizLeal: {
     id: 43076423,
@@ -27,7 +28,8 @@ export const vendors: Record<string, Vendor> = {
     last_active: "1733443087871",
     date_joined: "1645726617452",
     date_invited: "1644501018940",
-    reportTemplatePath: "IRAZU - Planilla Produccion - BEATRIZ LEAL.xlsx",
+    reportTemplatePath:
+      "excel_templates/IRAZU - Planilla Produccion - BEATRIZ LEAL.xlsx",
   },
   nathaly: {
     id: 43076424,
@@ -41,6 +43,7 @@ export const vendors: Record<string, Vendor> = {
     last_active: "1733492689110",
     date_joined: "1644838243645",
     date_invited: "1644501024880",
-    reportTemplatePath: "IRAZU - Planilla Produccion - NATHALY PINZON.xlsx",
+    reportTemplatePath:
+      "excel_templates/IRAZU - Planilla Produccion - NATHALY PINZON.xlsx",
   },
 };

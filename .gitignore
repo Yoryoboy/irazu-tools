@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+public/excel_templates
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
