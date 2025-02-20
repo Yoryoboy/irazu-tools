@@ -1,8 +1,8 @@
-import { TaskDatum } from "../../types/MQMS";
-import { ExtractedTaskFieldValues } from "../../types/Task";
+import { TaskDatum } from "../../../types/MQMS";
+import { ExtractedTaskFieldValues } from "../../../types/Task";
 import { Button, Space, Table } from "antd";
-import { changeTaskStatus } from "../../utils/clickUpApi";
-import { useFileteredMQMSTaks } from "../../hooks/useFileteredMQMSTaks";
+import { changeTaskStatus } from "../../../utils/clickUpApi";
+import { useFileteredMQMSTaks } from "../../../hooks/useFileteredMQMSTaks";
 import { createColumnsForComparisonTable } from "./ComparionTable.columns";
 
 interface Props {

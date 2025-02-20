@@ -1,5 +1,5 @@
 import { Key } from "antd/es/table/interface";
-import { TaskDatum } from "../../types/MQMS";
+import { TaskDatum } from "../../../types/MQMS";
 
 export function createColumnsForComparisonTable(
   filteredMQMSTasks: TaskDatum[]

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { useMQMSFetchTasks } from "../../hooks/useMQMS";
+import { useMQMSFetchTasks } from "../../../hooks/useMQMS";
 import ComparisonTable from "./ComparisonTable";
-import { extractTaskFields } from "../../utils/helperFunctions";
-import { Task } from "../../types/Task";
+import { extractTaskFields } from "../../../utils/helperFunctions";
+import { Task } from "../../../types/Task";
 
 interface Props {
   accessToken: string | undefined;

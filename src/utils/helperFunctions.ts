@@ -1,9 +1,11 @@
 import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 import { members } from "../constants/members";
+import { TaskTimeDataWithClickUpID } from "../types/MQMS";
 import {
   CustomField,
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
+  newTimeEntryPayload,
   Option,
   Status,
   Task,
@@ -141,6 +143,11 @@ export function extractTaskFields(
         } else if (customField.type === "date") {
           result[field] =
             new Date(Number(customField.value)).toLocaleDateString() || "";
+        } else if (customField.type === "users") {
+          result[field] =
+            customField.value && Array.isArray(customField.value)
+              ? customField.value.map((user) => user?.id)
+              : "";
         } else {
           // Para otros tipos de campos personalizados, usar el valor directamente
           result[field] = (customField.value as string) ?? "";
@@ -229,4 +236,57 @@ export function mergeTaskLabelPayload(
       value: Array.from(value), // Convertimos el Set a un array
     })
   );
+}
+
+export function getTimetrackingPayloadForTask(
+  tasksList: TaskTimeDataWithClickUpID
+): newTimeEntryPayload[] {
+  const { clickUpID, assignee, data } = tasksList;
+  const payload = data.map((time) => {
+    return {
+      clickUpID,
+      assignee,
+      start: new Date(time.start).getTime(),
+      stop: new Date(time.stop).getTime(),
+      tags: [{ name: "mqms time", tag_bg: "#6E56CF", tag_fg: "#6E56CF" }],
+    };
+  });
+  return payload.filter((payload) => payload.start < payload.stop);
+}
+
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+export async function sendBatchedRequests<T, R>(
+  payloads: T[],
+  batchSize: number,
+  postRequestCallback: (payload: T) => Promise<R>
+): Promise<R[]> {
+  const batches = chunkArray(payloads, batchSize);
+  const results: R[] = [];
+
+  for (let i = 0; i < batches.length; i++) {
+    console.log(`Sending batch ${i + 1} of ${batches.length}...`);
+
+    const batchResults = await Promise.all(
+      batches[i].map((payload) => postRequestCallback(payload))
+    );
+
+    results.push(...batchResults);
+
+    console.log(`Batch ${i + 1} sent successfully.`);
+
+    if (i < batches.length - 1) {
+      console.log("Waiting 60 seconds before sending the next batch...");
+      await new Promise((resolve) => setTimeout(resolve, 60000));
+    }
+  }
+
+  console.log("All batches sent successfully!");
+  return results;
 }

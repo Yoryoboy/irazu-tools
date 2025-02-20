@@ -1,7 +1,10 @@
 import {
+  BulkTasksTimeStatus,
   CustomField,
+  ExtractedTaskFieldValues,
   FulfilledPostNewTaskResult,
   MQMSTask,
+  newTimeEntryPayload,
   PostNewTaskResult,
   RejectedPostNewTaskResult,
   Task,
@@ -13,8 +16,12 @@ import {
   getTextCustomFieldObject,
 } from "./helperFunctions";
 
-import { CLICKUP_HS_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
+import {
+  CLICKUP_BAU_CUSTOM_FIELDS,
+  CLICKUP_HS_CUSTOM_FIELDS,
+} from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";
+import { TaskTimeData, TaskTimeDataWithClickUpID } from "../types/MQMS";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -245,13 +252,136 @@ export async function fetchFilteredTasks(
 }
 
 export function getCustomField(fieldName: string): CustomField {
-  const foundField = CLICKUP_HS_CUSTOM_FIELDS.fields.find(
-    (field) => field.name === fieldName
-  );
+  const foundField =
+    CLICKUP_HS_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName) ||
+    CLICKUP_BAU_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName);
 
   if (!foundField) {
     throw new Error("Field with name '" + fieldName + "' not found");
   }
 
   return foundField;
+}
+
+export function getTimeSpentInStatusPayloads(
+  validStatuses: string[],
+  timeStatus: BulkTasksTimeStatus[],
+  extractedTaskFieldValues: ExtractedTaskFieldValues[]
+): newTimeEntryPayload[] {
+  const payloads: Partial<newTimeEntryPayload>[] = timeStatus
+    .map((task) => {
+      const clickUpID = task.task_id;
+      const partialPayload = task.status_history
+        .flat()
+        .filter((status) => validStatuses.includes(status.status))
+        .map((time) => {
+          return {
+            clickUpID,
+            start: Number(time.total_time.since),
+            duration: time.total_time.by_minute * 60000,
+            status: time.status,
+          };
+        });
+
+      return partialPayload;
+    })
+    .flat();
+
+  const payloadWithQcer = addQcerToTaskByStatus(
+    payloads,
+    extractedTaskFieldValues
+  );
+
+  const QcPayloads = payloadWithQcer.map((payload) => {
+    return {
+      ...payload,
+      tags: [
+        {
+          name: "qc time",
+          tag_bg: "#e93d82",
+          tag_fg: "#e93d82",
+        },
+      ],
+    };
+  });
+
+  return QcPayloads;
+}
+
+function addQcerToTaskByStatus(
+  payloads: Partial<newTimeEntryPayload>[],
+  extractedTaskFieldValues: ExtractedTaskFieldValues[]
+): Partial<newTimeEntryPayload>[] {
+  const payloadWithQcer: Partial<newTimeEntryPayload>[] = payloads.map(
+    (payload) => {
+      const taskField = extractedTaskFieldValues.find(
+        (t) => t.id === payload.clickUpID
+      ) as ExtractedTaskFieldValues;
+
+      switch (payload.status) {
+        case "asbuilt in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["PREASBUILT QC BY"][0] || 0,
+          };
+
+        case "design in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["DESIGN QC BY"][0] || 0,
+          };
+
+        case "redesign in qc by irazu":
+          return {
+            ...payload,
+            assignee: taskField["REDESIGN QC BY"][0] || 0,
+          };
+
+        case "ready for qc":
+          return {
+            ...payload,
+            assignee: taskField["QC PERFORMED BY"][0] || 0,
+          };
+
+        default:
+          return payload;
+      }
+    }
+  );
+
+  return payloadWithQcer;
+}
+
+export function checkMissingWorkRequestID(tasks: Task[]): boolean {
+  return tasks.length > 0
+    ? tasks.some((task) => {
+        const workRequestID = task?.custom_fields?.find(
+          (field) => field.name === "WORK REQUEST ID"
+        );
+
+        if (!workRequestID?.value) {
+          console.log(`Missing Work Request ID for task ${task.name}`);
+        }
+
+        return !workRequestID?.value;
+      })
+    : true;
+}
+
+export function getMQMSTaskTimetrackerWithID(
+  MQMSTasksTimetracker: TaskTimeData[],
+  tasks: ExtractedTaskFieldValues[],
+  filteredTasks: Task[]
+): TaskTimeDataWithClickUpID[] {
+  return MQMSTasksTimetracker.map((task) => {
+    const sentTask = tasks.find(
+      (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
+    );
+    return { ...task, clickUpID: sentTask?.id?.toString() as string };
+  }).map((task) => {
+    const sentTask = filteredTasks.find(
+      (sentTask) => sentTask.id === task.clickUpID
+    );
+    return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
+  });
 }

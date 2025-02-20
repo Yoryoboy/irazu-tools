@@ -30,6 +30,7 @@ export interface Task {
   start_date?: null;
   points?: null;
   time_estimate?: null;
+  time_spent?: number;
   custom_fields?: CustomField[];
   dependencies?: unknown[];
   linked_tasks?: LinkedTask[];
@@ -197,4 +198,74 @@ export interface TaskLabelPayload {
   customFieldId?: string;
   value?: string[];
   error?: string;
+}
+
+export interface newTimeEntryPayload {
+  clickUpID: string;
+  assignee: number;
+  start: number;
+  stop?: number;
+  duration?: number;
+  tags?: Tag[];
+  status?: string;
+}
+
+export interface Tag {
+  name: string;
+  tag_fg: string;
+  tag_bg: string;
+}
+
+export interface CreateNewTimeEntryData {
+  data: Data;
+}
+
+export interface Data {
+  id: string;
+  task: Task;
+  wid: string;
+  user: User;
+  billable: boolean;
+  start: number;
+  end: number;
+  duration: number;
+  description: string;
+  tags: string[];
+  at: number;
+  is_locked: boolean;
+  task_location: unknown;
+}
+
+export interface CreateNewTimeEntryResponse {
+  status: string;
+  data?: CreateNewTimeEntryData;
+  message?: string;
+}
+
+export interface FecthBulkTasksTimeStatusResponse {
+  current_status: CurrentStatus;
+  status_history: StatusHistory[];
+}
+
+export interface BulkTasksTimeStatus extends FecthBulkTasksTimeStatusResponse {
+  task_id: string;
+}
+
+export interface CurrentStatus {
+  status: string;
+  color: string;
+  total_time: TotalTime;
+}
+
+export interface TotalTime {
+  by_minute: number;
+  since: string;
+}
+
+export interface StatusHistory {
+  status: string;
+  color: string;
+  type: string;
+  total_time: TotalTime;
+  orderindex?: number;
 }

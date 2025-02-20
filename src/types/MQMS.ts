@@ -180,3 +180,47 @@ export interface UserHierarchy {
   PARENTWITHCHILDREN: number;
   CompanyName: string;
 }
+
+export interface FetchStartsStopsResponse {
+  status: string;
+  message: string;
+  data: StartsStops[];
+}
+
+export interface StartsStops {
+  uuid: string;
+  createdAt: Date;
+  elapseTime: number;
+  moduleUUID: string;
+  oldStart: Date;
+  oldStop: Date;
+  start: Date;
+  stop: Date;
+  userUUID: string;
+  moduleToData: ModuleToData[];
+  actionByUser: ActionByUser[];
+}
+
+export interface ActionByUser {
+  firstName: string;
+  middleName: string;
+  username: string;
+  uuid: string;
+  lastName: string;
+}
+
+export interface ModuleToData {
+  uuid: string;
+  type: string;
+  name: string;
+}
+
+export interface TaskTimeData {
+  taskUuid: string;
+  data: StartsStops[];
+}
+
+export interface TaskTimeDataWithClickUpID extends TaskTimeData {
+  clickUpID: string;
+  assignee: number;
+}
