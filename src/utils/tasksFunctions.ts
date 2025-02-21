@@ -302,7 +302,7 @@ export function getTimeSpentInStatusPayloads(
           tag_fg: "#e93d82",
         },
       ],
-    };
+    } as newTimeEntryPayload;
   });
 
   return QcPayloads;

@@ -243,12 +243,16 @@ export interface CreateNewTimeEntryResponse {
 }
 
 export interface FecthBulkTasksTimeStatusResponse {
-  current_status: CurrentStatus;
-  status_history: StatusHistory[];
+  [task_id: string]: {
+    current_status: CurrentStatus;
+    status_history: StatusHistory[];
+  };
 }
 
-export interface BulkTasksTimeStatus extends FecthBulkTasksTimeStatusResponse {
+export interface BulkTasksTimeStatus {
   task_id: string;
+  current_status: CurrentStatus;
+  status_history: StatusHistory[];
 }
 
 export interface CurrentStatus {
