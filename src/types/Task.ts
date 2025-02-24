@@ -147,9 +147,9 @@ export interface NewCustomFieldObject {
   value: string;
 }
 
-export interface ExtractedTaskFieldValues {
-  [key: string]: unknown;
-}
+export type ExtractedTaskFieldValues<T extends Record<string, unknown>> = {
+  [K in keyof T]: T[K];
+};
 
 export interface UnifiedProject {
   id: string;

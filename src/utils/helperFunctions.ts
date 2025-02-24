@@ -89,48 +89,50 @@ export function getTextCustomFieldObject(
   };
 }
 
-export function extractTaskFields(
+export function extractTaskFields<T extends Record<string, unknown>>(
   task: Task,
-  fields: (keyof ExtractedTaskFieldValues)[]
-): ExtractedTaskFieldValues {
-  const result: Partial<ExtractedTaskFieldValues> = {};
+  fields: (keyof Task | string)[]
+): ExtractedTaskFieldValues<T> {
+  const result: Record<string, unknown> = {};
 
   fields.forEach((field) => {
-    // Si el campo existe directamente en el objeto task
     if (field in task) {
-      const value = task[field as keyof Task];
+      const value = task[field as keyof Task] as unknown;
+
       if (typeof value === "string" && !Array.isArray(value)) {
         result[field] = value.toString();
       } else if (Array.isArray(value)) {
         result[field] = task.assignees
-          ? value?.map((user) => user?.username)
+          ? value.map((user) => (user ? user.username : ""))
           : "";
-      } else if (field === "status" && typeof value === "object") {
+      } else if (
+        field === "status" &&
+        typeof value === "object" &&
+        value !== null
+      ) {
         result[field] = (value as Status).status;
       }
     } else {
-      // Buscar en custom_fields si es un campo personalizado
+      // ✅ Buscar en `custom_fields` si es un campo personalizado
       const customField = task.custom_fields?.find((cf) => cf.name === field);
       if (customField) {
         if (
           customField.type === "drop_down" &&
           customField.type_config?.options
         ) {
-          // Si el campo es de tipo drop_down, buscar el nombre de la opción correspondiente
+          // ✅ Manejo de drop_down
           const selectedOption = customField.type_config.options.find(
             (option) => option.orderindex === customField.value
           );
-          result[field] =
-            selectedOption != null ? selectedOption.name?.toString() : ""; // Asignar el nombre de la opción o null
+          result[field] = selectedOption ? selectedOption.name?.toString() : "";
         } else if (
           customField.type === "labels" &&
           customField.type_config?.options
         ) {
-          // Si el campo es de tipo labels, mapear los IDs a sus etiquetas correspondientes
+          // ✅ Manejo de etiquetas (labels)
           result[field] =
             customField.value && Array.isArray(customField.value)
               ? customField.value
-                  // Filtrar para asegurarte de que son cadenas
                   .map(
                     (id) =>
                       customField.type_config?.options?.find(
@@ -139,24 +141,25 @@ export function extractTaskFields(
                   )
                   .filter((label) => label !== "")
               : [];
-          // Filtrar valores nulos
-        } else if (customField.type === "date") {
-          result[field] =
-            new Date(Number(customField.value)).toLocaleDateString() || "";
-        } else if (customField.type === "users") {
-          result[field] =
-            customField.value && Array.isArray(customField.value)
-              ? customField.value.map((user) => user?.id)
-              : "";
+        } else if (
+          customField.type === "date" &&
+          typeof customField.value === "number"
+        ) {
+          result[field] = new Date(customField.value).toLocaleDateString();
+        } else if (
+          customField.type === "users" &&
+          Array.isArray(customField.value)
+        ) {
+          result[field] = customField.value.map((user) => user?.id);
         } else {
-          // Para otros tipos de campos personalizados, usar el valor directamente
-          result[field] = (customField.value as string) ?? "";
+          result[field] =
+            typeof customField.value === "string" ? customField.value : "";
         }
       }
     }
   });
 
-  return result;
+  return result as ExtractedTaskFieldValues<T>; // ✅ Casting final asegurando tipado correcto
 }
 
 export function unifyProjects(
