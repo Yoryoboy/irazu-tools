@@ -7,6 +7,7 @@ import {
   NewCustomFieldObject,
   newTimeEntryPayload,
   Option,
+  ProjectFields,
   Status,
   Task,
   TaskLabelPayload,
@@ -163,17 +164,17 @@ export function extractTaskFields<T extends Record<string, unknown>>(
 }
 
 export function unifyProjects(
-  asbuiltArray: ExtractedTaskFieldValues[],
-  designArray: ExtractedTaskFieldValues[]
-): ExtractedTaskFieldValues[] {
-  const unifiedArray: ExtractedTaskFieldValues[] = [];
+  asbuiltArray: ExtractedTaskFieldValues<ProjectFields>[],
+  designArray: ExtractedTaskFieldValues<ProjectFields>[]
+): ExtractedTaskFieldValues<ProjectFields>[] {
+  const unifiedArray: ExtractedTaskFieldValues<ProjectFields>[] = [];
 
   // Procesar ASBUILT
   asbuiltArray.forEach((item) => {
     unifiedArray.push({
       id: item.id,
       name: item.name,
-      receivedDate: item["RECEIVED DATE"],
+      receivedDate: item["RECEIVED DATE"] || "",
       completionDate: item["PREASBUILT ACTUAL COMPLETION DATE "] || "",
       quantity: item["ASBUILT ROUNDED MILES"] || "0",
       checkedForSubco: item["CHECKED FOR SUBCO"] || [],
@@ -186,7 +187,7 @@ export function unifyProjects(
     unifiedArray.push({
       id: item.id,
       name: item.name,
-      receivedDate: item["RECEIVED DATE"],
+      receivedDate: item["RECEIVED DATE"] || "",
       completionDate: item["ACTUAL COMPLETION DATE"] || "",
       quantity: item["DESIGN ROUNDED MILES"] || "0",
       checkedForSubco: item["CHECKED FOR SUBCO"] || [],

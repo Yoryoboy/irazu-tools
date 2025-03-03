@@ -151,6 +151,22 @@ export type ExtractedTaskFieldValues<T extends Record<string, unknown>> = {
   [K in keyof T]: T[K];
 };
 
+export type ProjectFields = {
+  id: string;
+  name: string;
+  receivedDate?: string;
+  "RECEIVED DATE"?: string;
+  "PREASBUILT ACTUAL COMPLETION DATE "?: string;
+  completionDate?: string;
+  "ACTUAL COMPLETION DATE"?: string;
+  quantity?: string;
+  "ASBUILT ROUNDED MILES"?: string;
+  "DESIGN ROUNDED MILES"?: string;
+  checkedForSubco?: string[];
+  "CHECKED FOR SUBCO"?: string[];
+  projectCode: string;
+};
+
 export interface UnifiedProject {
   id: string;
   name: string;
