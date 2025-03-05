@@ -3,6 +3,7 @@ import ProductionReportGenerator from "./ProductionReportGenerator";
 import { Task } from "../../types/Task";
 import { Vendor } from "../../types/Vendor";
 import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
+import { idID } from "@mui/material/locale";
 
 interface Props {
   bau: Task[];
@@ -27,7 +28,8 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
     );
 
     return {
-      taskName: task.name,
+      id: task.id,
+      name: task.name,
       receivedDate,
       completionDate,
       codes,
@@ -36,28 +38,52 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
 
   console.log(bauFieldsValues);
 
-  const columns =
-    unifiedTasks.length > 0
-      ? Object.keys(unifiedTasks[0]).map((key) => ({
-          title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalizar título
-          dataIndex: key, // Vincula la columna con el campo correspondiente
-          key: key,
-        }))
-      : [];
+  const columns = [
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "ReceivedDate",
+      dataIndex: "receivedDate",
+      key: "receivedDate",
+    },
+    {
+      title: "CompletionDate",
+      dataIndex: "completionDate",
+      key: "completionDate",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "ProjectCode",
+      dataIndex: "projectCode",
+      key: "projectCode",
+    },
+  ];
 
-  const dataSource = unifiedTasks.map((item, index) => ({
-    ...item,
-    key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
-  }));
+  // const dataSource = unifiedTasks.map((item, index) => ({
+  //   ...item,
+  //   key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
+  // }));
 
   return (
     <main>
-      <h1>Planilla de {vendor.username}</h1>
+      {/* <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
       <Flex justify="center" gap="small">
         <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
         <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
-      </Flex>
+      </Flex> */}
     </main>
   );
 }
