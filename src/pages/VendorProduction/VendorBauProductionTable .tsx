@@ -60,27 +60,41 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
       key: "completionDate",
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
       title: "ProjectCode",
       dataIndex: "projectCode",
       key: "projectCode",
     },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
   ];
 
-  // const dataSource = unifiedTasks.map((item, index) => ({
-  //   ...item,
-  //   key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
-  // }));
+  const dataSource = bauFieldsValues.reduce((acc, task) => {
+    const row = task?.codes?.map((code, index) => {
+      return {
+        id: task.id,
+        name: task.name,
+        receivedDate: task?.receivedDate,
+        completionDate: task?.completionDate,
+        quantity: code.value,
+        projectCode: code.name,
+
+        key: `${task.name}-${index}`,
+      };
+    });
+    acc.push(...row);
+    return acc;
+  }, []);
+
+  console.log(dataSource);
 
   return (
     <main>
-      {/* <h1>Planilla de {vendor.username}</h1>
+      <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
-      <Flex justify="center" gap="small">
+      {/* <Flex justify="center" gap="small">
         <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
         <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
       </Flex> */}
