@@ -1,6 +1,10 @@
 import { Flex, Table } from "antd";
 import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
-import { asbuiltFields, designFields } from "./VendorProductionTable.config";
+import {
+  asbuiltFields,
+  designFields,
+  redesignFields,
+} from "./VendorProductionTable.config";
 import ProductionReportGenerator from "./ProductionReportGenerator";
 import { Task } from "../../types/Task";
 import { Vendor } from "../../types/Vendor";
@@ -9,10 +13,16 @@ import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
 interface Props {
   asbuilts: Task[];
   designs: Task[];
+  redesigns: Task[];
   vendor: Vendor;
 }
 
-function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
+function VendorProductionTable({
+  asbuilts,
+  designs,
+  redesigns,
+  vendor,
+}: Props) {
   const asbuiltFieldsValues = asbuilts.map((asbuilt) => {
     const projectCode: string = "CCI - HS ASBUILT";
     const fieldsValues = extractTaskFields(asbuilt, asbuiltFields);
@@ -25,7 +35,17 @@ function VendorProductionTable({ asbuilts, designs, vendor }: Props) {
     return { ...fieldValues, projectCode };
   });
 
-  const unifiedTasks = unifyProjects(asbuiltFieldsValues, designFieldsValues);
+  const redesignFieldsValues = redesigns.map((redesign) => {
+    const projectCode: string = "CCI - HS REDESIGN";
+    const fieldValues = extractTaskFields(redesign, redesignFields);
+    return { ...fieldValues, projectCode };
+  });
+
+  const unifiedTasks = unifyProjects(
+    asbuiltFieldsValues,
+    designFieldsValues,
+    redesignFieldsValues
+  );
 
   const columns =
     unifiedTasks.length > 0

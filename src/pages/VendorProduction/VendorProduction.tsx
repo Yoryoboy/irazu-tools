@@ -3,6 +3,7 @@ import {
   getAsbuiltSearchParamsForVendor,
   getBAUSearchParamsForVendor,
   getDesignSearchParamsForVendor,
+  getRedesignSearchParamsForVendor,
 } from "./VendorProduction.SearchParams";
 import VendorProductionTable from "./VendorProductionTable";
 import { vendors } from "./VendorProduction.vendors";
@@ -23,6 +24,13 @@ function VendorProduction() {
       getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
     );
 
+  const { filteredTasks: redesignForAnaisDelValleArchilaGonzalez } =
+    useFilteredTasks(
+      getRedesignSearchParamsForVendor(
+        anaisDelValleArchilaGonzalez.id.toString()
+      )
+    );
+
   const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } =
     useFilteredTasks(
       getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
@@ -36,12 +44,20 @@ function VendorProduction() {
     getDesignSearchParamsForVendor(beatrizLeal.id.toString())
   );
 
+  const { filteredTasks: redesignForBeatrizLeal } = useFilteredTasks(
+    getRedesignSearchParamsForVendor(beatrizLeal.id.toString())
+  );
+
   const { filteredTasks: asbuiltForNathaly } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(nathaly.id.toString())
   );
 
   const { filteredTasks: designForNathaly } = useFilteredTasks(
     getDesignSearchParamsForVendor(nathaly.id.toString())
+  );
+
+  const { filteredTasks: redesignForNathaly } = useFilteredTasks(
+    getRedesignSearchParamsForVendor(nathaly.id.toString())
   );
 
   return (
@@ -53,16 +69,19 @@ function VendorProduction() {
       <VendorProductionTable
         asbuilts={asbuiltForAnaisDelValleArchilaGonzalez}
         designs={designForAnaisDelValleArchilaGonzalez}
+        redesigns={redesignForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
       />
       <VendorProductionTable
         asbuilts={asbuiltForBeatrizLeal}
         designs={designForBeatrizLeal}
+        redesigns={redesignForBeatrizLeal}
         vendor={beatrizLeal}
       />
       <VendorProductionTable
         asbuilts={asbuiltForNathaly}
         designs={designForNathaly}
+        redesigns={redesignForNathaly}
         vendor={nathaly}
       />
     </main>

@@ -15,3 +15,12 @@ export const designFields = [
   "DESIGN ROUNDED MILES",
   "CHECKED FOR SUBCO",
 ];
+
+export const redesignFields = [
+  "id",
+  "name",
+  "RECEIVED DATE",
+  "REDESIGN ACTUAL COMPLETION DATE",
+  "REDESIGN TIME",
+  "CHECKED FOR SUBCO",
+];

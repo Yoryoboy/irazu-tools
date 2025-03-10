@@ -161,7 +161,8 @@ export function extractTaskFields(
 
 export function unifyProjects(
   asbuiltArray: ExtractedTaskFieldValues[],
-  designArray: ExtractedTaskFieldValues[]
+  designArray: ExtractedTaskFieldValues[],
+  redesignArray: ExtractedTaskFieldValues[]
 ): ExtractedTaskFieldValues[] {
   const unifiedArray: ExtractedTaskFieldValues[] = [];
 
@@ -186,6 +187,19 @@ export function unifyProjects(
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["ACTUAL COMPLETION DATE"] || "",
       quantity: item["DESIGN ROUNDED MILES"] || "0",
+      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
+      projectCode: item.projectCode,
+    });
+  });
+
+  // Procesar REDESIGN
+  redesignArray.forEach((item) => {
+    unifiedArray.push({
+      id: item.id,
+      name: item.name,
+      receivedDate: item["RECEIVED DATE"],
+      completionDate: item["REDESIGN ACTUAL COMPLETION DATE"] || "",
+      quantity: item["REDESIGN TIME"] || "0",
       checkedForSubco: item["CHECKED FOR SUBCO"] || [],
       projectCode: item.projectCode,
     });

@@ -71,14 +71,10 @@ export function getRedesignSearchParamsForVendor(
 ): SearchParams {
   return {
     page: "0",
+    "assignees[]": vendorId,
     "list_ids[]": CLICKUP_LIST_IDS.cciHs,
     include_closed: "true",
     custom_fields: JSON.stringify([
-      {
-        field_id: designAssigneeField.id,
-        operator: "ANY",
-        value: [vendorId],
-      },
       {
         field_id: redesignBillingStatusField.id,
         operator: "ANY",
