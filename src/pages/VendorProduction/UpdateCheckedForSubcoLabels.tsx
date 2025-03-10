@@ -1,15 +1,8 @@
 import { Button, notification } from "antd";
 import { ExtractedTaskFieldValues } from "../../types/Task";
 import { useState } from "react";
-import {
-  getTaskLabelPayload,
-  updateCustomFieldLabel,
-} from "../../utils/clickUpApi";
-import {
-  getCheckedSubcoBillingStatusPayloads,
-  mergeTaskLabelPayload,
-} from "../../utils/helperFunctions";
-import { getCustomField } from "../../utils/tasksFunctions";
+import { updateCustomFieldLabel } from "../../utils/clickUpApi";
+import { getCheckedSubcoBillingStatusPayloads } from "../../utils/helperFunctions";
 
 interface Props {
   tasks: ExtractedTaskFieldValues[];

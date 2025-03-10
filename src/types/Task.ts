@@ -193,13 +193,6 @@ export interface ParsedData {
   [key: string]: string | number | null | undefined;
 }
 
-export interface TaskLabelPayload {
-  taskId: string;
-  customFieldId?: string;
-  value?: string[];
-  error?: string;
-}
-
 export interface newTimeEntryPayload {
   clickUpID: string;
   assignee: number;
