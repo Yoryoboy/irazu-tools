@@ -2,6 +2,7 @@ import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
 import { members } from "../constants/members";
 import { TaskTimeDataWithClickUpID } from "../types/MQMS";
 import {
+  CheckedSubcoBillingStatusPayloads,
   CustomField,
   ExtractedTaskFieldValues,
   NewCustomFieldObject,
@@ -12,6 +13,7 @@ import {
   TaskLabelPayload,
   User,
 } from "../types/Task";
+import { getCustomField } from "./tasksFunctions";
 
 export function formatString(input: string) {
   const regex = /(\w+)\/\s+(\w+)/; // Patrón: string/[espacio]string
@@ -303,4 +305,34 @@ export async function sendBatchedRequests<T, R>(
 
   console.log("All batches sent successfully!");
   return results;
+}
+
+export function getCheckedSubcoBillingStatusPayloads(
+  tasks: ExtractedTaskFieldValues[]
+): CheckedSubcoBillingStatusPayloads[] {
+  const asbuiltChecked = getCustomField("ASBUILT CHECKED");
+  const designChecked = getCustomField("DESIGN CHECKED");
+  const redesignChecked = getCustomField("REDESIGN CHECKED");
+
+  return tasks.map((task) => {
+    let customFieldId: string;
+    switch (task.projectCode) {
+      case "CCI - HS ASBUILT":
+        customFieldId = asbuiltChecked.id ?? "";
+        break;
+      case "CCI - HS DESIGN":
+        customFieldId = designChecked.id ?? "";
+        break;
+      case "CCI - REDESIGN":
+        customFieldId = redesignChecked.id ?? "";
+        break;
+      default:
+        customFieldId = "";
+    }
+    return {
+      taskId: task.id,
+      customFieldId,
+      value: true,
+    } as CheckedSubcoBillingStatusPayloads;
+  });
 }

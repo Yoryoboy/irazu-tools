@@ -1,14 +1,14 @@
 import { Button, notification } from "antd";
-import {
-  ExtractedTaskFieldValues,
-  CheckedSubcoBillingStatusPayloads,
-} from "../../types/Task";
+import { ExtractedTaskFieldValues } from "../../types/Task";
 import { useState } from "react";
 import {
   getTaskLabelPayload,
   updateCustomFieldLabel,
 } from "../../utils/clickUpApi";
-import { mergeTaskLabelPayload } from "../../utils/helperFunctions";
+import {
+  getCheckedSubcoBillingStatusPayloads,
+  mergeTaskLabelPayload,
+} from "../../utils/helperFunctions";
 import { getCustomField } from "../../utils/tasksFunctions";
 
 interface Props {
@@ -19,39 +19,9 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const asbuiltChecked = getCustomField("ASBUILT CHECKED");
-  const designChecked = getCustomField("DESIGN CHECKED");
-  const redesignChecked = getCustomField("REDESIGN CHECKED");
-
   const handleUpdateLabels = async () => {
     setLoading(true);
     setError(null);
-
-    function getCheckedSubcoBillingStatusPayloads(
-      tasks: ExtractedTaskFieldValues[]
-    ): CheckedSubcoBillingStatusPayloads[] {
-      return tasks.map((task) => {
-        let customFieldId: string;
-        switch (task.projectCode) {
-          case "CCI - HS ASBUILT":
-            customFieldId = asbuiltChecked.id ?? "";
-            break;
-          case "CCI - HS DESIGN":
-            customFieldId = designChecked.id ?? "";
-            break;
-          case "CCI - REDESIGN":
-            customFieldId = redesignChecked.id ?? "";
-            break;
-          default:
-            customFieldId = "";
-        }
-        return {
-          taskId: task.id,
-          customFieldId,
-          value: true,
-        } as CheckedSubcoBillingStatusPayloads;
-      });
-    }
 
     const checkedSubcoBillingStatusPayloads =
       getCheckedSubcoBillingStatusPayloads(tasks);
