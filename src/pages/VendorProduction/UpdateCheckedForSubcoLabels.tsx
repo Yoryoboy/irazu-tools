@@ -1,12 +1,12 @@
 import { Button, notification } from "antd";
-import { CustomField, ExtractedTaskFieldValues } from "../../types/Task";
+import { ExtractedTaskFieldValues } from "../../types/Task";
 import { useState } from "react";
-import { CLICKUP_HS_CUSTOM_FIELDS } from "../../constants/clickUpCustomFields";
 import {
   getTaskLabelPayload,
   updateCustomFieldLabel,
 } from "../../utils/clickUpApi";
 import { mergeTaskLabelPayload } from "../../utils/helperFunctions";
+import { getCustomField } from "../../utils/tasksFunctions";
 
 interface Props {
   tasks: ExtractedTaskFieldValues[];
@@ -16,22 +16,17 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const checkedForSubcoCustomField: CustomField =
-    CLICKUP_HS_CUSTOM_FIELDS.fields.find(
-      (field) => field.name === "CHECKED FOR SUBCO"
-    )!;
+  const asbuiltChecked = getCustomField("ASBUILT CHECKED");
+  const designChecked = getCustomField("DESIGN CHECKED");
+  const redesignChecked = getCustomField("REDESIGN CHECKED");
+
+  console.log(tasks);
 
   const handleUpdateLabels = async () => {
     setLoading(true);
     setError(null);
 
-    const unmergedTaskLabelsPayload = tasks.map((task) =>
-      getTaskLabelPayload(task, checkedForSubcoCustomField)
-    );
-
-    const mergedTaskLabelsPayload = mergeTaskLabelPayload(
-      unmergedTaskLabelsPayload
-    );
+    function getCheckedSubcoBillingStatusPayloads (tasks: ExtractedTaskFieldValues[]) {
 
     const results = await Promise.allSettled(
       mergedTaskLabelsPayload.map((task) => {
