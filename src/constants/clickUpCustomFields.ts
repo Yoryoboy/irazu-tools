@@ -2979,6 +2979,39 @@ export const CLICKUP_HS_CUSTOM_FIELDS: CustomFields = {
       required: false,
     },
     {
+      id: "2ba7840b-7ff1-4e37-b519-2f7741e45170",
+      name: "REDESIGN BILLING STATUS",
+      type: "drop_down",
+      type_config: {
+        default: 0,
+        placeholder: null,
+        new_drop_down: true,
+        options: [
+          {
+            id: "b72a35ef-df4f-43e1-b9bc-8c1aa8fac08a",
+            name: "REDESIGN READY TO BILL",
+            color: "#f9d900",
+            orderindex: 0,
+          },
+          {
+            id: "86e072c0-7078-45a6-929c-0bf6071cce1e",
+            name: "REDESIGN BILLED",
+            color: "#2ecd6f",
+            orderindex: 1,
+          },
+          {
+            id: "2d4dc4c1-48d6-4af2-b009-2a0e1f0101b9",
+            name: "NA",
+            color: "#667684",
+            orderindex: 2,
+          },
+        ],
+      },
+      date_created: "1698928392347",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "a29b848b-028a-4aa5-acea-ab6f9304177c",
       name: "FIRST REDESIGN QC SUBMISSION DATE 1",
       type: "date",

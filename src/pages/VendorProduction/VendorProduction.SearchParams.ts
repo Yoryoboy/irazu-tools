@@ -2,12 +2,15 @@ import { getCustomField } from "../../utils/tasksFunctions";
 import { CLICKUP_LIST_IDS } from "../../utils/config";
 import { SearchParams } from "../../types/SearchParams";
 
-const checkedForSubcoField = getCustomField("CHECKED FOR SUBCO");
+const asbuiltChecked = getCustomField("ASBUILT CHECKED");
+const designChecked = getCustomField("DESIGN CHECKED");
+const redesignChecked = getCustomField("REDESIGN CHECKED");
+const bauChecked = getCustomField("BAU CHECKED");
 const asbuiltBillingStatusField = getCustomField("ASBUILT BILLING STATUS");
 const designBillingStatusField = getCustomField("DESIGN BILLING STATUS");
+const redesignBillingStatusField = getCustomField("REDESIGN BILLING STATUS");
 const designAssigneeField = getCustomField("DESIGN ASSIGNEE");
 const bauBillingStatusField = getCustomField("BAU BILLING STATUS");
-const jorgeCheckedField = getCustomField("Jorge Checked");
 
 // Anais Del Valle Archila Gonzalez
 
@@ -29,9 +32,8 @@ export function getAsbuiltSearchParamsForVendor(
         ],
       },
       {
-        field_id: checkedForSubcoField.id,
-        operator: "NOT ALL",
-        value: [checkedForSubcoField.type_config?.options?.[0].id],
+        field_id: asbuiltChecked.id,
+        operator: "IS NULL",
       },
     ]),
   };
@@ -57,9 +59,37 @@ export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
         ],
       },
       {
-        field_id: checkedForSubcoField.id,
-        operator: "NOT ALL",
-        value: [checkedForSubcoField.type_config?.options?.[1].id],
+        field_id: designChecked.id,
+        operator: "IS NULL",
+      },
+    ]),
+  };
+}
+
+export function getRedesignSearchParamsForVendor(
+  vendorId: string
+): SearchParams {
+  return {
+    page: "0",
+    "list_ids[]": CLICKUP_LIST_IDS.cciHs,
+    include_closed: "true",
+    custom_fields: JSON.stringify([
+      {
+        field_id: designAssigneeField.id,
+        operator: "ANY",
+        value: [vendorId],
+      },
+      {
+        field_id: redesignBillingStatusField.id,
+        operator: "ANY",
+        value: [
+          redesignBillingStatusField.type_config?.options?.[0].id,
+          redesignBillingStatusField.type_config?.options?.[1].id,
+        ],
+      },
+      {
+        field_id: redesignChecked.id,
+        operator: "IS NULL",
       },
     ]),
   };
@@ -81,9 +111,8 @@ export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
         ],
       },
       {
-        field_id: jorgeCheckedField.id,
-        operator: "NOT ALL",
-        value: [checkedForSubcoField.type_config?.options?.[0].id],
+        field_id: bauChecked.id,
+        operator: "IS NULL",
       },
     ]),
   };
