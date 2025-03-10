@@ -7,6 +7,15 @@ interface CustomFields {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "29022a6c-d455-48c8-aa05-293518a5f2a6",
+      name: "BAU CHECKED",
+      type: "checkbox",
+      type_config: {},
+      date_created: "1741272813321",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "e4ae3c81-f4cd-4e07-a8c1-0e50490e6bdb",
       name: "Timetracked",
       type: "checkbox",
@@ -2180,6 +2189,33 @@ export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
 
 export const CLICKUP_HS_CUSTOM_FIELDS: CustomFields = {
   fields: [
+    {
+      id: "44834017-91d2-4076-9c3c-971c90809fa0",
+      name: "DESIGN CHECKED",
+      type: "checkbox",
+      type_config: {},
+      date_created: "1741272418967",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
+      id: "573f4ecc-44b4-4a1f-8bda-dc1163577b65",
+      name: "ASBUILT CHECKED",
+      type: "checkbox",
+      type_config: {},
+      date_created: "1741272405741",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
+      id: "5769aa5e-6b6a-4c6f-af1e-be4d767c926f",
+      name: "REDESIGN CHECKED",
+      type: "checkbox",
+      type_config: {},
+      date_created: "1741272450972",
+      hide_from_guests: false,
+      required: false,
+    },
     {
       id: "0dbd1e61-077f-44bf-a3cf-101cac65f3aa",
       name: "ETA",
