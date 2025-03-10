@@ -1,5 +1,8 @@
 import { Button, notification } from "antd";
-import { ExtractedTaskFieldValues } from "../../types/Task";
+import {
+  ExtractedTaskFieldValues,
+  CheckedSubcoBillingStatusPayloads,
+} from "../../types/Task";
 import { useState } from "react";
 import {
   getTaskLabelPayload,
@@ -20,16 +23,41 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
   const designChecked = getCustomField("DESIGN CHECKED");
   const redesignChecked = getCustomField("REDESIGN CHECKED");
 
-  console.log(tasks);
-
   const handleUpdateLabels = async () => {
     setLoading(true);
     setError(null);
 
-    function getCheckedSubcoBillingStatusPayloads (tasks: ExtractedTaskFieldValues[]) {
+    function getCheckedSubcoBillingStatusPayloads(
+      tasks: ExtractedTaskFieldValues[]
+    ): CheckedSubcoBillingStatusPayloads[] {
+      return tasks.map((task) => {
+        let customFieldId: string;
+        switch (task.projectCode) {
+          case "CCI - HS ASBUILT":
+            customFieldId = asbuiltChecked.id ?? "";
+            break;
+          case "CCI - HS DESIGN":
+            customFieldId = designChecked.id ?? "";
+            break;
+          case "CCI - REDESIGN":
+            customFieldId = redesignChecked.id ?? "";
+            break;
+          default:
+            customFieldId = "";
+        }
+        return {
+          taskId: task.id,
+          customFieldId,
+          value: true,
+        } as CheckedSubcoBillingStatusPayloads;
+      });
+    }
+
+    const checkedSubcoBillingStatusPayloads =
+      getCheckedSubcoBillingStatusPayloads(tasks);
 
     const results = await Promise.allSettled(
-      mergedTaskLabelsPayload.map((task) => {
+      checkedSubcoBillingStatusPayloads.map((task) => {
         const { taskId, customFieldId, value } = task;
         if (!taskId || !customFieldId || !value) {
           return Promise.reject("Missing required parameters");

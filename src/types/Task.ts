@@ -273,3 +273,9 @@ export interface StatusHistory {
   total_time: TotalTime;
   orderindex?: number;
 }
+
+export interface CheckedSubcoBillingStatusPayloads {
+  taskId: string;
+  customFieldId: string;
+  value: boolean;
+}
