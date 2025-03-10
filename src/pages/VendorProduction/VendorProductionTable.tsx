@@ -36,7 +36,7 @@ function VendorProductionTable({
   });
 
   const redesignFieldsValues = redesigns.map((redesign) => {
-    const projectCode: string = "CCI - HS REDESIGN";
+    const projectCode: string = "CCI - REDESIGN";
     const fieldValues = extractTaskFields(redesign, redesignFields);
     return { ...fieldValues, projectCode };
   });
