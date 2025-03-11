@@ -7,7 +7,7 @@ import {
 } from "./VendorProduction.SearchParams";
 import VendorProductionTable from "./VendorProductionTable";
 import { vendors } from "./VendorProduction.vendors";
-import VendorBauProductionTable from "./VendorBauProductionTable ";
+import VendorBauProductionTable from "./VendorBauProductionTable";
 
 function VendorProduction() {
   const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
