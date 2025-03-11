@@ -66,7 +66,7 @@ function VendorProduction() {
         bau={bauForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
       />
-      {/* <VendorProductionTable
+      <VendorProductionTable
         asbuilts={asbuiltForAnaisDelValleArchilaGonzalez}
         designs={designForAnaisDelValleArchilaGonzalez}
         redesigns={redesignForAnaisDelValleArchilaGonzalez}
@@ -83,7 +83,7 @@ function VendorProduction() {
         designs={designForNathaly}
         redesigns={redesignForNathaly}
         vendor={nathaly}
-      /> */}
+      />
     </main>
   );
 }
