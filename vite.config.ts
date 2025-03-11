@@ -9,4 +9,7 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
   },
+  css: {
+    postcss: "./postcss.config.cjs",
+  },
 });
