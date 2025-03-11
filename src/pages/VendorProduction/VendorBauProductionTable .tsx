@@ -1,6 +1,6 @@
 import { Flex, Table } from "antd";
 import ProductionReportGenerator from "./ProductionReportGenerator";
-import { CustomField, Task } from "../../types/Task";
+import { CustomField, Task, TaskRow } from "../../types/Task";
 import { Vendor } from "../../types/Vendor";
 import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
 
@@ -68,16 +68,6 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
     },
   ];
 
-  interface TaskRow {
-    id: string;
-    name: string;
-    receivedDate: string;
-    completionDate: string;
-    quantity: string;
-    projectCode: string;
-    key?: `${string}-${string}-${string}-${string}-${string}`;
-  }
-
   const codeMapping: Record<string, string> = {
     "COAX ASBUILD / 27240 (EA)": "CCI - BAU Coax Asbuild/27240",
     "COAX ASBUILT FOOTAGE > 1,500’ / 27529 (FT)":
@@ -113,10 +103,10 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
     <main>
       <h1>Planilla de {vendor.username}</h1>
       <Table dataSource={dataSource} columns={columns} pagination={false} />
-      {/* <Flex justify="center" gap="small">
-        <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
-        <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
-      </Flex> */}
+      <Flex justify="center" gap="small">
+        <ProductionReportGenerator vendor={vendor} tasks={dataSource} />
+        <UpdateCheckedForSubcoLabels tasks={dataSource} />
+      </Flex>
     </main>
   );
 }

@@ -10,6 +10,7 @@ import {
   Option,
   Status,
   Task,
+  TaskRow,
   User,
 } from "../types/Task";
 import { getCustomField } from "./tasksFunctions";
@@ -275,15 +276,22 @@ export async function sendBatchedRequests<T, R>(
 }
 
 export function getCheckedSubcoBillingStatusPayloads(
-  tasks: ExtractedTaskFieldValues[]
+  tasks: ExtractedTaskFieldValues[] | TaskRow[]
 ): CheckedSubcoBillingStatusPayloads[] {
   const asbuiltChecked = getCustomField("ASBUILT CHECKED");
   const designChecked = getCustomField("DESIGN CHECKED");
   const redesignChecked = getCustomField("REDESIGN CHECKED");
+  const bauChecked = getCustomField("BAU CHECKED");
 
   return tasks.map((task) => {
     let customFieldId: string;
-    switch (task.projectCode) {
+    let code = task.projectCode as string;
+
+    if (code.includes("CCI - BAU")) {
+      code = "CCI - BAU";
+    }
+
+    switch (code) {
       case "CCI - HS ASBUILT":
         customFieldId = asbuiltChecked.id ?? "";
         break;
@@ -292,6 +300,9 @@ export function getCheckedSubcoBillingStatusPayloads(
         break;
       case "CCI - REDESIGN":
         customFieldId = redesignChecked.id ?? "";
+        break;
+      case "CCI - BAU":
+        customFieldId = bauChecked.id ?? "";
         break;
       default:
         customFieldId = "";

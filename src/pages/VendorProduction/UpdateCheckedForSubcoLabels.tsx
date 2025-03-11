@@ -1,11 +1,11 @@
 import { Button, notification } from "antd";
-import { ExtractedTaskFieldValues } from "../../types/Task";
+import { ExtractedTaskFieldValues, TaskRow } from "../../types/Task";
 import { useState } from "react";
 import { updateCustomFieldLabel } from "../../utils/clickUpApi";
 import { getCheckedSubcoBillingStatusPayloads } from "../../utils/helperFunctions";
 
 interface Props {
-  tasks: ExtractedTaskFieldValues[];
+  tasks: ExtractedTaskFieldValues[] | TaskRow[];
 }
 
 function UpdateCheckedForSubcoLabels({ tasks }: Props) {
@@ -18,6 +18,8 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
 
     const checkedSubcoBillingStatusPayloads =
       getCheckedSubcoBillingStatusPayloads(tasks);
+
+    console.log(checkedSubcoBillingStatusPayloads);
 
     const results = await Promise.allSettled(
       checkedSubcoBillingStatusPayloads.map((task) => {

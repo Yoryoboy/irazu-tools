@@ -3,11 +3,11 @@ import { DownloadOutlined } from "@ant-design/icons";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { Vendor } from "../../types/Vendor";
-import { ExtractedTaskFieldValues } from "../../types/Task";
+import { ExtractedTaskFieldValues, TaskRow } from "../../types/Task";
 
 interface Props {
   vendor: Vendor;
-  tasks: ExtractedTaskFieldValues[];
+  tasks: ExtractedTaskFieldValues[] | TaskRow[];
 }
 
 function ProductionReportGenerator({ vendor, tasks }: Props) {

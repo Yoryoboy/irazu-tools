@@ -272,3 +272,13 @@ export interface CheckedSubcoBillingStatusPayloads {
   customFieldId: string;
   value: boolean;
 }
+
+export interface TaskRow {
+  id: string;
+  name: string;
+  receivedDate: string;
+  completionDate: string;
+  quantity: string;
+  projectCode: string;
+  key?: `${string}-${string}-${string}-${string}-${string}`;
+}
