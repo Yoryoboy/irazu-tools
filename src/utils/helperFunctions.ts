@@ -38,9 +38,13 @@ export function getDropdownCustomFieldOption(
   customFieldDetails: CustomField,
   optionName: string
 ): Option {
-  const customFieldOptions = customFieldDetails.type_config?.options?.find(
-    (option) => option.name === optionName
-  );
+  const customFieldOptions =
+    customFieldDetails.type_config?.options?.find(
+      (option) => option.name === optionName
+    ) ??
+    customFieldDetails.type_config?.options?.find(
+      (option) => option.name === "UNKNOWN"
+    );
   if (!customFieldOptions) {
     throw new Error(`Custom field options not found`);
   }
