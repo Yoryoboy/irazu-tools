@@ -3,8 +3,10 @@ import {
   CreateNewTimeEntryData,
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
+  Task,
 } from "../types/Task";
 import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
+import { Result } from "../types/AsyncResult";
 
 const clickUp = axios.create({
   baseURL: "https://api.clickup.com/api/v2",
@@ -21,6 +23,30 @@ clickUp.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+export async function getTask(taskId: string): Promise<Result<Task>> {
+  try {
+    const response = await clickUp.get(`/task/${taskId}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error(`Error al obtener respuesta de la tarea ${taskId}:`, error);
+
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: {
+          status: error.response?.status || 500,
+          message: error.message,
+        },
+      };
+    }
+
+    return {
+      success: false,
+      error: { status: 500, message: "Unknown error" },
+    };
+  }
+}
 
 export async function updateCustomFieldLabel(
   taskId: string,
