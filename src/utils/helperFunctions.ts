@@ -38,17 +38,17 @@ export function getDropdownCustomFieldOption(
   customFieldDetails: CustomField,
   optionName: string
 ): Option {
-  const customFieldOptions =
-    customFieldDetails.type_config?.options?.find(
-      (option) => option.name === optionName
-    ) ??
-    customFieldDetails.type_config?.options?.find(
-      (option) => option.name === "UNKNOWN"
-    );
-  if (!customFieldOptions) {
+  const options = customFieldDetails.type_config?.options || [];
+
+  const customFieldOption =
+    options.find((option) => option.name === optionName) ||
+    options.find((option) => option.name === "UNKNOWN");
+
+  if (!customFieldOption) {
     throw new Error(`Custom field options not found`);
   }
-  return customFieldOptions;
+
+  return customFieldOption;
 }
 
 export function getNewDropdownCustomFieldObject(
