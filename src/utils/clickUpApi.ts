@@ -1,9 +1,26 @@
+import axios from "axios";
 import {
   CreateNewTimeEntryData,
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
 } from "../types/Task";
 import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
+
+const clickUp = axios.create({
+  baseURL: "https://api.clickup.com/api/v2",
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
+
+clickUp.interceptors.request.use(
+  (config) => {
+    config.headers.Authorization = CLICKUP_API_AKEY;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export async function updateCustomFieldLabel(
   taskId: string,
