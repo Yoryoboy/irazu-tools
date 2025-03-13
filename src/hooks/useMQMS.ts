@@ -4,6 +4,20 @@ import { fetchMQMSTaskByUuid } from "../utils/MQMSApi";
 
 const BASE_URL = "https://mqms.corp.chartercom.com/api/work-requests/";
 
+interface PromiseFulfilledResult<T> {
+  status: "fulfilled";
+  value: T;
+}
+
+interface PromiseRejectedResult {
+  status: "rejected";
+  reason: unknown;
+}
+
+type PromiseSettledResult<T> =
+  | PromiseFulfilledResult<T>
+  | PromiseRejectedResult;
+
 export function useMQMSFetchTasks(
   accessToken: string | null | undefined,
   listOfSentTasks: string[] = []
@@ -28,32 +42,37 @@ export function useMQMSFetchTasks(
       };
 
       try {
-        const allResults = await Promise.allSettled(
-          listOfSentTasks.map(async (uuid) => {
-            const url = `${BASE_URL}${uuid}`;
-            const { status, data } = await fetchMQMSTaskByUuid(headers, url);
-            if (status !== "success" || !data) {
-              throw new Error("status is not 'success' or data is not defined");
-            }
-
-            if (data.length === 0) {
-              return {
-                status: "UUID_NOT_FOUND",
-                uuuid: uuid,
-              };
-            }
-            return data;
-          })
-        );
+        const allResults: PromiseSettledResult<TaskDatum[]>[] =
+          await Promise.allSettled(
+            listOfSentTasks.map(async (uuid) => {
+              const url = `${BASE_URL}${uuid}`;
+              const { status, data } = await fetchMQMSTaskByUuid(headers, url);
+              if (status !== "success" || !data || data.length === 0) {
+                return Promise.reject({ status: "UUID_NOT_FOUND", uuid: uuid });
+              }
+              return Promise.resolve(data);
+            })
+          );
 
         const fulfilledResults: TaskDatum[][] = [];
         const rejectedResults: { status: string; uuid: string }[] = [];
 
         allResults.forEach((result) => {
-          if (result.value.status !== "UUID_NOT_FOUND") {
-            fulfilledResults.push(result.value);
+          if (result.status === "fulfilled") {
+            if (Array.isArray(result.value)) {
+              fulfilledResults.push(result.value);
+            }
           } else {
-            rejectedResults.push(result.value);
+            if (
+              typeof result.reason === "object" &&
+              result.reason !== null &&
+              "status" in result.reason &&
+              "uuid" in result.reason
+            ) {
+              rejectedResults.push(
+                result.reason as { status: string; uuid: string }
+              );
+            }
           }
         });
 
