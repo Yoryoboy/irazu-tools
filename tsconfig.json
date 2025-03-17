@@ -1,4 +1,10 @@
 {
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2023", "es2024", "dom", "dom.iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
