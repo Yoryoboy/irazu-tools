@@ -5,6 +5,23 @@ import {
 import { createNewtimeEntry } from "../../../utils/clickUpApi";
 import { sendBatchedRequests } from "../../../utils/helperFunctions";
 
+interface TimeTrackingData {
+  clickUpID: string;
+  duration: number;
+  // Add other properties as needed
+}
+
+export function groupByClickUpId(data: TimeTrackingData[]) {
+  return data.reduce((acc: Record<string, TimeTrackingData[]>, item) => {
+    const key = item.clickUpID;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {});
+}
+
 export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
   const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
 
