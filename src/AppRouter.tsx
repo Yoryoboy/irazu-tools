@@ -10,7 +10,6 @@ function AppRouter() {
     <Routes>
       <Route path="/" element={<TaskSyncListSelector />} />
       <Route path="/task-sync" element={<TaskSyncListSelector />} />
-      <Route path="/production-contratistas" element={<VendorProduction />} />
       <Route path="/mqms-verification" element={<MqmsVerificationSelector />}>
         <Route
           path="check-approved-tasks"

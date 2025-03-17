@@ -8,12 +8,7 @@ function HeaderComponent() {
   const items1: MenuProps["items"] = [
     { key: "/", label: <Link to="/">Home</Link> },
     { key: "/task-sync", label: <Link to="/task-sync">Tasks Sync</Link> },
-    {
-      key: "/production-contratistas",
-      label: (
-        <Link to="/production-contratistas">Producción de Contratistas</Link>
-      ),
-    },
+
     {
       key: "/mqms-verification",
       label: <Link to="/mqms-verification">MQMS</Link>,
