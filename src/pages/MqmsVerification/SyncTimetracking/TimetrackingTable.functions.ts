@@ -23,20 +23,35 @@ export function groupByClickUpId(data: TimeTrackingData[]) {
 }
 
 export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
-  const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
+  const groupedPayload = payloads.reduce(
+    (acc: Record<string, newTimeEntryPayload[]>, payload) => {
+      if (!acc[payload.clickUpID]) {
+        acc[payload.clickUpID] = [];
+      }
+      acc[payload.clickUpID].push(payload);
+      return acc;
+    },
+    {}
+  );
 
   const testRow = [];
 
   for (const [clickUpID, values] of Object.entries(groupedPayload)) {
-    const designDuration = values?.reduce((acc, value) => {
-      const time = value.stop ? value.stop - value.start : 0;
-      return acc + (time ?? 0);
-    }, 0);
+    const designDuration = values.reduce(
+      (acc: number, value: newTimeEntryPayload) => {
+        const time = value.stop ? value.stop - value.start : 0;
+        return acc + (time ?? 0);
+      },
+      0
+    );
 
-    const qcDuration = values?.reduce((acc, value) => {
-      const time = value.duration ?? 0;
-      return acc + (time ?? 0);
-    }, 0);
+    const qcDuration = values.reduce(
+      (acc: number, value: newTimeEntryPayload) => {
+        const time = value.duration ?? 0;
+        return acc + (time ?? 0);
+      },
+      0
+    );
 
     testRow.push({
       id: clickUpID,
