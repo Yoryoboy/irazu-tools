@@ -3,7 +3,10 @@ import { ExtractedTaskFieldValues } from "../../../types/Task";
 import { Button, Space, Table } from "antd";
 import { changeTaskStatus } from "../../../utils/clickUpApi";
 import { useFileteredMQMSTaks } from "../../../hooks/useFileteredMQMSTaks";
-import { createColumnsForComparisonTable } from "./ComparionTable.columns";
+import {
+  createColumnsForComparisonTable,
+  TableDataType,
+} from "./ComparionTable.columns";
 
 interface Props {
   MQMSTasks: TaskDatum[];
@@ -63,36 +66,39 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     filteredMQMSTasksWithClickUpID
   );
 
-  const dataSource = filteredMQMSTasksWithClickUpID.map((task) => ({
-    key: task.uuid,
-    jobID: task.externalID,
-    secondaryID: task.secondaryExternalID,
-    clickupStatus:
-      sentTasks
-        .find((sentTask) => sentTask.name === task.externalID)
-        ?.status?.toString()
-        .toUpperCase() ?? "",
-    clickupAssignee: sentTasks.find(
-      (sentTask) => sentTask.name === task.externalID
-    )?.assignees,
-    mqmsStatus: task.status.name,
-    mqmsAssignedUser: `${task.currentAssignedUser.firstName} ${task.currentAssignedUser.lastName}`,
-    mqmsModule: task.currentAssignedModule.name ?? "",
-    clickUpID: task.clickUpID ?? "",
-    action: (
-      <Space size="middle">
-        <Button
-          type="primary"
-          disabled={
-            task.status.name !== "CLOSED" && task.status.name !== "PRECLOSE"
-          }
-          onClick={() => handleAction(task.clickUpID, task.uuid)}
-        >
-          Mark as Approved
-        </Button>
-      </Space>
-    ),
-  }));
+  const dataSource: TableDataType[] = filteredMQMSTasksWithClickUpID.map(
+    (task) => ({
+      key: task.uuid,
+      jobID: task.externalID,
+      secondaryID: task.secondaryExternalID,
+      clickupStatus:
+        sentTasks
+          .find((sentTask) => sentTask.name === task.externalID)
+          ?.status?.toString()
+          .toUpperCase() ?? "",
+      clickupAssignee:
+        sentTasks
+          .find((sentTask) => sentTask.name === task.externalID)
+          ?.assignees?.toString() ?? "",
+      mqmsStatus: task.status.name,
+      mqmsAssignedUser: `${task.currentAssignedUser.firstName} ${task.currentAssignedUser.lastName}`,
+      mqmsModule: task.currentAssignedModule.name ?? "",
+      clickUpID: task.clickUpID ?? "",
+      action: (
+        <Space size="middle">
+          <Button
+            type="primary"
+            disabled={
+              task.status.name !== "CLOSED" && task.status.name !== "PRECLOSE"
+            }
+            onClick={() => handleAction(task.clickUpID, task.uuid)}
+          >
+            Mark as Approved
+          </Button>
+        </Space>
+      ),
+    })
+  );
 
   return (
     <div>
@@ -105,7 +111,11 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
           Approve All Closed and Preclose Tasks
         </Button>
       )}
-      <Table dataSource={dataSource} columns={columns} pagination={false} />
+      <Table<TableDataType>
+        dataSource={dataSource}
+        columns={columns}
+        pagination={false}
+      />
     </div>
   );
 }

@@ -1,6 +1,19 @@
 import { Key } from "antd/es/table/interface";
 import { TaskDatum } from "../../../types/MQMS";
 
+export interface TableDataType {
+  key: string;
+  jobID: string;
+  secondaryID: string;
+  clickupStatus: string;
+  clickupAssignee: string;
+  mqmsStatus: string;
+  mqmsAssignedUser: string;
+  mqmsModule: string;
+  clickUpID: string;
+  action: JSX.Element;
+}
+
 export function createColumnsForComparisonTable(
   filteredMQMSTasks: TaskDatum[]
 ) {
@@ -37,10 +50,8 @@ export function createColumnsForComparisonTable(
               text: status,
               value: status,
             })),
-            onFilter: (
-              value: boolean | Key,
-              record: { [key: string]: string }
-            ) => record.mqmsStatus === value,
+            onFilter: (value: boolean | Key, record: TableDataType) =>
+              record.mqmsStatus === value,
           },
           {
             title: "MQMS ASSIGNED USER",
@@ -57,10 +68,8 @@ export function createColumnsForComparisonTable(
               text: user,
               value: user,
             })),
-            onFilter: (
-              value: boolean | Key,
-              record: { [key: string]: string }
-            ) => record.mqmsAssignedUser === value,
+            onFilter: (value: boolean | Key, record: TableDataType) =>
+              record.mqmsAssignedUser === value,
           },
           {
             title: "MODULE",
