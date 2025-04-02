@@ -15,6 +15,10 @@ function HeaderComponent() {
       ),
     },
     {
+      key: "/income-reports",
+      label: <Link to="/income-reports">Income Reports</Link>,
+    },
+    {
       key: "/mqms-verification",
       label: <Link to="/mqms-verification">MQMS</Link>,
     },
