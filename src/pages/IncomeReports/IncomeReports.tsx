@@ -1,9 +1,27 @@
+
+import { useFetchClickUpTasks } from "../../hooks/useClickUp";
+import { CLICKUP_LIST_IDS } from "../../utils/config";
+import { SearchParams } from "../../types/SearchParams";
+
+const bauSearchParams: SearchParams = {
+  "statuses[]": ["approved"],
+};
+
 function IncomeReports() {
+
+  const { clickUpTasks: approvedBauTasks } = useFetchClickUpTasks(
+    CLICKUP_LIST_IDS.cciBau,
+    bauSearchParams
+  );
+
+  console.log(approvedBauTasks)
+
+
   
   return (
-    <div>
-      <h1>Income Reports</h1>
-    </div>
+    <main>
+
+    </main>
   );
 }
 
