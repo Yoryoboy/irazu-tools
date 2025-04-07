@@ -5,7 +5,7 @@ import { SearchParams } from "../types/SearchParams";
 
 export function useFetchClickUpTasks(
   listId: string,
-  SearchParams: SearchParams
+  SearchParams: SearchParams | null
 ) {
   const [clickUpTasks, setClickUpTasks] = useState<Task[]>([]);
 
@@ -20,7 +20,7 @@ export function useFetchClickUpTasks(
         const query = new URLSearchParams();
         query.append("page", page.toString());
 
-        Object.entries(SearchParams).forEach(([key, value]) => {
+        Object.entries(SearchParams as SearchParams).forEach(([key, value]) => {
           if (Array.isArray(value)) {
             value.forEach((item) => query.append(key, item)); // Agregar múltiples valores con la misma clave
           } else {
@@ -56,7 +56,9 @@ export function useFetchClickUpTasks(
       setClickUpTasks(allTasks);
     };
 
-    fetchTasks();
+    if (SearchParams) {
+      fetchTasks();
+    }
   }, [listId, SearchParams]);
 
   return { clickUpTasks };

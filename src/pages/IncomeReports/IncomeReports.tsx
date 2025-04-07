@@ -1,17 +1,47 @@
 import { useFetchClickUpTasks } from '../../hooks/useClickUp';
 import { CLICKUP_LIST_IDS } from '../../utils/config';
-import { SearchParams } from '../../types/SearchParams';
 import { CustomField, User } from '../../types/Task';
 import { Button } from 'antd';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { DatePicker } from 'antd';
+import type { Dayjs } from 'dayjs';
+import { useState } from 'react';
+import { SearchParams } from '../../types/SearchParams';
+import { getCustomField } from '../../utils/tasksFunctions';
 
-const bauSearchParams: SearchParams = {
-  'statuses[]': ['approved'],
-};
+const { RangePicker } = DatePicker;
+
+
 
 function IncomeReports() {
-  const { clickUpTasks } = useFetchClickUpTasks(CLICKUP_LIST_IDS.cciBau, bauSearchParams);
+  const [searchParams, setSearchParams] = useState<SearchParams | null>(null);
+
+  const onChange = (dates: [Dayjs | null, Dayjs | null]) => {
+    if (dates && dates[0] && dates[1]) {
+      const [startDate, endDate] = dates;
+      const startTimestamp = startDate.unix() * 1000;
+      const endTimestamp = endDate.unix() * 1000;
+      const bauSearchParams: SearchParams = {
+        'statuses[]': ['approved'],
+        custom_fields: JSON.stringify([
+          {
+            field_id: getCustomField("ACTUAL COMPLETION DATE").id,
+            operator: "RANGE",
+            value: [
+              startTimestamp,
+              endTimestamp,
+            ],
+          },
+        ]),
+      };
+      console.log(bauSearchParams)
+      setSearchParams(bauSearchParams);
+    }
+      
+  };
+
+  const { clickUpTasks } = useFetchClickUpTasks(CLICKUP_LIST_IDS.cciBau, searchParams);
 
   const approvedBauTasks = clickUpTasks.map(task => {
     let designers: string = '';
@@ -90,8 +120,13 @@ function IncomeReports() {
 
   console.log(bauIncome);
 
+
+
+  
+
   return (
     <main>
+       <RangePicker onChange={onChange} />
       {bauIncome.length > 0 && (
         <Button
           type="primary"
