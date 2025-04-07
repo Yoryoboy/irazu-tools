@@ -11,7 +11,7 @@ const validStatuses = [
   "asbuilt in qc by irazu",
   "design in qc by irazu",
   "redesign in qc by irazu",
-  "ready for qc",
+  "internal qc",
 ];
 
 export function useTimetrackingPayloads(
