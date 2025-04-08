@@ -8,7 +8,11 @@ import { DatePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
-import { formatApprovedBauTasks, getCustomField } from '../../utils/tasksFunctions';
+import {
+  formatApprovedBauTasks,
+  formatBauIncomeDataForExcel,
+  getCustomField,
+} from '../../utils/tasksFunctions';
 import { bauPrices } from './IncomeReports.config';
 
 const { RangePicker } = DatePicker;
@@ -40,36 +44,9 @@ function IncomeReports() {
 
   const approvedBauTasks = formatApprovedBauTasks(clickUpTasks);
 
-  console.log(approvedBauTasks);
+  const bauIncome = formatBauIncomeDataForExcel(approvedBauTasks);
 
-  // const bauIncome = approvedBauTasks.reduce<
-  //   Array<{
-  //     id: string;
-  //     name: string;
-  //     designers: string;
-  //     receivedDate: Date | null;
-  //     completionDate: Date | null;
-  //     code: string;
-  //     quantity: string | number | User[] | null | undefined;
-  //     price: number;
-  //     total: number;
-  //   }>
-  // >((acc, task) => {
-  //   task.codes?.forEach(code => {
-  //     acc.push({
-  //       id: task.id,
-  //       name: task.name,
-  //       designers: task.designers,
-  //       receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
-  //       completionDate: task.completionDate ? new Date(task.completionDate) : null,
-  //       code: code.name || '',
-  //       quantity: code.value,
-  //       price: bauPrices[code.name as keyof typeof bauPrices] || 0,
-  //       total: Number(code.value) * (bauPrices[code.name as keyof typeof bauPrices] || 0),
-  //     });
-  //   });
-  //   return acc;
-  // }, []);
+  console.log(bauIncome);
 
   return (
     <main>

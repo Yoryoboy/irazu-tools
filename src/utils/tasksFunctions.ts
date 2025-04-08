@@ -1,4 +1,6 @@
 import {
+  ApprovedBauTasks,
+  BauIncomeData,
   BulkTasksTimeStatus,
   CustomField,
   ExtractedTaskFieldValues,
@@ -22,6 +24,7 @@ import {
 } from '../constants/clickUpCustomFields';
 import { SearchParams } from '../types/SearchParams';
 import { TaskTimeData, TaskTimeDataWithClickUpID } from '../types/MQMS';
+import { bauPrices } from '../pages/IncomeReports/IncomeReports.config';
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -346,7 +349,7 @@ export function getMQMSTaskTimetrackerWithID(
   });
 }
 
-export function formatApprovedBauTasks(tasks: Task[]): Task[] {
+export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
     let designers: string = '';
 
@@ -376,4 +379,23 @@ export function formatApprovedBauTasks(tasks: Task[]): Task[] {
       codes,
     };
   });
+}
+
+export function formatBauIncomeDataForExcel(tasks: ApprovedBauTasks[]): BauIncomeData[] {
+  return tasks.reduce<BauIncomeData[]>((acc, task) => {
+    task.codes?.forEach(code => {
+      acc.push({
+        id: task.id,
+        name: task.name,
+        designers: task.designers,
+        receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
+        completionDate: task.completionDate ? new Date(task.completionDate) : null,
+        code: code.name || '',
+        quantity: code.value as string,
+        price: bauPrices[code.name as keyof typeof bauPrices] || 0,
+        total: Number(code.value) * (bauPrices[code.name as keyof typeof bauPrices] || 0),
+      });
+    });
+    return acc;
+  }, []);
 }
