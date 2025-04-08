@@ -8,44 +8,36 @@ import {
   PostNewTaskResult,
   RejectedPostNewTaskResult,
   Task,
-} from "../types/Task";
+} from '../types/Task';
 
 import {
   formatString,
   getNewDropdownCustomFieldObject,
   getTextCustomFieldObject,
-} from "./helperFunctions";
+} from './helperFunctions';
 
 import {
   CLICKUP_BAU_CUSTOM_FIELDS,
   CLICKUP_HS_CUSTOM_FIELDS,
-} from "../constants/clickUpCustomFields";
-import { SearchParams } from "../types/SearchParams";
-import { TaskTimeData, TaskTimeDataWithClickUpID } from "../types/MQMS";
+} from '../constants/clickUpCustomFields';
+import { SearchParams } from '../types/SearchParams';
+import { TaskTimeData, TaskTimeDataWithClickUpID } from '../types/MQMS';
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
-export function getNewTasksFromMqms(
-  MQMSTasks: MQMSTask[],
-  clickUpTasks: Task[]
-): MQMSTask[] {
+export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[]): MQMSTask[] {
   const clickUpTaskMap = new Map<string, string>();
 
-  clickUpTasks.forEach((task) => {
-    const secondaryIdField = task.custom_fields?.find(
-      (field) => field.name === "SECONDARY ID"
-    );
-    const secondaryId =
-      typeof secondaryIdField?.value === "string"
-        ? secondaryIdField?.value
-        : "";
+  clickUpTasks.forEach(task => {
+    const secondaryIdField = task.custom_fields?.find(field => field.name === 'SECONDARY ID');
+    const secondaryId = typeof secondaryIdField?.value === 'string' ? secondaryIdField?.value : '';
 
     if (secondaryId) {
       clickUpTaskMap.set(task.name, secondaryId);
     }
   });
 
-  const newMqmsTasks = MQMSTasks.filter((task) => {
+  const newMqmsTasks = MQMSTasks.filter(task => {
     const existsInClickUp =
       clickUpTaskMap.has(task.EXTERNAL_ID) &&
       clickUpTaskMap.get(task.EXTERNAL_ID) === task.SECONDARY_EXTERNAL_ID;
@@ -61,40 +53,38 @@ export async function postNewTasks(
   apikey: string
 ): Promise<PostNewTaskResult[]> {
   const results = await Promise.allSettled(
-    newTasks.map((task) =>
+    newTasks.map(task =>
       fetch(`https://api.clickup.com/api/v2/list/${listId}/task?`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: apikey,
         },
         body: JSON.stringify(task),
       })
-        .then((resp) => {
+        .then(resp => {
           if (!resp.ok) {
-            throw new Error(
-              `Error creating task ${task.name}: ${resp.statusText}`
-            );
+            throw new Error(`Error creating task ${task.name}: ${resp.statusText}`);
           }
           return resp.json();
         })
-        .then((data) => ({
+        .then(data => ({
           taskName: task.name,
-          status: "success",
+          status: 'success',
           clickUpTaskId: data.id,
         }))
     )
   );
 
-  return results.map((result) => {
-    if (result.status === "fulfilled") {
+  return results.map(result => {
+    if (result.status === 'fulfilled') {
       return {
-        status: "fulfilled",
+        status: 'fulfilled',
         value: result.value,
       } as FulfilledPostNewTaskResult;
     } else {
       return {
-        status: "rejected",
+        status: 'rejected',
         reason: result.reason,
       } as RejectedPostNewTaskResult;
     }
@@ -102,44 +92,37 @@ export async function postNewTasks(
 }
 
 export function getNewTask(row: MQMSTask): Task {
-  const [plantTypeUnformatted, projectType, jobType] =
-    row.PROJECT_TYPE.split(" - ");
+  const [plantTypeUnformatted, projectType, jobType] = row.PROJECT_TYPE.split(' - ');
   const plantType = formatString(plantTypeUnformatted);
 
   const plantTypeCustomFieldValue = getNewDropdownCustomFieldObject(
-    "PLANT TYPE",
+    'PLANT TYPE',
     plantType,
-    "77b959a3-d6ee-4c4e-8d21-575559a9080a"
+    '77b959a3-d6ee-4c4e-8d21-575559a9080a'
   );
 
   const projectTypeCustomFieldValue = getNewDropdownCustomFieldObject(
-    "PROJECT TYPE",
+    'PROJECT TYPE',
     projectType,
-    "ff865e6f-323f-49a0-bad5-9c9b439c8d64"
+    'ff865e6f-323f-49a0-bad5-9c9b439c8d64'
   );
 
   const jobTypeCustomFieldValue = getNewDropdownCustomFieldObject(
-    "JOB TYPE CCI",
+    'JOB TYPE CCI',
     jobType,
-    "81f785fe-7a17-4075-ad7b-29918a6f55ad"
+    '81f785fe-7a17-4075-ad7b-29918a6f55ad'
   );
 
   const secondaryIdCustomFieldValue = getTextCustomFieldObject(
-    "SECONDARY ID",
+    'SECONDARY ID',
     row.SECONDARY_EXTERNAL_ID
   );
 
-  const nodeNameCustomFieldValue = getTextCustomFieldObject(
-    "NODE",
-    row.NODE_NAME
-  );
+  const nodeNameCustomFieldValue = getTextCustomFieldObject('NODE', row.NODE_NAME);
 
-  const workRequestCustomFieldValue = getTextCustomFieldObject(
-    "WORK REQUEST ID",
-    row.REQUEST_ID
-  );
+  const workRequestCustomFieldValue = getTextCustomFieldObject('WORK REQUEST ID', row.REQUEST_ID);
 
-  const hubCustomFieldValue = getTextCustomFieldObject("HUB", row.HUB);
+  const hubCustomFieldValue = getTextCustomFieldObject('HUB', row.HUB);
 
   const customFields = [
     plantTypeCustomFieldValue,
@@ -158,10 +141,8 @@ export function getNewTask(row: MQMSTask): Task {
   };
 }
 
-export const updateNewMqmsTasks = (
-  newTaskName: string,
-  newMqmsTasks: MQMSTask[]
-) => newMqmsTasks.filter((task) => task.EXTERNAL_ID !== newTaskName);
+export const updateNewMqmsTasks = (newTaskName: string, newMqmsTasks: MQMSTask[]) =>
+  newMqmsTasks.filter(task => task.EXTERNAL_ID !== newTaskName);
 
 export const handleAction = async (
   row: MQMSTask,
@@ -174,19 +155,16 @@ export const handleAction = async (
   const results = await postNewTasks(newTask, listId, apikey);
 
   const successfulTasks = results.filter(
-    (result): result is FulfilledPostNewTaskResult =>
-      result.status === "fulfilled"
+    (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
   );
 
   if (successfulTasks.length > 0) {
-    setMQMSTasks(
-      updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks)
-    );
+    setMQMSTasks(updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks));
   }
 
-  const failedTasks = results.filter((result) => result.status === "rejected");
+  const failedTasks = results.filter(result => result.status === 'rejected');
   if (failedTasks.length > 0) {
-    console.error("Error procesando tareas:", failedTasks);
+    console.error('Error procesando tareas:', failedTasks);
   }
 };
 
@@ -195,27 +173,23 @@ export const handleSyncAll = async (
   setMQMSTasks: (tasks: MQMSTask[]) => void,
   listId: string
 ) => {
-  const allNewTasks = newMqmsTasks.map((row) => getNewTask(row));
+  const allNewTasks = newMqmsTasks.map(row => getNewTask(row));
   const results = await postNewTasks(allNewTasks, listId, apikey);
 
   const successfulTasks = results.filter(
-    (result): result is FulfilledPostNewTaskResult =>
-      result.status === "fulfilled"
+    (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
   );
 
   if (successfulTasks.length > 0) {
     const updatedTasks = newMqmsTasks.filter(
-      (task) =>
-        !successfulTasks.some(
-          (success) => success.value.taskName === task.EXTERNAL_ID
-        )
+      task => !successfulTasks.some(success => success.value.taskName === task.EXTERNAL_ID)
     );
     setMQMSTasks(updatedTasks);
   }
 
-  const failedTasks = results.filter((result) => result.status === "rejected");
+  const failedTasks = results.filter(result => result.status === 'rejected');
   if (failedTasks.length > 0) {
-    console.error("Error procesando tareas:", failedTasks);
+    console.error('Error procesando tareas:', failedTasks);
   }
 };
 
@@ -227,15 +201,12 @@ export async function fetchFilteredTasks(
   const query = new URLSearchParams(searchParams).toString();
 
   try {
-    const response = await fetch(
-      `https://api.clickup.com/api/v2/team/${teamId}/task?${query}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: apiKey,
-        },
-      }
-    );
+    const response = await fetch(`https://api.clickup.com/api/v2/team/${teamId}/task?${query}`, {
+      method: 'GET',
+      headers: {
+        Authorization: apiKey,
+      },
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -246,15 +217,15 @@ export async function fetchFilteredTasks(
     const { tasks } = data;
     return tasks;
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    console.error('Error fetching tasks:', error);
     throw error;
   }
 }
 
 export function getCustomField(fieldName: string): CustomField {
   const foundField =
-    CLICKUP_HS_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName) ||
-    CLICKUP_BAU_CUSTOM_FIELDS.fields.find((field) => field.name === fieldName);
+    CLICKUP_HS_CUSTOM_FIELDS.fields.find(field => field.name === fieldName) ||
+    CLICKUP_BAU_CUSTOM_FIELDS.fields.find(field => field.name === fieldName);
 
   if (!foundField) {
     throw new Error("Field with name '" + fieldName + "' not found");
@@ -269,12 +240,12 @@ export function getTimeSpentInStatusPayloads(
   extractedTaskFieldValues: ExtractedTaskFieldValues[]
 ): newTimeEntryPayload[] {
   const payloads: Partial<newTimeEntryPayload>[] = timeStatus
-    .map((task) => {
+    .map(task => {
       const clickUpID = task.task_id;
       const partialPayload = task.status_history
         .flat()
-        .filter((status) => validStatuses.includes(status.status))
-        .map((time) => {
+        .filter(status => validStatuses.includes(status.status))
+        .map(time => {
           return {
             clickUpID,
             start: Number(time.total_time.since),
@@ -287,19 +258,16 @@ export function getTimeSpentInStatusPayloads(
     })
     .flat();
 
-  const payloadWithQcer = addQcerToTaskByStatus(
-    payloads,
-    extractedTaskFieldValues
-  );
+  const payloadWithQcer = addQcerToTaskByStatus(payloads, extractedTaskFieldValues);
 
-  const QcPayloads = payloadWithQcer.map((payload) => {
+  const QcPayloads = payloadWithQcer.map(payload => {
     return {
       ...payload,
       tags: [
         {
-          name: "qc time",
-          tag_bg: "#e93d82",
-          tag_fg: "#e93d82",
+          name: 'qc time',
+          tag_bg: '#e93d82',
+          tag_fg: '#e93d82',
         },
       ],
     } as newTimeEntryPayload;
@@ -312,52 +280,48 @@ function addQcerToTaskByStatus(
   payloads: Partial<newTimeEntryPayload>[],
   extractedTaskFieldValues: ExtractedTaskFieldValues[]
 ): Partial<newTimeEntryPayload>[] {
-  const payloadWithQcer: Partial<newTimeEntryPayload>[] = payloads.map(
-    (payload) => {
-      const taskField = extractedTaskFieldValues.find(
-        (t) => t.id === payload.clickUpID
-      ) as ExtractedTaskFieldValues;
+  const payloadWithQcer: Partial<newTimeEntryPayload>[] = payloads.map(payload => {
+    const taskField = extractedTaskFieldValues.find(
+      t => t.id === payload.clickUpID
+    ) as ExtractedTaskFieldValues;
 
-      switch (payload.status) {
-        case "asbuilt in qc by irazu":
-          return {
-            ...payload,
-            assignee: taskField["PREASBUILT QC BY"][0] || 0,
-          };
+    switch (payload.status) {
+      case 'asbuilt in qc by irazu':
+        return {
+          ...payload,
+          assignee: taskField['PREASBUILT QC BY'][0] || 0,
+        };
 
-        case "design in qc by irazu":
-          return {
-            ...payload,
-            assignee: taskField["DESIGN QC BY"][0] || 0,
-          };
+      case 'design in qc by irazu':
+        return {
+          ...payload,
+          assignee: taskField['DESIGN QC BY'][0] || 0,
+        };
 
-        case "redesign in qc by irazu":
-          return {
-            ...payload,
-            assignee: taskField["REDESIGN QC BY"][0] || 0,
-          };
+      case 'redesign in qc by irazu':
+        return {
+          ...payload,
+          assignee: taskField['REDESIGN QC BY'][0] || 0,
+        };
 
-        case "ready for qc":
-          return {
-            ...payload,
-            assignee: taskField["QC PERFORMED BY"][0] || 0,
-          };
+      case 'ready for qc':
+        return {
+          ...payload,
+          assignee: taskField['QC PERFORMED BY'][0] || 0,
+        };
 
-        default:
-          return payload;
-      }
+      default:
+        return payload;
     }
-  );
+  });
 
   return payloadWithQcer;
 }
 
 export function checkMissingWorkRequestID(tasks: Task[]): boolean {
   return tasks.length > 0
-    ? tasks.some((task) => {
-        const workRequestID = task?.custom_fields?.find(
-          (field) => field.name === "WORK REQUEST ID"
-        );
+    ? tasks.some(task => {
+        const workRequestID = task?.custom_fields?.find(field => field.name === 'WORK REQUEST ID');
 
         if (!workRequestID?.value) {
           console.log(`Missing Work Request ID for task ${task.name}`);
@@ -373,15 +337,43 @@ export function getMQMSTaskTimetrackerWithID(
   tasks: ExtractedTaskFieldValues[],
   filteredTasks: Task[]
 ): TaskTimeDataWithClickUpID[] {
-  return MQMSTasksTimetracker.map((task) => {
-    const sentTask = tasks.find(
-      (sentTask) => sentTask["WORK REQUEST ID"] === task.taskUuid
-    );
+  return MQMSTasksTimetracker.map(task => {
+    const sentTask = tasks.find(sentTask => sentTask['WORK REQUEST ID'] === task.taskUuid);
     return { ...task, clickUpID: sentTask?.id?.toString() as string };
-  }).map((task) => {
-    const sentTask = filteredTasks.find(
-      (sentTask) => sentTask.id === task.clickUpID
-    );
+  }).map(task => {
+    const sentTask = filteredTasks.find(sentTask => sentTask.id === task.clickUpID);
     return { ...task, assignee: sentTask?.assignees?.[0]?.id as number };
+  });
+}
+
+export function formatApprovedBauTasks(tasks: Task[]): Task[] {
+  return tasks.map(task => {
+    let designers: string = '';
+
+    task?.assignees?.forEach(assignee => {
+      designers += assignee.username + ', ';
+    });
+    const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
+      ?.value as string;
+    const completionDate = task?.custom_fields?.find(
+      field => field.name === 'ACTUAL COMPLETION DATE'
+    )?.value as string;
+    const codes = task?.custom_fields?.filter(
+      field =>
+        field.type === 'number' &&
+        field.value &&
+        (field.name?.includes('(EA)') ||
+          field.name?.includes('(FT)') ||
+          field.name?.includes('(HR)'))
+    ) as CustomField[];
+
+    return {
+      designers,
+      id: task.id as string,
+      name: task.name,
+      receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
+      completionDate: new Date(Number(completionDate)).toLocaleDateString(),
+      codes,
+    };
   });
 }
