@@ -1,44 +1,20 @@
 import { useFetchClickUpTasks } from '../../hooks/useClickUp';
 import { CLICKUP_LIST_IDS } from '../../utils/config';
-import { CustomField, User } from '../../types/Task';
 import { Button } from 'antd';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { DatePicker } from 'antd';
-import type { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
-import {
-  formatApprovedBauTasks,
-  formatBauIncomeDataForExcel,
-  getCustomField,
-} from '../../utils/tasksFunctions';
-import { bauPrices } from './IncomeReports.config';
-import dayjs from 'dayjs';
+import { formatApprovedBauTasks, formatBauIncomeDataForExcel } from '../../utils/tasksFunctions';
+import { createOnChangeHandler } from './IncomeReports.handlers';
 
 const { RangePicker } = DatePicker;
 
 function IncomeReports() {
   const [searchParams, setSearchParams] = useState<SearchParams | null>(null);
 
-  function onChange(dates: [Dayjs | null, Dayjs | null] | null) {
-    if (dates && dates[0] && dates[1]) {
-      const [startDate, endDate] = dates;
-      const startTimestamp = startDate.unix() * 1000;
-      const endTimestamp = endDate.unix() * 1000;
-      const bauSearchParams: SearchParams = {
-        'statuses[]': ['approved'],
-        custom_fields: JSON.stringify([
-          {
-            field_id: getCustomField('ACTUAL COMPLETION DATE').id,
-            operator: 'RANGE',
-            value: [startTimestamp, endTimestamp],
-          },
-        ]),
-      };
-      setSearchParams(bauSearchParams);
-    }
-  }
+  const onBauParamsChange = createOnChangeHandler(setSearchParams);
 
   const { clickUpTasks } = useFetchClickUpTasks(CLICKUP_LIST_IDS.cciBau, searchParams);
 
@@ -50,8 +26,8 @@ function IncomeReports() {
 
   return (
     <main>
-      <RangePicker onChange={onChange} />
-      {/* <>
+      <RangePicker onChange={onBauParamsChange} />
+      <>
         {bauIncome.length > 0 && (
           <Button
             type="primary"
@@ -152,7 +128,7 @@ function IncomeReports() {
             Download Income Report
           </Button>
         )}
-      </> */}
+      </>
     </main>
   );
 }
