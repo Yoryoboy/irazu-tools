@@ -14,13 +14,14 @@ import {
   getCustomField,
 } from '../../utils/tasksFunctions';
 import { bauPrices } from './IncomeReports.config';
+import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
 
 function IncomeReports() {
   const [searchParams, setSearchParams] = useState<SearchParams | null>(null);
 
-  function onChange(dates: [Dayjs | null, Dayjs | null]) {
+  function onChange(dates: [Dayjs | null, Dayjs | null] | null) {
     if (dates && dates[0] && dates[1]) {
       const [startDate, endDate] = dates;
       const startTimestamp = startDate.unix() * 1000;
@@ -35,7 +36,6 @@ function IncomeReports() {
           },
         ]),
       };
-      console.log(bauSearchParams);
       setSearchParams(bauSearchParams);
     }
   }
