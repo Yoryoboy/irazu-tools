@@ -9,15 +9,14 @@ import type { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
 import { getCustomField } from '../../utils/tasksFunctions';
+import { bauPrices } from './IncomeReports.config';
 
 const { RangePicker } = DatePicker;
-
-
 
 function IncomeReports() {
   const [searchParams, setSearchParams] = useState<SearchParams | null>(null);
 
-  const onChange = (dates: [Dayjs | null, Dayjs | null]) => {
+  function onChange(dates: [Dayjs | null, Dayjs | null]) {
     if (dates && dates[0] && dates[1]) {
       const [startDate, endDate] = dates;
       const startTimestamp = startDate.unix() * 1000;
@@ -26,20 +25,16 @@ function IncomeReports() {
         'statuses[]': ['approved'],
         custom_fields: JSON.stringify([
           {
-            field_id: getCustomField("ACTUAL COMPLETION DATE").id,
-            operator: "RANGE",
-            value: [
-              startTimestamp,
-              endTimestamp,
-            ],
+            field_id: getCustomField('ACTUAL COMPLETION DATE').id,
+            operator: 'RANGE',
+            value: [startTimestamp, endTimestamp],
           },
         ]),
       };
-      console.log(bauSearchParams)
+      console.log(bauSearchParams);
       setSearchParams(bauSearchParams);
     }
-      
-  };
+  }
 
   const { clickUpTasks } = useFetchClickUpTasks(CLICKUP_LIST_IDS.cciBau, searchParams);
 
@@ -73,22 +68,6 @@ function IncomeReports() {
     };
   });
 
-  const prices = {
-    'COAX ASBUILD / 27240 (EA)': 20.0,
-    'COAX ASBUILT FOOTAGE > 1,500’ / 27529 (FT)': 0.0025,
-    'FIBER ASBUILD / 27242 (EA)': 25.0,
-    'FIBER ASBUILT FOOTAGE > 1,500’ / 27530 (FT)': 0.0025,
-    'COAX NEW BUILD < 1,500’ / 27281 (EA)': 75.0,
-    'NEW COAX FOOTAGE OVER 1500 (FT)': 0.02,
-    'FIBER AND/OR COAX FOOTAGE >1,500’ / 27280 (FT)': 0.0025,
-    'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 150.0,
-    'NEW FIBER FOOTAGE OVER 1500 (FT)': 0.02,
-    'RDOF Architecture / 40555 (MILE)': 125.0,
-    'NODE SPLIT PRELIM / 35539 (EA)': 55.0,
-    'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)': 125.0,
-    'SERVICEABLE/TCI/WIFI / 29312 (EA)': 20.0,
-  };
-
   const bauIncome = approvedBauTasks.reduce<
     Array<{
       id: string;
@@ -111,22 +90,16 @@ function IncomeReports() {
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
         code: code.name || '',
         quantity: code.value,
-        price: prices[code.name as keyof typeof prices] || 0,
-        total: Number(code.value) * (prices[code.name as keyof typeof prices] || 0),
+        price: bauPrices[code.name as keyof typeof bauPrices] || 0,
+        total: Number(code.value) * (bauPrices[code.name as keyof typeof bauPrices] || 0),
       });
     });
     return acc;
   }, []);
 
-  console.log(bauIncome);
-
-
-
-  
-
   return (
     <main>
-       <RangePicker onChange={onChange} />
+      <RangePicker onChange={onChange} />
       {bauIncome.length > 0 && (
         <Button
           type="primary"
