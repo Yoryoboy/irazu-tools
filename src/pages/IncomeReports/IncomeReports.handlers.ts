@@ -25,3 +25,44 @@ export function createOnChangeHandler(setSearchParams: (params: SearchParams) =>
     });
   };
 }
+
+export function createHsOnChangeHandler(
+  setHsSearchParams: (params: SearchParams) => void,
+  setRedesignSearchParams: (params: SearchParams) => void
+) {
+  return function onChange(dates: [Dayjs | null, Dayjs | null] | null) {
+    if (!dates || !dates[0] || !dates[1]) return;
+
+    const [startDate, endDate] = dates;
+    const startTimestamp = startDate.unix() * 1000;
+    const endTimestamp = endDate.unix() * 1000;
+
+    const actualCompletionDateId = getCustomField('ACTUAL COMPLETION DATE').id;
+    const redesignActualCompletionDateId = getCustomField('REDESIGN ACTUAL COMPLETION DATE').id;
+    const hsCustomFields = [
+      {
+        field_id: actualCompletionDateId,
+        operator: 'RANGE',
+        value: [startTimestamp, endTimestamp],
+      },
+    ];
+
+    const redesignCustomFields = [
+      {
+        field_id: redesignActualCompletionDateId,
+        operator: 'RANGE',
+        value: [startTimestamp, endTimestamp],
+      },
+    ];
+
+    setHsSearchParams({
+      'statuses[]': ['sent', 'approved'],
+      custom_fields: JSON.stringify(hsCustomFields),
+    });
+
+    setRedesignSearchParams({
+      'statuses[]': ['sent', 'approved'],
+      custom_fields: JSON.stringify(redesignCustomFields),
+    });
+  };
+}

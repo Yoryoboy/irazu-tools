@@ -381,6 +381,41 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
   });
 }
 
+export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
+  return tasks.map(task => {
+    let designers: string = '';
+
+    task?.assignees?.forEach(assignee => {
+      designers += assignee.username + ', ';
+    });
+    const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
+      ?.value as string;
+
+    const isDesign = task?.custom_fields?.find(field => field.name === 'PROJECT TYPE')?.value === 0;
+
+    const completionDate = isDesign
+      ? (task?.custom_fields?.find(field => field.name === 'ACTUAL COMPLETION DATE')
+          ?.value as string)
+      : (task?.custom_fields?.find(field => field.name === 'REDESIGN ACTUAL COMPLETION DATE')
+          ?.value as string);
+
+    const codeNames = ['ASBUILT ROUNDED MILES', 'DESIGN ROUNDED MILES', 'REDESIGN TIME'];
+
+    const codes = task?.custom_fields?.filter(
+      field => codeNames.includes(field.name as string) && field.value && field.type === 'number'
+    ) as CustomField[];
+
+    return {
+      designers,
+      id: task.id as string,
+      name: task.name,
+      receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
+      completionDate: new Date(Number(completionDate)).toLocaleDateString(),
+      codes,
+    };
+  });
+}
+
 export function formatBauIncomeDataForExcel(tasks: ApprovedBauTasks[]): BauIncomeData[] {
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
     task.codes?.forEach(code => {
