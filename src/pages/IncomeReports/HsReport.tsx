@@ -25,10 +25,7 @@ function HsReport() {
     redesignSearchParams
   );
 
-  const approvedHsTasks =
-    hsClickUpTasks.length > 0 && redesignClickUpTasks.length > 0
-      ? formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks])
-      : [];
+  const approvedHsTasks = formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks]);
 
   const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks, hsPrices);
 

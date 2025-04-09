@@ -10,6 +10,7 @@ import {
   PostNewTaskResult,
   RejectedPostNewTaskResult,
   Task,
+  User,
 } from '../types/Task';
 
 import {
@@ -384,9 +385,21 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
     let designers: string = '';
 
-    task?.assignees?.forEach(assignee => {
-      designers += assignee.username + ', ';
-    });
+    if (task?.assignees && task?.assignees.length > 0) {
+      task?.assignees?.forEach(assignee => {
+        designers += assignee.username + ', ';
+      });
+    } else {
+      const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
+        ?.value as User[];
+
+      if (designAssignee) {
+        designAssignee.forEach(assignee => {
+          designers += assignee.username + ', ';
+        });
+      }
+    }
+
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
 
