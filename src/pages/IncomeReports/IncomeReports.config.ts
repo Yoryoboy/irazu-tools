@@ -18,6 +18,12 @@ export const bauPrices = {
   'SERVICEABLE/TCI/WIFI / 29312 (EA)': 20.0,
 };
 
+export const hsPrices = {
+  'REDESIGN TIME': 35.0,
+  'ASBUILT ROUNDED MILES': 55.0,
+  'DESIGN ROUNDED MILES': 70.0,
+};
+
 export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[]) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Income', {

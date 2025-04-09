@@ -30,8 +30,6 @@ function HsReport() {
       ? formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks])
       : [];
 
-  console.log(approvedHsTasks);
-
   const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks);
 
   return (
