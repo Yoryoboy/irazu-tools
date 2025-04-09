@@ -16,13 +16,13 @@ export const bauPrices = {
   'NODE SPLIT PRELIM / 35539 (EA)': 55.0,
   'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)': 125.0,
   'SERVICEABLE/TCI/WIFI / 29312 (EA)': 20.0,
-};
+} as const;
 
 export const hsPrices = {
   'REDESIGN TIME': 35.0,
   'ASBUILT ROUNDED MILES': 55.0,
   'DESIGN ROUNDED MILES': 70.0,
-};
+} as const;
 
 export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[]) {
   const workbook = new ExcelJS.Workbook();
