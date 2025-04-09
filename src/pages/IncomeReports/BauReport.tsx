@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
 import { formatApprovedBauTasks, formatBauIncomeDataForExcel } from '../../utils/tasksFunctions';
 import { createOnChangeHandler } from './IncomeReports.handlers';
-import { generateBauIncomeExcel } from './IncomeReports.config';
+import { bauPrices, generateBauIncomeExcel } from './IncomeReports.config';
 
 const { RangePicker } = DatePicker;
 
@@ -19,12 +19,11 @@ function BauReport() {
 
   const approvedBauTasks = formatApprovedBauTasks(clickUpTasks);
 
-  const bauIncome = formatBauIncomeDataForExcel(approvedBauTasks);
-
-  console.log(bauIncome);
+  const bauIncome = formatBauIncomeDataForExcel(approvedBauTasks, bauPrices);
 
   return (
     <main>
+      <h1>BAU Income Report</h1>
       <RangePicker onChange={onBauParamsChange} />
       <>
         {bauIncome.length > 0 && (

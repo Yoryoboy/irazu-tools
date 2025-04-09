@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
 import { formatApprovedHsTasks, formatBauIncomeDataForExcel } from '../../utils/tasksFunctions';
 import { createHsOnChangeHandler } from './IncomeReports.handlers';
-import { generateBauIncomeExcel } from './IncomeReports.config';
+import { generateBauIncomeExcel, hsPrices } from './IncomeReports.config';
 
 const { RangePicker } = DatePicker;
 
@@ -30,7 +30,7 @@ function HsReport() {
       ? formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks])
       : [];
 
-  const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks);
+  const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks, hsPrices);
 
   return (
     <main>

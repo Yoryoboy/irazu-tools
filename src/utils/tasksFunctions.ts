@@ -24,7 +24,6 @@ import {
 } from '../constants/clickUpCustomFields';
 import { SearchParams } from '../types/SearchParams';
 import { TaskTimeData, TaskTimeDataWithClickUpID } from '../types/MQMS';
-import { bauPrices } from '../pages/IncomeReports/IncomeReports.config';
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
@@ -416,9 +415,14 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   });
 }
 
-export function formatBauIncomeDataForExcel(tasks: ApprovedBauTasks[]): BauIncomeData[] {
+export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
+  tasks: ApprovedBauTasks[],
+  prices: T
+): BauIncomeData[] {
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
     task.codes?.forEach(code => {
+      const price = prices[code.name as keyof T] || 0;
+      const quantity = Number(code.value);
       acc.push({
         id: task.id,
         name: task.name,
@@ -427,8 +431,8 @@ export function formatBauIncomeDataForExcel(tasks: ApprovedBauTasks[]): BauIncom
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
         code: code.name || '',
         quantity: code.value as string,
-        price: bauPrices[code.name as keyof typeof bauPrices] || 0,
-        total: Number(code.value) * (bauPrices[code.name as keyof typeof bauPrices] || 0),
+        price,
+        total: quantity * price,
       });
     });
     return acc;
