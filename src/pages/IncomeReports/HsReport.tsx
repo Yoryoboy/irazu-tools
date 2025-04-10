@@ -35,7 +35,7 @@ function HsReport() {
       <RangePicker onChange={onParamsChange} />
       <>
         {HsIncome.length > 0 && (
-          <Button type="primary" onClick={() => generateBauIncomeExcel(HsIncome)}>
+          <Button type="primary" onClick={() => generateBauIncomeExcel(HsIncome, 'HS')}>
             Download Income Report
           </Button>
         )}

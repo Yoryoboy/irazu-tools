@@ -27,7 +27,7 @@ function BauReport() {
       <RangePicker onChange={onBauParamsChange} />
       <>
         {bauIncome.length > 0 && (
-          <Button type="primary" onClick={() => generateBauIncomeExcel(bauIncome)}>
+          <Button type="primary" onClick={() => generateBauIncomeExcel(bauIncome, 'BAU')}>
             Download Income Report
           </Button>
         )}

@@ -24,7 +24,7 @@ export const hsPrices = {
   'DESIGN ROUNDED MILES': 70.0,
 } as const;
 
-export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[]) {
+export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName: string) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Income', {
     views: [{ state: 'frozen', ySplit: 1 }],
@@ -114,6 +114,6 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[]) {
     const blob = new Blob([data], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    saveAs(blob, `Income_BAU_${new Date().toLocaleDateString()}.xlsx`);
+    saveAs(blob, `Income_${fileName}_${new Date().toLocaleDateString()}.xlsx`);
   });
 }
