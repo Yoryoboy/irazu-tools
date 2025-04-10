@@ -4,6 +4,7 @@ import TaskSyncListSelector from "./pages/TaskSync/TaskSyncListSelector";
 import MqmsVerificationSelector from "./pages/MqmsVerification/MqmsVerificationSelector";
 import MqmsTimetracking from "./pages/MqmsVerification/SyncTimetracking/MqmsTimetracking";
 import MqmsListConfigForCheckApproved from "./pages/MqmsVerification/MqmsListConfigForCheckApproved";
+import IncomeReports from "./pages/IncomeReports/IncomeReports";
 
 function AppRouter() {
   return (
@@ -18,6 +19,7 @@ function AppRouter() {
         />
         <Route path="timetracking" element={<MqmsTimetracking />} />
       </Route>
+      <Route path="/income-reports" element={<IncomeReports />} />
     </Routes>
   );
 }

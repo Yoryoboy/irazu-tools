@@ -1,3 +1,3 @@
 export interface SearchParams {
-  [key: string]: string;
+  [key: string]: string | string[];
 }
