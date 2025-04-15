@@ -345,7 +345,7 @@ function addQcerToTaskByStatus(
             assignee: (taskField["REDESIGN QC BY"] as number[])[0] || 0,
           };
 
-        case "ready for qc":
+        case "internal qc":
           return {
             ...payload,
             assignee: (taskField["QC PERFORMED BY"] as number[])[0] || 0,
