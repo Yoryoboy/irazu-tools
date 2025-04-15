@@ -29,21 +29,12 @@ import { TaskTimeData, TaskTimeDataWithClickUpID } from '../types/MQMS';
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
 export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[]): MQMSTask[] {
-  const clickUpTaskMap = new Map<string, string>();
-
-  clickUpTasks.forEach(task => {
-    const secondaryIdField = task.custom_fields?.find(field => field.name === 'SECONDARY ID');
-    const secondaryId = typeof secondaryIdField?.value === 'string' ? secondaryIdField?.value : '';
-
-    if (secondaryId) {
-      clickUpTaskMap.set(task.name, secondaryId);
-    }
+  const clickUpTasksUUID = clickUpTasks.map(task => {
+    return task.custom_fields?.find(field => field.name === 'WORK REQUEST ID')?.value;
   });
 
   const newMqmsTasks = MQMSTasks.filter(task => {
-    const existsInClickUp =
-      clickUpTaskMap.has(task.EXTERNAL_ID) &&
-      clickUpTaskMap.get(task.EXTERNAL_ID) === task.SECONDARY_EXTERNAL_ID;
+    const existsInClickUp = clickUpTasksUUID.includes(task.REQUEST_ID);
     return !existsInClickUp;
   });
 
