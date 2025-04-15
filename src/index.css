@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -48,60 +48,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-}
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  min-height: 100dvh;
-}
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-p {
-  overflow-wrap: break-word; /* Corrige 'text-wrap: pretty' a 'overflow-wrap: break-word' */
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  text-wrap: balance; /* 'text-wrap: balance' es experimental, válido para navegadores que lo soporten */
-}
-
-img,
-video,
-svg {
-  height: auto;
-  max-width: 100%;
-  vertical-align: middle;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-    transition: none !important; /* Añadido '!important' para ser consistente */
-  }
 }
 
 @theme inline {
