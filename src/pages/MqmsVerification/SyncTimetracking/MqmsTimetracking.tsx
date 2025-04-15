@@ -31,7 +31,7 @@ function MqmsTimetracking() {
 
   const tasks = useMemo(() => {
     return filteredTasks.length > 0
-      ? filteredTasks.map(task => extractTaskFields(task, fields)).filter(t => t.id === '86b4daf6n')
+      ? filteredTasks.map(task => extractTaskFields(task, fields))
       : [];
   }, [filteredTasks]);
 
