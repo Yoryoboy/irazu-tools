@@ -17,24 +17,49 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNewMqmsTasks } from '@/hooks/useNewMqmsTasks';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
+import { MQMSTask, ParsedData, Task } from '@/types/Task';
+import * as XLSX from 'xlsx';
 
 const options: CheckboxGroupProps<string>['options'] = [
   { label: 'HighSplit', value: '' },
   { label: 'BAU', value: 'bau' },
 ];
 
+const DESIRED_KEYS: (keyof MQMSTask)[] = [
+  'REQUEST_ID',
+  'JOB_NAME',
+  'EXTERNAL_ID',
+  'SECONDARY_EXTERNAL_ID',
+  'REQUEST_NAME',
+  'PROJECT_TYPE',
+  'NODE_NAME',
+  'HUB',
+];
+
 const DEFAULT_SEARCH_PARAMS = {};
+
+function cleanData(rawData: ParsedData[], desiredKeys: (keyof MQMSTask)[]): MQMSTask[] {
+  return rawData.map(
+    obj =>
+      desiredKeys.reduce((acc: Partial<MQMSTask>, key) => {
+        if (obj[key] !== null && obj[key] !== undefined) {
+          acc[key] = obj[key] as MQMSTask[typeof key];
+        }
+        return acc;
+      }, {} as Partial<MQMSTask>) as MQMSTask
+  );
+}
 
 function TaskSyncListSelector() {
   const [file, setFile] = useState<File | null>(null);
   const [selectedList, setSelectedList] = useState<keyof typeof CLICKUP_LIST_IDS | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
 
   const { clickUpTasks, loading: loadingClickUpData } = useFetchClickUpTasks(
     selectedList || '',
     DEFAULT_SEARCH_PARAMS
   );
-
-  console.log(clickUpTasks);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -53,6 +78,38 @@ function TaskSyncListSelector() {
     const listId = CLICKUP_LIST_IDS[value as keyof typeof CLICKUP_LIST_IDS];
     setSelectedList(listId as keyof typeof CLICKUP_LIST_IDS);
   };
+
+  function processTasks() {
+    if (!file) return;
+    setIsProcessing(true);
+
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      const binaryStr = e.target?.result;
+      const workbook = XLSX.read(binaryStr, { type: 'binary' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const sheetData = XLSX.utils.sheet_to_json(firstSheet, {
+        header: 1,
+      });
+
+      const [headers, ...rows] = sheetData as [string[], ...string[][]];
+
+      const parsedData = rows.map((row: string[]) =>
+        headers.reduce((acc, header, index) => {
+          acc[header as string] = row[index];
+          return acc;
+        }, {} as ParsedData)
+      ); // <- faltaba cerrar este paréntesis y llave
+
+      const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
+      setMQMSTasks(parsedDataCleaned);
+      setIsProcessing(false);
+      toast(`Tasks processed. Found ${parsedDataCleaned.length} new tasks to sync`);
+    };
+
+    reader.readAsArrayBuffer(file);
+  }
 
   return (
     <div className="max-w-6xl m-4 space-y-8 text-gray-100">
@@ -136,6 +193,29 @@ function TaskSyncListSelector() {
             </AlertDescription>
           </Alert>
         </div>
+      )}
+
+      {/* Process Button */}
+      {file && clickUpTasks.length > 0 && (
+        <Button
+          className="w-full sm:w-auto bg-[#3B82F6] hover:bg-blue-600"
+          onClick={processTasks}
+          disabled={isProcessing || MQMSTasks.length > 0}
+        >
+          {isProcessing ? (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : MQMSTasks.length > 0 ? (
+            <>
+              <Check className="mr-2 h-4 w-4" />
+              Processed
+            </>
+          ) : (
+            'Process Tasks'
+          )}
+        </Button>
       )}
     </div>
   );
