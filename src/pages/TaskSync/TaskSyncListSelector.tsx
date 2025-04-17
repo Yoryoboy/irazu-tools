@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import { CLICKUP_LIST_IDS } from '../../utils/config';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Check, AlertCircle, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import { Upload, Check, AlertCircle, RefreshCw, FileSpreadsheet, Loader } from 'lucide-react';
 import TaskSync from './TaskSync';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,11 +26,15 @@ const options: CheckboxGroupProps<string>['options'] = [
 const DEFAULT_SEARCH_PARAMS = {};
 
 function TaskSyncListSelector() {
-  const [clickUpDataFetched, setClickUpDataFetched] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [selectedList, setSelectedList] = useState<keyof typeof CLICKUP_LIST_IDS | null>(null);
 
-  const { clickUpTasks } = useFetchClickUpTasks(selectedList as string, DEFAULT_SEARCH_PARAMS);
+  const { clickUpTasks, loading: loadingClickUpData } = useFetchClickUpTasks(
+    selectedList || '',
+    DEFAULT_SEARCH_PARAMS
+  );
+
+  console.log(clickUpTasks);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -46,7 +50,8 @@ function TaskSyncListSelector() {
   });
 
   const handleListChange = (value: string) => {
-    setSelectedList(value as keyof typeof CLICKUP_LIST_IDS);
+    const listId = CLICKUP_LIST_IDS[value as keyof typeof CLICKUP_LIST_IDS];
+    setSelectedList(listId as keyof typeof CLICKUP_LIST_IDS);
   };
 
   return (
@@ -122,12 +127,12 @@ function TaskSyncListSelector() {
           </Alert>
           <Alert className="bg-gray-800 border-gray-700">
             <AlertDescription className="flex items-center">
-              {clickUpDataFetched ? (
-                <Check className="h-4 w-4 text-green-500 mr-2" />
+              {loadingClickUpData ? (
+                <Loader className="h-4 w-4 text-gray-500 mr-2 animate-spin" />
               ) : (
-                <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />
+                <Check className="h-4 w-4 text-green-500 mr-2" />
               )}
-              ClickUp Data: {clickUpDataFetched ? 'Fetched' : 'Pending'}
+              ClickUp Data: {loadingClickUpData ? 'Pending' : 'Fetched'}
             </AlertDescription>
           </Alert>
         </div>
