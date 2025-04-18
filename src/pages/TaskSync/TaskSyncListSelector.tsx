@@ -100,7 +100,7 @@ function TaskSyncListSelector() {
           acc[header as string] = row[index];
           return acc;
         }, {} as ParsedData)
-      ); // <- faltaba cerrar este paréntesis y llave
+      );
 
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
       setMQMSTasks(parsedDataCleaned);
