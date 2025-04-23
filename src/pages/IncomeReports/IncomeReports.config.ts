@@ -10,12 +10,14 @@ export const bauPrices = {
   'COAX NEW BUILD < 1,500’ / 27281 (EA)': 75.0,
   'NEW COAX FOOTAGE OVER 1500 (FT)': 0.02,
   'FIBER AND/OR COAX FOOTAGE >1,500’ / 27280 (FT)': 0.0025,
+  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)': 0.0025,
   'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 150.0,
   'NEW FIBER FOOTAGE OVER 1500 (FT)': 0.02,
   'RDOF Architecture / 40555 (MILE)': 125.0,
   'NODE SPLIT PRELIM / 35539 (EA)': 55.0,
   'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)': 125.0,
   'SERVICEABLE/TCI/WIFI / 29312 (EA)': 20.0,
+  'REDESIGN / 13406 (HR)': 35.0,
 } as const;
 
 export const hsPrices = {
@@ -68,8 +70,8 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
   };
 
   // Format number columns
-  worksheet.getColumn('price').numFmt = '"$"#,##0.00';
-  worksheet.getColumn('total').numFmt = '"$"#,##0.00';
+  worksheet.getColumn('price').numFmt = '"$"#,##0.0000';
+  worksheet.getColumn('total').numFmt = '"$"#,##0.0000';
   worksheet.getColumn('quantity').numFmt = '#,##0';
 
   // Format date columns and ensure they're recognized as dates

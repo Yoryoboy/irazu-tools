@@ -20,7 +20,7 @@ export function createOnChangeHandler(setSearchParams: (params: SearchParams) =>
     ];
 
     setSearchParams({
-      'statuses[]': ['approved'],
+      'statuses[]': ['approved', 'sent'],
       custom_fields: JSON.stringify(customFields),
     });
   };
@@ -61,7 +61,7 @@ export function createHsOnChangeHandler(
     });
 
     setRedesignSearchParams({
-      'statuses[]': ['sent', 'approved'],
+      'statuses[]': ['redesign sent', 'approved'],
       custom_fields: JSON.stringify(redesignCustomFields),
     });
   };
