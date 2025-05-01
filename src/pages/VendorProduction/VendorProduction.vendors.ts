@@ -46,4 +46,19 @@ export const vendors: Record<string, Vendor> = {
     reportTemplatePath:
       "excel_templates/IRAZU - Planilla Produccion - NATHALY PINZON.xlsx",
   },
+  barbaraGarcia : {
+    id: 88296360,
+    username: "Barbara Garcia",
+    email: "barbaragga.1596@gmail.com",
+    color: null,
+    profilePicture: null,
+    initials: "BG",
+    role: 4,
+    custom_role: null,
+    last_active: "1745983285342",
+    date_joined: "1744201624549",
+    date_invited: "1744199963870",
+    reportTemplatePath:
+      "excel_templates/IRAZU - Planilla Produccion - BARBARA.xlsx",
+  }
 };

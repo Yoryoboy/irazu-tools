@@ -10,6 +10,7 @@ import { vendors } from "./VendorProduction.vendors";
 import VendorBauProductionTable from "./VendorBauProductionTable";
 
 function VendorProduction() {
+  
   const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
 
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
