@@ -41,4 +41,5 @@ export const codeMapping: Record<string, string> = {
   'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 'CCI - BAU Fiber New Build  1,500’/27282',
   'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)':
     'CCI - BAU SUBCO ONLY Node Seg/Split Asbuild/35473',
+  'NODE SPLIT PRELIM / 35539 (EA)': 'CCI - BAU Node Split Prelim/35539',
 };
