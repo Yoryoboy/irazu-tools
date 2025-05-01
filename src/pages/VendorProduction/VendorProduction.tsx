@@ -10,8 +10,10 @@ import { vendors } from "./VendorProduction.vendors";
 import VendorBauProductionTable from "./VendorBauProductionTable";
 
 function VendorProduction() {
-  
-  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly } = vendors;
+
+  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia } = vendors;
+
+  // Anais Archila
 
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
     useFilteredTasks(
@@ -37,6 +39,8 @@ function VendorProduction() {
       getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
     );
 
+  // Beatriz Leal 
+
   const { filteredTasks: asbuiltForBeatrizLeal } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(beatrizLeal.id.toString())
   );
@@ -49,6 +53,7 @@ function VendorProduction() {
     getRedesignSearchParamsForVendor(beatrizLeal.id.toString())
   );
 
+  // Nathaly
   const { filteredTasks: asbuiltForNathaly } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(nathaly.id.toString())
   );
@@ -59,6 +64,13 @@ function VendorProduction() {
 
   const { filteredTasks: redesignForNathaly } = useFilteredTasks(
     getRedesignSearchParamsForVendor(nathaly.id.toString())
+  );
+
+  // Barbara Garcia
+ 
+
+  const {filteredTasks: bauForBarbaraGarcia} = useFilteredTasks(
+    getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
   );
 
   return (
@@ -84,6 +96,10 @@ function VendorProduction() {
         designs={designForNathaly}
         redesigns={redesignForNathaly}
         vendor={nathaly}
+      />
+      <VendorBauProductionTable
+        bau={bauForBarbaraGarcia}
+        vendor={barbaraGarcia}
       />
     </main>
   );
