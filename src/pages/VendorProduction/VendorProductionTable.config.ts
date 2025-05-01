@@ -23,4 +23,5 @@ export const redesignFields = [
   "REDESIGN ACTUAL COMPLETION DATE",
   "REDESIGN TIME",
   "CHECKED FOR SUBCO",
+  "TIME SPENT BY VENDOR",
 ];

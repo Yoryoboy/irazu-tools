@@ -205,7 +205,7 @@ export function unifyProjects(
       name: item.name,
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["REDESIGN ACTUAL COMPLETION DATE"] || "",
-      quantity: item["REDESIGN TIME"] || "0",
+      quantity: item["TIME SPENT BY VENDOR"] || item["REDESIGN TIME"] || "0",
       checkedForSubco: item["CHECKED FOR SUBCO"] || [],
       projectCode: item.projectCode,
     });

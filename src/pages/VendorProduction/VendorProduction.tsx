@@ -67,7 +67,6 @@ function VendorProduction() {
   );
 
   // Barbara Garcia
- 
 
   const {filteredTasks: bauForBarbaraGarcia} = useFilteredTasks(
     getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
