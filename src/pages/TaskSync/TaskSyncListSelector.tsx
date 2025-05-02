@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { CLICKUP_LIST_IDS } from '../../utils/config';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Check, AlertCircle, RefreshCw, FileSpreadsheet, Loader } from 'lucide-react';
@@ -105,7 +106,6 @@ function TaskSyncListSelector() {
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
       setMQMSTasks(parsedDataCleaned);
       setIsProcessing(false);
-      toast(`Tasks processed. Found ${parsedDataCleaned.length} new tasks to sync`);
     };
 
     reader.readAsArrayBuffer(file);
@@ -217,6 +217,81 @@ function TaskSyncListSelector() {
           )}
         </Button>
       )}
+              {/* Results Table */}
+              {newTasks.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">New Tasks ({newTasks.length})</h2>
+              <Button
+                onClick={syncAllTasks}
+                className="bg-[#3B82F6] hover:bg-blue-600"
+                disabled={Object.keys(syncingTasks).length > 0}
+              >
+                {Object.keys(syncingTasks).length === newTasks.length ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Syncing All...
+                  </>
+                ) : (
+                  "Sync All Tasks"
+                )}
+              </Button>
+            </div>
+
+            <div className="rounded-lg border border-gray-700 overflow-hidden">
+              <Table>
+                <TableHeader className="bg-gray-800">
+                  <TableRow className="border-gray-700">
+                    <TableHead className="text-gray-300">Task ID</TableHead>
+                    <TableHead className="text-gray-300">Task Name</TableHead>
+                    <TableHead className="text-gray-300">Status</TableHead>
+                    <TableHead className="text-gray-300 text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {newTasks.map((task) => (
+                    <TableRow key={task.id} className="border-gray-700 hover:bg-gray-800/50">
+                      <TableCell className="font-mono text-gray-400">{task.id}</TableCell>
+                      <TableCell>{task.name}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={
+                            task.status === "Urgent"
+                              ? "bg-red-500/20 text-red-400 border-red-500/50"
+                              : task.status === "In Progress"
+                                ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                                : "bg-gray-500/20 text-gray-400 border-gray-500/50"
+                          }
+                        >
+                          {task.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
+                          onClick={() => syncTask(task.id)}
+                          disabled={syncingTasks[task.id]}
+                        >
+                          {syncingTasks[task.id] ? (
+                            <>
+                              <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                              Syncing...
+                            </>
+                          ) : (
+                            "Sync"
+                          )}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
