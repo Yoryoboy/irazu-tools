@@ -37,9 +37,7 @@ export function useFileteredMQMSTaks(
       );
 
       if (!sentTask?.id) {
-        throw new Error(
-          `MQMS Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`
-        );
+          console.log(`Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`);
       }
 
       return { ...task, clickUpID: sentTask?.id?.toString() };
