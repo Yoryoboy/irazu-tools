@@ -16,7 +16,7 @@ export function useFileteredMQMSTaks(
         if (!sentTask?.id) {
           return { ...task, clickUpID: "" };
         }
-        return { ...task, clickUpID: sentTask?.id?.toString() };
+        return { ...task, clickUpID: sentTask.id.toString() };
       })
     );
 
@@ -37,10 +37,12 @@ export function useFileteredMQMSTaks(
       );
 
       if (!sentTask?.id) {
-          console.log(`Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`);
+        console.log(
+          `Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`
+        );
       }
 
-      return { ...task, clickUpID: sentTask?.id?.toString() };
+      return { ...task, clickUpID: sentTask?.id?.toString() || "" };
     });
 
   return {
