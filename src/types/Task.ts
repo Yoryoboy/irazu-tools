@@ -169,6 +169,7 @@ export interface MQMSTask {
   PROJECT_TYPE: string;
   NODE_NAME: string;
   HUB: string;
+  'MASTER PROJECT NAME': string;
 }
 
 export type PostNewTaskResult = FulfilledPostNewTaskResult | RejectedPostNewTaskResult;

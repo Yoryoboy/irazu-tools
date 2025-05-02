@@ -20,6 +20,7 @@ import { useNewMqmsTasks } from '@/hooks/useNewMqmsTasks';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
 import { MQMSTask, ParsedData, Task } from '@/types/Task';
 import * as XLSX from 'xlsx';
+import { getNewTasksFromMqms, handleAction } from '@/utils/tasksFunctions';
 
 const options: CheckboxGroupProps<string>['options'] = [
   { label: 'HighSplit', value: '' },
@@ -35,6 +36,7 @@ const DESIRED_KEYS: (keyof MQMSTask)[] = [
   'PROJECT_TYPE',
   'NODE_NAME',
   'HUB',
+  'MASTER PROJECT NAME'
 ];
 
 const DEFAULT_SEARCH_PARAMS = {};
@@ -56,11 +58,17 @@ function TaskSyncListSelector() {
   const [selectedList, setSelectedList] = useState<keyof typeof CLICKUP_LIST_IDS | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
+  const [syncingTasks, setSyncingTasks] = useState<Record<string, boolean>>({})
 
   const { clickUpTasks, loading: loadingClickUpData } = useFetchClickUpTasks(
     selectedList || '',
     DEFAULT_SEARCH_PARAMS
   );
+
+  const newTasks = MQMSTasks.length > 0 ? getNewTasksFromMqms(MQMSTasks, clickUpTasks) : [];
+
+
+
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -103,12 +111,32 @@ function TaskSyncListSelector() {
         }, {} as ParsedData)
       );
 
+
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
       setMQMSTasks(parsedDataCleaned);
       setIsProcessing(false);
     };
 
     reader.readAsArrayBuffer(file);
+  }
+
+
+
+  const syncAllTasks = () => {
+    const syncingAll = newTasks.reduce(
+      (acc, task) => {
+        acc[task.EXTERNAL_ID] = true
+        return acc
+      },
+      {} as Record<string, boolean>,
+    )
+
+    setSyncingTasks(syncingAll)
+
+    // Simulate sync delay
+    setTimeout(() => {
+      setSyncingTasks({})
+    }, 2500)
   }
 
   return (
@@ -242,18 +270,23 @@ function TaskSyncListSelector() {
               <Table>
                 <TableHeader className="bg-gray-800">
                   <TableRow className="border-gray-700">
+                    <TableHead className="text-gray-300">Task UUID</TableHead>
                     <TableHead className="text-gray-300">Task ID</TableHead>
+                    <TableHead className="text-gray-300">Secondary ID</TableHead>
                     <TableHead className="text-gray-300">Task Name</TableHead>
+                    <TableHead className="text-gray-300">Job Type</TableHead>
+                    <TableHead className="text-gray-300">Project Type</TableHead>
+                    <TableHead className="text-gray-300">Node Name</TableHead>
                     <TableHead className="text-gray-300">Status</TableHead>
                     <TableHead className="text-gray-300 text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {newTasks.map((task) => (
-                    <TableRow key={task.id} className="border-gray-700 hover:bg-gray-800/50">
-                      <TableCell className="font-mono text-gray-400">{task.id}</TableCell>
-                      <TableCell>{task.name}</TableCell>
-                      <TableCell>
+                    <TableRow key={task.REQUEST_ID} className="border-gray-700 hover:bg-gray-800/50">
+                      <TableCell className="font-mono text-gray-400">{task.EXTERNAL_ID}</TableCell>
+                      <TableCell>{task.EXTERNAL_ID}</TableCell>
+                      {/* <TableCell>
                         <Badge
                           variant="outline"
                           className={
@@ -266,16 +299,16 @@ function TaskSyncListSelector() {
                         >
                           {task.status}
                         </Badge>
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="text-right">
                         <Button
                           size="sm"
                           variant="outline"
                           className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
-                          onClick={() => syncTask(task.id)}
-                          disabled={syncingTasks[task.id]}
+                          onClick={() => handleAction(task, newTasks, setMQMSTasks, selectedList as string)}
+                          disabled={syncingTasks[task.EXTERNAL_ID]}
                         >
-                          {syncingTasks[task.id] ? (
+                          {syncingTasks[task.EXTERNAL_ID] ? (
                             <>
                               <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
                               Syncing...
