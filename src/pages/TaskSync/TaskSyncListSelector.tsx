@@ -140,7 +140,7 @@ function TaskSyncListSelector() {
   }
 
   return (
-    <div className="max-w-6xl m-4 space-y-8 text-gray-100">
+    <div className="max-w-6xl m-4 space-y-8 text-gray-100 overflow-y-auto">
       <h1 className="text-3xl font-bold">ClickUp MQMS Integration</h1>
       <p className="text-gray-400">
         Upload an Excel file to compare and synchronize tasks with ClickUp
@@ -264,66 +264,66 @@ function TaskSyncListSelector() {
                   "Sync All Tasks"
                 )}
               </Button>
-            </div>
+            </div>  
 
-            <div className="rounded-lg border border-gray-700 overflow-hidden">
-              <Table>
-                <TableHeader className="bg-gray-800">
-                  <TableRow className="border-gray-700">
-                    <TableHead className="text-gray-300">Task UUID</TableHead>
-                    <TableHead className="text-gray-300">Task ID</TableHead>
-                    <TableHead className="text-gray-300">Secondary ID</TableHead>
-                    <TableHead className="text-gray-300">Task Name</TableHead>
-                    <TableHead className="text-gray-300">Job Type</TableHead>
-                    <TableHead className="text-gray-300">Project Type</TableHead>
-                    <TableHead className="text-gray-300">Node Name</TableHead>
-                    <TableHead className="text-gray-300">Status</TableHead>
-                    <TableHead className="text-gray-300 text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {newTasks.map((task) => (
-                    <TableRow key={task.REQUEST_ID} className="border-gray-700 hover:bg-gray-800/50">
-                      <TableCell className="font-mono text-gray-400">{task.EXTERNAL_ID}</TableCell>
-                      <TableCell>{task.EXTERNAL_ID}</TableCell>
-                      {/* <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={
-                            task.status === "Urgent"
-                              ? "bg-red-500/20 text-red-400 border-red-500/50"
-                              : task.status === "In Progress"
-                                ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
-                                : "bg-gray-500/20 text-gray-400 border-gray-500/50"
-                          }
-                        >
-                          {task.status}
-                        </Badge>
-                      </TableCell> */}
-                      <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
-                          onClick={() => handleAction(task, newTasks, setMQMSTasks, selectedList as string)}
-                          disabled={syncingTasks[task.EXTERNAL_ID]}
-                        >
-                          {syncingTasks[task.EXTERNAL_ID] ? (
-                            <>
-                              <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
-                              Syncing...
-                            </>
-                          ) : (
-                            "Sync"
-                          )}
-                        </Button>
-                      </TableCell>
+            <div className="rounded-lg border border-gray-700 overflow-hidden max-h-[500px] overflow-y-auto">
+                <Table>
+                  <TableHeader className="bg-gray-800 sticky top-0">
+                    <TableRow className="border-gray-700">
+                      <TableHead className="text-gray-300">Task UUID</TableHead>
+                      <TableHead className="text-gray-300">Task ID</TableHead>
+                      <TableHead className="text-gray-300">Secondary ID</TableHead>
+                      <TableHead className="text-gray-300">Task Name</TableHead>
+                      <TableHead className="text-gray-300">Job Type</TableHead>
+                      <TableHead className="text-gray-300">Project Type</TableHead>
+                      <TableHead className="text-gray-300">Node Name</TableHead>
+                      <TableHead className="text-gray-300">Status</TableHead>
+                      <TableHead className="text-gray-300 text-right">Action</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {newTasks.map((task) => (
+                      <TableRow key={task.REQUEST_ID} className="border-gray-700 hover:bg-gray-800/50">
+                        <TableCell className="font-mono text-gray-400">{task.EXTERNAL_ID}</TableCell>
+                        <TableCell>{task.EXTERNAL_ID}</TableCell>
+                        {/* <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={
+                              task.status === "Urgent"
+                                ? "bg-red-500/20 text-red-400 border-red-500/50"
+                                : task.status === "In Progress"
+                                  ? "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                                  : "bg-gray-500/20 text-gray-400 border-gray-500/50"
+                            }
+                          >
+                            {task.status}
+                          </Badge>
+                        </TableCell> */}
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
+                            onClick={() => handleAction(task, newTasks, setMQMSTasks, selectedList as string)}
+                            disabled={syncingTasks[task.EXTERNAL_ID]}
+                          >
+                            {syncingTasks[task.EXTERNAL_ID] ? (
+                              <>
+                                <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                                Syncing...
+                              </>
+                            ) : (
+                              "Sync"
+                            )}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
-          </div>
         )}
     </div>
   );

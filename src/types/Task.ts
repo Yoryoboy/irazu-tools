@@ -25,7 +25,7 @@ export interface Task {
   tags?: unknown[];
   parent?: null;
   top_level_parent?: null;
-  priority?: Priority;
+  priority?: Priority | number | null;
   due_date?: null;
   start_date?: null;
   points?: null;

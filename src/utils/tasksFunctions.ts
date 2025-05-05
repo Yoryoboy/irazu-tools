@@ -140,7 +140,7 @@ export function getNewTask(row: MQMSTask): Task {
   return {
     name: row.EXTERNAL_ID,
     description: row.JOB_NAME,
-    priority: row['MASTER PROJECT NAME'] === "RAPID BUILD" ? "1" : null,
+    priority: row['MASTER PROJECT NAME'] === "RAPID BUILD" ? 1 : null,
     custom_fields: customFields,
   };
 }
