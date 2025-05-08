@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import VendorProduction from './pages/VendorProduction/VendorProduction';
-import TaskSyncListSelector from './pages/TaskSync/TaskSyncListSelector';
+import TaskSyncListSelector from './pages/TaskSync/TaskSync';
 import MqmsVerificationSelector from './pages/MqmsVerification/MqmsVerificationSelector';
 import MqmsTimetracking from './pages/MqmsVerification/SyncTimetracking/MqmsTimetracking';
 import MqmsListConfigForCheckApproved from './pages/MqmsVerification/MqmsListConfigForCheckApproved';
