@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { MQMSTask, ParsedData } from '@/types/Task';
-import * as XLSX from 'xlsx';
+import { MQMSTask } from '@/types/Task';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
-import { cleanData, getNewTasksFromMqms, handleAction, handleSyncAll } from '@/utils/tasksFunctions';
-import { DEFAULT_SEARCH_PARAMS, DESIRED_KEYS } from './TaskSync.config';
+import { getNewTasksFromMqms } from '@/utils/tasksFunctions';
+import { DEFAULT_SEARCH_PARAMS } from './TaskSync.config';
+import { useTaskProcessing, handleSyncTask, handleSyncAllTasks } from './TaskSync.functions';
 import { ListSelector } from './ListSelector';
 import { FileUploader } from './FileUploader';
 import { StatusPanel } from './StatusPanel';
@@ -13,9 +13,10 @@ import { TasksTable } from './TasksTable';
 function TaskSyncListSelector() {
   const [file, setFile] = useState<File | null>(null);
   const [selectedList, setSelectedList] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [MQMSTasks, setMQMSTasks] = useState<MQMSTask[]>([]);
   const [syncingTasks, setSyncingTasks] = useState<Record<string, boolean>>({});
+  
+  
+  const { isProcessing, MQMSTasks, setMQMSTasks, processTasks } = useTaskProcessing();
 
   const { clickUpTasks, loading: loadingClickUpData } = useFetchClickUpTasks(
     selectedList || '',
@@ -27,44 +28,14 @@ function TaskSyncListSelector() {
   const handleListChange = (listId: string) => {
     setSelectedList(listId);
   };
-
-  function processTasks() {
-    if (!file) return;
-    setIsProcessing(true);
-
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      const binaryStr = e.target?.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const sheetData = XLSX.utils.sheet_to_json(firstSheet, {
-        header: 1,
-      });
-
-      const [headers, ...rows] = sheetData as [string[], ...string[][]];
-
-      const parsedData = rows.map((row: string[]) =>
-        headers.reduce((acc, header, index) => {
-          acc[header as string] = row[index];
-          return acc;
-        }, {} as ParsedData)
-      );
-
-      const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
-      setMQMSTasks(parsedDataCleaned);
-      setIsProcessing(false);
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
-
-  const handleSyncTask = (task: MQMSTask) => {
-    handleAction(task, newTasks, setMQMSTasks, selectedList as string);
+  
+  // Wrapper functions to handle task syncing
+  const handleSyncSingleTask = (task: MQMSTask) => {
+    handleSyncTask(task, newTasks, setMQMSTasks, selectedList as string);
   };
 
-  const handleSyncAllTasks = () => {
-    handleSyncAll(newTasks, setMQMSTasks, selectedList as string);
+  const handleSyncAll = () => {
+    handleSyncAllTasks(newTasks, setMQMSTasks, selectedList as string);
   };
 
   return (
@@ -84,18 +55,17 @@ function TaskSyncListSelector() {
         <ProcessButton
           isProcessing={isProcessing}
           hasProcessedTasks={MQMSTasks.length > 0}
-          onProcess={processTasks}
+          onProcess={() => processTasks(file)}
           disabled={isProcessing || MQMSTasks.length > 0}
         />
       )}
-
       
       {newTasks.length > 0 && (
         <TasksTable
           newTasks={newTasks}
           syncingTasks={syncingTasks}
-          onSyncAll={handleSyncAllTasks}
-          onSyncTask={handleSyncTask}
+          onSyncAll={handleSyncAll}
+          onSyncTask={handleSyncSingleTask}
         />
       )}
     </div>
