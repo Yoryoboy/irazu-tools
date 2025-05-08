@@ -156,20 +156,20 @@ export const handleAction = async (
 ) => {
   const newTask: Task[] = [getNewTask(row)];
   console.log(newTask);
-  // const results = await postNewTasks(newTask, listId, apikey);
+  const results = await postNewTasks(newTask, listId, apikey);
 
-  // const successfulTasks = results.filter(
-  //   (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
-  // );
+  const successfulTasks = results.filter(
+    (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
+  );
 
-  // if (successfulTasks.length > 0) {
-  //   setMQMSTasks(updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks));
-  // }
+  if (successfulTasks.length > 0) {
+    setMQMSTasks(updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks));
+  }
 
-  // const failedTasks = results.filter(result => result.status === 'rejected');
-  // if (failedTasks.length > 0) {
-  //   console.error('Error procesando tareas:', failedTasks);
-  // }
+  const failedTasks = results.filter(result => result.status === 'rejected');
+  if (failedTasks.length > 0) {
+    console.error('Error procesando tareas:', failedTasks);
+  }
 };
 
 export const handleSyncAll = async (

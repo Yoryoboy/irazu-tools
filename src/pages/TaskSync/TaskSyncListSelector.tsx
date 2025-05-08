@@ -20,7 +20,7 @@ import { useNewMqmsTasks } from '@/hooks/useNewMqmsTasks';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
 import { MQMSTask, ParsedData, Task } from '@/types/Task';
 import * as XLSX from 'xlsx';
-import { getNewTasksFromMqms, handleAction } from '@/utils/tasksFunctions';
+import { getNewTasksFromMqms, handleAction, handleSyncAll } from '@/utils/tasksFunctions';
 
 const options: CheckboxGroupProps<string>['options'] = [
   { label: 'HighSplit', value: '' },
@@ -121,23 +121,6 @@ function TaskSyncListSelector() {
   }
 
  console.log(MQMSTasks)
-
-  const syncAllTasks = () => {
-    const syncingAll = newTasks.reduce(
-      (acc, task) => {
-        acc[task.EXTERNAL_ID] = true
-        return acc
-      },
-      {} as Record<string, boolean>,
-    )
-
-    setSyncingTasks(syncingAll)
-
-    // Simulate sync delay
-    setTimeout(() => {
-      setSyncingTasks({})
-    }, 2500)
-  }
 
   return (
     <div className="max-w-7xl m-4 space-y-8 text-gray-100 overflow-y-auto">
@@ -251,7 +234,7 @@ function TaskSyncListSelector() {
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">New Tasks ({newTasks.length})</h2>
               <Button
-                onClick={syncAllTasks}
+                onClick={()=>handleSyncAll(newTasks, setMQMSTasks, selectedList as string)}
                 className="bg-[#3B82F6] hover:bg-blue-600"
                 disabled={Object.keys(syncingTasks).length > 0}
               >
