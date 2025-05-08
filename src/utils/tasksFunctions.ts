@@ -7,6 +7,7 @@ import {
   FulfilledPostNewTaskResult,
   MQMSTask,
   newTimeEntryPayload,
+  ParsedData,
   PostNewTaskResult,
   RejectedPostNewTaskResult,
   Task,
@@ -224,6 +225,18 @@ export async function fetchFilteredTasks(
     console.error('Error fetching tasks:', error);
     throw error;
   }
+}
+
+export function cleanData(rawData: ParsedData[], desiredKeys: (keyof MQMSTask)[]): MQMSTask[] {
+  return rawData.map(
+    obj =>
+      desiredKeys.reduce((acc: Partial<MQMSTask>, key) => {
+        if (obj[key] !== null && obj[key] !== undefined) {
+          acc[key] = obj[key] as MQMSTask[typeof key];
+        }
+        return acc;
+      }, {} as Partial<MQMSTask>) as MQMSTask
+  );
 }
 
 export function getCustomField(fieldName: string): CustomField {

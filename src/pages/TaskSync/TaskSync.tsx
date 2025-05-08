@@ -17,33 +17,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
 import { MQMSTask, ParsedData } from '@/types/Task';
 import * as XLSX from 'xlsx';
-import { getNewTasksFromMqms, handleAction, handleSyncAll } from '@/utils/tasksFunctions';
+import { cleanData, getNewTasksFromMqms, handleAction, handleSyncAll } from '@/utils/tasksFunctions';
+import { DEFAULT_SEARCH_PARAMS, DESIRED_KEYS } from './TaskSync.config';
 
-const DESIRED_KEYS: (keyof MQMSTask)[] = [
-  'REQUEST_ID',
-  'JOB_NAME',
-  'EXTERNAL_ID',
-  'SECONDARY_EXTERNAL_ID',
-  'REQUEST_NAME',
-  'PROJECT_TYPE',
-  'NODE_NAME',
-  'HUB',
-  'MASTER PROJECT NAME'
-];
 
-const DEFAULT_SEARCH_PARAMS = {};
-
-function cleanData(rawData: ParsedData[], desiredKeys: (keyof MQMSTask)[]): MQMSTask[] {
-  return rawData.map(
-    obj =>
-      desiredKeys.reduce((acc: Partial<MQMSTask>, key) => {
-        if (obj[key] !== null && obj[key] !== undefined) {
-          acc[key] = obj[key] as MQMSTask[typeof key];
-        }
-        return acc;
-      }, {} as Partial<MQMSTask>) as MQMSTask
-  );
-}
 
 function TaskSyncListSelector() {
   const [file, setFile] = useState<File | null>(null);
