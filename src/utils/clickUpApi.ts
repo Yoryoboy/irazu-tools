@@ -4,6 +4,7 @@ import {
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
   Task,
+  PostNewTaskResponse,
 } from "../types/Task";
 import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
 import { Result } from "../types/AsyncResult";
@@ -170,6 +171,38 @@ export async function changeTaskStatus(status: string, taskId: string) {
   } catch (error) {
     console.error(`Error updating task ${taskId}:`, error);
     return { status: "error", message: `Error updating task ${taskId}:` };
+  }
+}
+
+export async function createTask(task: Task, listId: string): Promise<Result<PostNewTaskResponse>> {
+  try {
+    const response = await clickUp.post(`/list/${listId}/task`, task);
+    
+    return { 
+      success: true, 
+      data: {
+        taskName: task.name,
+        status: 'success',
+        clickUpTaskId: response.data.id
+      }
+    };
+  } catch (error) {
+    console.error(`Error creating task ${task.name}:`, error);
+    
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: {
+          status: error.response?.status || 500,
+          message: error.message,
+        },
+      };
+    }
+    
+    return {
+      success: false,
+      error: { status: 500, message: "Unknown error" },
+    };
   }
 }
 

@@ -174,13 +174,15 @@ export interface MQMSTask {
 
 export type PostNewTaskResult = FulfilledPostNewTaskResult | RejectedPostNewTaskResult;
 
+export interface PostNewTaskResponse {
+  taskName: string;
+  status: 'success';
+  clickUpTaskId: string;
+}
+
 export interface FulfilledPostNewTaskResult {
   status: 'fulfilled';
-  value: {
-    taskName: string;
-    status: 'success';
-    clickUpTaskId: string;
-  };
+  value: PostNewTaskResponse;
 }
 
 export interface RejectedPostNewTaskResult {

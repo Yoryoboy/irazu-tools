@@ -24,10 +24,11 @@ import {
   CLICKUP_BAU_CUSTOM_FIELDS,
   CLICKUP_HS_CUSTOM_FIELDS,
 } from '../constants/clickUpCustomFields';
+import { createTask } from './clickUpApi';
 import { SearchParams } from '../types/SearchParams';
 import { TaskTimeData, TaskTimeDataWithClickUpID } from '../types/MQMS';
 
-const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
+// Ya no necesitamos importar la API key aquí, se maneja en clickUpApi.ts
 
 export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[]): MQMSTask[] {
   const clickUpTaskMap = new Map<string, string>();
@@ -53,33 +54,21 @@ export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[])
 
 export async function postNewTasks(
   newTasks: Task[],
-  listId: string,
-  apikey: string
+  listId: string
 ): Promise<PostNewTaskResult[]> {
   const results = await Promise.allSettled(
-    newTasks.map(task =>
-      fetch(`https://api.clickup.com/api/v2/list/${listId}/task?`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: apikey,
-        },
-        body: JSON.stringify(task),
-      })
-        .then(resp => {
-          if (!resp.ok) {
-            throw new Error(`Error creating task ${task.name}: ${resp.statusText}`);
-          }
-          return resp.json();
-        })
-        .then(data => ({
-          taskName: task.name,
-          status: 'success',
-          clickUpTaskId: data.id,
-        }))
-    )
+    newTasks.map(async (task) => {
+      const result = await createTask(task, listId);
+      
+      if (result.success) {
+        return result.data;
+      } else {
+        throw new Error(`Error creating task ${task.name}: ${result.error.message}`);
+      }
+    })
   );
 
+ 
   return results.map(result => {
     if (result.status === 'fulfilled') {
       return {
@@ -157,7 +146,7 @@ export const handleAction = async (
 ) => {
   const newTask: Task[] = [getNewTask(row)];
   console.log(newTask);
-  const results = await postNewTasks(newTask, listId, apikey);
+  const results = await postNewTasks(newTask, listId);
 
   const successfulTasks = results.filter(
     (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
@@ -179,7 +168,7 @@ export const handleSyncAll = async (
   listId: string
 ) => {
   const allNewTasks = newMqmsTasks.map(row => getNewTask(row));
-  const results = await postNewTasks(allNewTasks, listId, apikey);
+  const results = await postNewTasks(allNewTasks, listId);
 
   const successfulTasks = results.filter(
     (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
