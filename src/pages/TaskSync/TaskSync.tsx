@@ -29,13 +29,7 @@ function TaskSyncListSelector() {
     setSelectedList(listId);
   };
   
-  const handleSyncSingleTask = (task: MQMSTask) => {
-    handleSyncTask(task, newTasks, setMQMSTasks, selectedList as string);
-  };
 
-  const handleSyncAll = () => {
-    handleSyncAllTasks(newTasks, setMQMSTasks, selectedList as string);
-  };
 
   return (
     <div className="max-w-7xl m-4 space-y-8 text-gray-100 overflow-y-auto">
@@ -63,8 +57,7 @@ function TaskSyncListSelector() {
         <TasksTable
           newTasks={newTasks}
           syncingTasks={syncingTasks}
-          onSyncAll={handleSyncAll}
-          onSyncTask={handleSyncSingleTask}
+          selectedList={selectedList}
         />
       )}
     </div>

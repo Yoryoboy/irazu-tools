@@ -64,20 +64,19 @@ export function useTaskProcessing(): UseTaskProcessingResult {
 /**
  * Handles syncing a single task with ClickUp
  * @param task The task to sync
- * @param newTasks All new tasks
- * @param setMQMSTasks Function to update MQMS tasks
  * @param selectedList The selected ClickUp list
+ * @returns Promise with the result of the sync operation
  */
-export const handleSyncTask = (task: MQMSTask, newTasks: MQMSTask[], setMQMSTasks: React.Dispatch<React.SetStateAction<MQMSTask[]>>, selectedList: string) => {
-  handleAction(task, newTasks, setMQMSTasks, selectedList);
+export const handleSyncTask = async (task: MQMSTask, selectedList: string) => {
+  return await handleAction(task, selectedList);
 };
 
 /**
  * Handles syncing all tasks with ClickUp
  * @param newTasks All new tasks
- * @param setMQMSTasks Function to update MQMS tasks
  * @param selectedList The selected ClickUp list
+ * @returns Promise with the result of the sync operation
  */
-export const handleSyncAllTasks = (newTasks: MQMSTask[], setMQMSTasks: React.Dispatch<React.SetStateAction<MQMSTask[]>>, selectedList: string) => {
-  handleSyncAll(newTasks, setMQMSTasks, selectedList);
+export const handleSyncAllTasks = async (newTasks: MQMSTask[], selectedList: string) => {
+  return await handleSyncAll(newTasks, selectedList);
 };

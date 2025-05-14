@@ -183,7 +183,7 @@ export async function createTask(task: Task, listId: string): Promise<Result<Pos
       data: {
         taskName: task.name,
         status: 'success',
-        clickUpTaskId: response.data.id
+        clickUpTaskId: response.data.id,
       }
     };
   } catch (error) {

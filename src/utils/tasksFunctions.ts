@@ -140,8 +140,6 @@ export const updateNewMqmsTasks = (newTaskName: string, newMqmsTasks: MQMSTask[]
 
 export const handleAction = async (
   row: MQMSTask,
-  newMqmsTasks: MQMSTask[],
-  setMQMSTasks: (tasks: MQMSTask[]) => void,
   listId: string
 ) => {
   const newTask: Task[] = [getNewTask(row)];
@@ -152,19 +150,21 @@ export const handleAction = async (
     (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
   );
 
-  if (successfulTasks.length > 0) {
-    setMQMSTasks(updateNewMqmsTasks(successfulTasks[0].value.taskName, newMqmsTasks));
-  }
-
   const failedTasks = results.filter(result => result.status === 'rejected');
   if (failedTasks.length > 0) {
     console.error('Error procesando tareas:', failedTasks);
   }
+  
+  // Devolver los resultados para que el componente pueda decidir qué hacer
+  return {
+    success: successfulTasks.length > 0,
+    taskId: successfulTasks.length > 0 ? successfulTasks[0].value.taskName : null,
+    results
+  };
 };
 
 export const handleSyncAll = async (
   newMqmsTasks: MQMSTask[],
-  setMQMSTasks: (tasks: MQMSTask[]) => void,
   listId: string
 ) => {
   const allNewTasks = newMqmsTasks.map(row => getNewTask(row));
@@ -174,17 +174,17 @@ export const handleSyncAll = async (
     (result): result is FulfilledPostNewTaskResult => result.status === 'fulfilled'
   );
 
-  if (successfulTasks.length > 0) {
-    const updatedTasks = newMqmsTasks.filter(
-      task => !successfulTasks.some(success => success.value.taskName === task.EXTERNAL_ID)
-    );
-    setMQMSTasks(updatedTasks);
-  }
-
   const failedTasks = results.filter(result => result.status === 'rejected');
   if (failedTasks.length > 0) {
     console.error('Error procesando tareas:', failedTasks);
   }
+  
+  // Devolver los resultados para que el componente pueda decidir qué hacer
+  return {
+    success: successfulTasks.length > 0,
+    syncedTaskIds: successfulTasks.map(success => success.value.taskName),
+    results
+  };
 };
 
 export async function fetchFilteredTasks(
