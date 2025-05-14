@@ -29,7 +29,6 @@ function TaskSyncListSelector() {
     setSelectedList(listId);
   };
   
-  // Wrapper functions to handle task syncing
   const handleSyncSingleTask = (task: MQMSTask) => {
     handleSyncTask(task, newTasks, setMQMSTasks, selectedList as string);
   };

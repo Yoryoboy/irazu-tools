@@ -7,6 +7,7 @@ import {
 } from "../types/Task";
 import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
 import { Result } from "../types/AsyncResult";
+import { SearchParams } from "../types/SearchParams";
 
 const clickUp = axios.create({
   baseURL: "https://api.clickup.com/api/v2",
@@ -41,6 +42,63 @@ export async function getTask(taskId: string): Promise<Result<Task>> {
       };
     }
 
+    return {
+      success: false,
+      error: { status: 500, message: "Unknown error" },
+    };
+  }
+}
+
+
+export async function getTasks(listId: string, searchParams: SearchParams): Promise<Result<Task[]>> {
+  try {
+    let allTasks: Task[] = [];
+    let page = 0;
+    let lastPage = false;
+    
+    do {
+      
+      const query = new URLSearchParams();
+      
+      query.append('page', page.toString());
+      
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (key !== 'page') {
+          if (Array.isArray(value)) {
+            value.forEach(item => query.append(key, item));
+          } else {
+            query.append(key, value.toString());
+          }
+        }
+      });
+      
+      const response = await clickUp.get(`/list/${listId}/task?${query.toString()}`);
+      
+      allTasks = [...allTasks, ...response.data.tasks];
+      
+      lastPage = response.data.last_page;
+      
+      page += 1;
+      
+    } while (!lastPage);
+    
+    return { 
+      success: true, 
+      data: allTasks 
+    };
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: {
+          status: error.response?.status || 500,
+          message: error.message,
+        },
+      };
+    }
+    
     return {
       success: false,
       error: { status: 500, message: "Unknown error" },
