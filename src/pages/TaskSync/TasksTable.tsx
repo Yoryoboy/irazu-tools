@@ -1,4 +1,3 @@
-import { RefreshCw } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +7,11 @@ import { useState, useEffect } from 'react';
 
 interface TasksTableProps {
   newTasks: MQMSTask[];
-  syncingTasks: Record<string, boolean>;
   selectedList: string | null;
 }
 
 export function TasksTable({ 
   newTasks, 
-  syncingTasks, 
   selectedList
 }: TasksTableProps) {
 
@@ -28,27 +25,27 @@ export function TasksTable({
   const handleSyncSingleTask = async (task: MQMSTask) => {
     if (!selectedList) return;
     
-    const result = await handleSyncTask(task, selectedList);
-    
-    if (result.success && result.taskId) {
-      setTasks((prevTasks: MQMSTask[]) => {
-        return prevTasks.filter((t: MQMSTask) => t.REQUEST_ID !== task.REQUEST_ID);
-      });
-    }
+      const result = await handleSyncTask(task, selectedList);
+      
+      if (result.success && result.taskId) {
+        setTasks((prevTasks: MQMSTask[]) => {
+          return prevTasks.filter((t: MQMSTask) => t.REQUEST_ID !== task.REQUEST_ID);
+        });
+      }
   };
 
   const handleSyncAll = async () => {
     if (!selectedList) return;
     
-    const result = await handleSyncAllTasks(tasks, selectedList);
+      const result = await handleSyncAllTasks(tasks, selectedList);
 
-    if (result.success && result.syncedTaskIds && result.syncedTaskIds.length > 0) {
-      setTasks((prevTasks: MQMSTask[]) => {
-        return prevTasks.filter((task: MQMSTask) => 
-          !result.syncedTaskIds.includes(task.EXTERNAL_ID)
-        );
-      });
-    }
+      if (result.success && result.syncedTaskIds && result.syncedTaskIds.length > 0) {
+        setTasks((prevTasks: MQMSTask[]) => {
+          return prevTasks.filter((task: MQMSTask) => 
+            !result.syncedTaskIds.includes(task.EXTERNAL_ID)
+          );
+        });
+      }
   };
 
   return (
@@ -58,16 +55,8 @@ export function TasksTable({
         <Button
           onClick={handleSyncAll}
           className="bg-[#3B82F6] hover:bg-blue-600"
-          disabled={Object.keys(syncingTasks).length > 0}
         >
-          {Object.keys(syncingTasks).length === tasks.length ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-              Syncing All...
-            </>
-          ) : (
-            "Sync All Tasks"
-          )}
+          Sync All Tasks
         </Button>
       </div>  
 
@@ -105,16 +94,8 @@ export function TasksTable({
                     variant="outline"
                     className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
                     onClick={() => handleSyncSingleTask(task)}
-                    disabled={syncingTasks[task.EXTERNAL_ID]}
                   >
-                    {syncingTasks[task.EXTERNAL_ID] ? (
-                      <>
-                        <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
-                        Syncing...
-                      </>
-                    ) : (
-                      "Sync"
-                    )}
+                    Sync
                   </Button>
                 </TableCell>
               </TableRow>

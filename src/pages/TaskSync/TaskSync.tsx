@@ -1,22 +1,18 @@
 import { useState } from 'react';
-import { MQMSTask } from '@/types/Task';
 import { useFetchClickUpTasks } from '@/hooks/useClickUp';
-import { getNewTasksFromMqms } from '@/utils/tasksFunctions';
 import { DEFAULT_SEARCH_PARAMS } from './TaskSync.config';
-import { useTaskProcessing, handleSyncTask, handleSyncAllTasks } from './TaskSync.functions';
+import { useTaskProcessing } from './TaskSync.functions';
 import { ListSelector } from './ListSelector';
 import { FileUploader } from './FileUploader';
 import { StatusPanel } from './StatusPanel';
 import { ProcessButton } from './ProcessButton';
 import { TasksTable } from './TasksTable';
+import { getNewTasksFromMqms } from '@/utils/tasksFunctions';
 
 function TaskSyncListSelector() {
   const [file, setFile] = useState<File | null>(null);
-  const [selectedList, setSelectedList] = useState<string | null>(null);
-  const [syncingTasks, setSyncingTasks] = useState<Record<string, boolean>>({});
-  
-  
-  const { isProcessing, MQMSTasks, setMQMSTasks, processTasks } = useTaskProcessing();
+  const [selectedList, setSelectedList] = useState<string | null>(null);  
+  const { isProcessing, MQMSTasks, processTasks } = useTaskProcessing();
 
   const { clickUpTasks, loading: loadingClickUpData } = useFetchClickUpTasks(
     selectedList || '',
@@ -56,7 +52,6 @@ function TaskSyncListSelector() {
       {newTasks.length > 0 && (
         <TasksTable
           newTasks={newTasks}
-          syncingTasks={syncingTasks}
           selectedList={selectedList}
         />
       )}
