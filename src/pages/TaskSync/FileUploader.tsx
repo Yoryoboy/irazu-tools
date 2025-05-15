@@ -42,8 +42,8 @@ export function FileUploader({ file, setFile }: FileUploaderProps) {
             ? 'Drop the Excel file here'
             : 'Drag and drop an Excel file here, or click to select'}
         </p>
-        <Button variant="outline" className="mt-4">
-          <Upload className="mr-2 h-4 w-4" />
+        <Button variant="outline" className="cursor-pointer mt-4 text-black hover:bg-gray-700 hover:text-white">
+          <Upload className="mr-2 h-4 w-4 " />
           Upload Excel File
         </Button>
         {file && (
