@@ -19,9 +19,6 @@ export function TasksTable({
   const [tasks, setTasks] = useState<MQMSTask[]>(newTasks);
   const [syncing, setSyncing] = useState<string[]>([]);
 
-  console.log(tasks)
-
-
   useEffect(() => {
     setTasks(newTasks);
   }, [newTasks]);
@@ -47,7 +44,6 @@ export function TasksTable({
     
     setSyncing((prevSyncing: string[]) => [...prevSyncing, ...tasks.map((task: MQMSTask) => task.REQUEST_ID)]);
       const result = await handleSyncAllTasks(tasks, selectedList);
-      console.log("result, ", result)
 
       if (result.success && result.syncedTaskIds && result.syncedTaskIds.length > 0) {
         setTasks((prevTasks: MQMSTask[]) => {
