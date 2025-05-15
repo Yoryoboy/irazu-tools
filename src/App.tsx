@@ -15,7 +15,7 @@ function App() {
       <Flex>
         <Layout style={layoutStyle}>
           <HeaderComponent />
-          <div className="min-h-screen bg-[#121212] p-4">
+          <div className= "overflow-auto bg-[#121212] p-4">
             <AppRouter />
           </div>
         </Layout>
