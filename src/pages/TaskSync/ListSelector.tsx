@@ -21,12 +21,12 @@ export function ListSelector({ onListChange }: ListSelectorProps) {
     <div className="space-y-2">
       <label className="text-sm font-medium">Select ClickUp List</label>
       <Select onValueChange={handleListChange}>
-        <SelectTrigger className="w-full sm:w-72 bg-gray-800 border-gray-700">
+        <SelectTrigger className="w-xs bg-gray-800 border-gray-700">
           <SelectValue placeholder="Select a list" />
         </SelectTrigger>
         <SelectContent className="bg-gray-800 border-gray-700">
-          <SelectItem value="cciHs">HighSplit</SelectItem>
-          <SelectItem value="cciBau">BAU</SelectItem>
+          <SelectItem value="cciHs" className="font-medium text-white">HighSplit</SelectItem>
+          <SelectItem value="cciBau" className="font-medium text-white">BAU</SelectItem>
         </SelectContent>
       </Select>
     </div>

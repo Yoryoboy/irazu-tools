@@ -20,9 +20,7 @@ export function TasksTable({
 
   const [tasks, setTasks] = useState<MQMSTask[]>(newTasks);
 
-  console.log(tasks);
 
-  // Actualizar el estado local cuando cambian las tareas del padre
   useEffect(() => {
     setTasks(newTasks);
   }, [newTasks]);
@@ -30,10 +28,8 @@ export function TasksTable({
   const handleSyncSingleTask = async (task: MQMSTask) => {
     if (!selectedList) return;
     
-    // Llamar a handleSyncTask que ahora solo se encarga de crear la tarea
     const result = await handleSyncTask(task, selectedList);
     
-    // Si la sincronización fue exitosa, actualizar el estado local
     if (result.success && result.taskId) {
       setTasks((prevTasks: MQMSTask[]) => {
         return prevTasks.filter((t: MQMSTask) => t.REQUEST_ID !== task.REQUEST_ID);
@@ -44,12 +40,8 @@ export function TasksTable({
   const handleSyncAll = async () => {
     if (!selectedList) return;
     
-    // Llamar a handleSyncAllTasks que ahora solo se encarga de crear las tareas
     const result = await handleSyncAllTasks(tasks, selectedList);
 
-    console.log("result", result);
-    
-    // Si la sincronización fue exitosa, actualizar el estado local
     if (result.success && result.syncedTaskIds && result.syncedTaskIds.length > 0) {
       setTasks((prevTasks: MQMSTask[]) => {
         return prevTasks.filter((task: MQMSTask) => 

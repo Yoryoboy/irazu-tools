@@ -1,24 +1,20 @@
-import { Flex, Layout } from 'antd';
+import { Flex } from 'antd';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppRouter from './AppRouter';
 import HeaderComponent from './components/HeaderComponent';
 
-const layoutStyle = {
-  overflow: 'hidden',
-  width: '100%',
-  height: '100vh',
-};
+
 
 function App() {
   return (
     <Router>
       <Flex>
-        <Layout style={layoutStyle}>
+        <main className="w-full h-screen overflow-auto bg-[#121212]">
           <HeaderComponent />
-          <div className= "overflow-auto bg-[#121212] p-4">
+          <div className="p-4">
             <AppRouter />
           </div>
-        </Layout>
+        </main>
       </Flex>
     </Router>
   );
