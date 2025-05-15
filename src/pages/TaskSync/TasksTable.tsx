@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { MQMSTask } from '@/types/Task';
 import { handleSyncAllTasks, handleSyncTask } from './TaskSync.functions';
 import { useState, useEffect } from 'react';
+import { RefreshCw } from "lucide-react";
 
 interface TasksTableProps {
   newTasks: MQMSTask[];
@@ -16,6 +17,9 @@ export function TasksTable({
 }: TasksTableProps) {
 
   const [tasks, setTasks] = useState<MQMSTask[]>(newTasks);
+  const [syncing, setSyncing] = useState<string[]>([]);
+
+  console.log(tasks)
 
 
   useEffect(() => {
@@ -24,6 +28,8 @@ export function TasksTable({
 
   const handleSyncSingleTask = async (task: MQMSTask) => {
     if (!selectedList) return;
+
+    setSyncing((prevSyncing: string[]) => [...prevSyncing, task.REQUEST_ID]);
     
       const result = await handleSyncTask(task, selectedList);
       
@@ -32,12 +38,16 @@ export function TasksTable({
           return prevTasks.filter((t: MQMSTask) => t.REQUEST_ID !== task.REQUEST_ID);
         });
       }
+
+      setSyncing((prevSyncing: string[]) => prevSyncing.filter((id: string) => id !== task.REQUEST_ID));
   };
 
   const handleSyncAll = async () => {
     if (!selectedList) return;
     
+    setSyncing((prevSyncing: string[]) => [...prevSyncing, ...tasks.map((task: MQMSTask) => task.REQUEST_ID)]);
       const result = await handleSyncAllTasks(tasks, selectedList);
+      console.log("result, ", result)
 
       if (result.success && result.syncedTaskIds && result.syncedTaskIds.length > 0) {
         setTasks((prevTasks: MQMSTask[]) => {
@@ -46,6 +56,8 @@ export function TasksTable({
           );
         });
       }
+
+      setSyncing([]);
   };
 
   return (
@@ -56,7 +68,11 @@ export function TasksTable({
           onClick={handleSyncAll}
           className="bg-[#3B82F6] hover:bg-blue-600"
         >
-          Sync All Tasks
+          {syncing.length > 0 ? (
+            <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+          ) : (
+            "Sync All Tasks"
+          )}
         </Button>
       </div>  
 
@@ -95,7 +111,11 @@ export function TasksTable({
                     className="border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10"
                     onClick={() => handleSyncSingleTask(task)}
                   >
-                    Sync
+                    {syncing.includes(task.REQUEST_ID) ? (
+                      <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
+                    ) : (
+                      "Sync"
+                    )}
                   </Button>
                 </TableCell>
               </TableRow>
