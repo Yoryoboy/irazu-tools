@@ -3,9 +3,14 @@ import { TaskTimeDataWithClickUpID } from "../../../types/MQMS";
 import {
   ExtractedTaskFieldValues,
   newTimeEntryPayload,
+  TimetrackingPayload,
+  TimetrackingVerificationPayload,
 } from "../../../types/Task";
 import { getTimetrackingPayloadForTask } from "../../../utils/helperFunctions";
 import { getTimeSpentInStatusPayloads } from "../../../utils/tasksFunctions";
+
+
+
 
 const validStatuses = [
   "asbuilt in qc by irazu",
@@ -35,9 +40,26 @@ export function useTimetrackingPayloads(
         )
       : [];
 
-  const payloads =
-    payloadsWithMQMSTime && TimeSpentInStatusPayloads
-      ? [...payloadsWithMQMSTime, ...TimeSpentInStatusPayloads]
+  const IdListToCheckTimetracked: string[] = payloadsWithMQMSTime.reduce((acc, curr) => {
+    if (!acc.includes(curr.clickUpID)) {
+      acc.push(curr.clickUpID);
+    }
+    
+    return acc;
+  }, [] as string[])
+
+  const payloadToCheckTimetracked: TimetrackingVerificationPayload[] = IdListToCheckTimetracked.length > 0 ? IdListToCheckTimetracked.map(id => {
+    return {
+      clickUpID: id,
+      timetracked: true
+    }
+  }) : []
+
+  
+
+  const payloads: TimetrackingPayload[] =
+    payloadsWithMQMSTime && TimeSpentInStatusPayloads && payloadToCheckTimetracked
+      ? [...payloadsWithMQMSTime, ...TimeSpentInStatusPayloads, ...payloadToCheckTimetracked]
       : [];
 
   return { payloads };

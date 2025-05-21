@@ -171,21 +171,19 @@ export interface MQMSTask {
   HUB: string;
 }
 
-export type PostNewTaskResult =
-  | FulfilledPostNewTaskResult
-  | RejectedPostNewTaskResult;
+export type PostNewTaskResult = FulfilledPostNewTaskResult | RejectedPostNewTaskResult;
 
 export interface FulfilledPostNewTaskResult {
-  status: "fulfilled";
+  status: 'fulfilled';
   value: {
     taskName: string;
-    status: "success";
+    status: 'success';
     clickUpTaskId: string;
   };
 }
 
 export interface RejectedPostNewTaskResult {
-  status: "rejected";
+  status: 'rejected';
   reason: string;
 }
 
@@ -202,6 +200,14 @@ export interface newTimeEntryPayload {
   tags?: Tag[];
   status?: string;
 }
+
+export interface TimetrackingVerificationPayload {
+  clickUpID: string;
+  timetracked: boolean;
+}
+
+export type TimetrackingPayload = newTimeEntryPayload | TimetrackingVerificationPayload;
+
 
 export interface Tag {
   name: string;
@@ -282,3 +288,25 @@ export interface TaskRow {
   projectCode: string;
   key?: `${string}-${string}-${string}-${string}-${string}`;
 }
+
+export interface ApprovedBauTasks {
+  designers: string;
+  id: string;
+  name: string;
+  receivedDate: string;
+  completionDate: string;
+  codes: CustomField[];
+}
+
+export interface BauIncomeData {
+  id: string;
+  name: string;
+  designers: string;
+  receivedDate: Date | null;
+  completionDate: Date | null;
+  code: string;
+  quantity: string | number | null | undefined;
+  price: number;
+  total: number;
+}
+

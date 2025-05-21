@@ -205,7 +205,7 @@ export function unifyProjects(
       name: item.name,
       receivedDate: item["RECEIVED DATE"],
       completionDate: item["REDESIGN ACTUAL COMPLETION DATE"] || "",
-      quantity: item["REDESIGN TIME"] || "0",
+      quantity: item["TIME SPENT BY VENDOR"] || item["REDESIGN TIME"] || "0",
       checkedForSubco: item["CHECKED FOR SUBCO"] || [],
       projectCode: item.projectCode,
     });
@@ -255,6 +255,7 @@ export async function sendBatchedRequests<T, R>(
   batchSize: number,
   postRequestCallback: (payload: T) => Promise<R>
 ): Promise<R[]> {
+
   const batches = chunkArray(payloads, batchSize);
   const results: R[] = [];
 

@@ -1,11 +1,12 @@
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
-import { newTimeEntryPayload } from "../../../types/Task";
 import { useEffect, useState } from "react";
 import { getRowsforMUITable, handleClick } from "./TimetrackingTable.functions";
 import { Button, Flex, Statistic } from "antd";
+import { TimetrackingPayload } from "../../../types/Task";
+
 
 interface Props {
-  payloads: newTimeEntryPayload[];
+  payloads: TimetrackingPayload[];
 }
 
 const columns: GridColDef[] = [
@@ -15,12 +16,12 @@ const columns: GridColDef[] = [
 ];
 
 function TimetrackingTable({ payloads }: Props) {
-  const [localPayloads, setLocalPayloads] = useState<newTimeEntryPayload[]>([]);
+  const [localPayloads, setLocalPayloads] = useState<TimetrackingPayload[]>([]);
   const rows = getRowsforMUITable(localPayloads);
 
   useEffect(() => {
     if (payloads.length > 0) {
-      setLocalPayloads(payloads); // Almacena los datos una vez que el hook los obtiene
+      setLocalPayloads(payloads); 
     }
   }, [payloads]);
 
