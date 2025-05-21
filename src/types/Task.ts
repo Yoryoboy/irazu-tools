@@ -201,6 +201,14 @@ export interface newTimeEntryPayload {
   status?: string;
 }
 
+export interface TimetrackingVerificationPayload {
+  clickUpID: string;
+  timetracked: boolean;
+}
+
+export type TimetrackingPayload = newTimeEntryPayload | TimetrackingVerificationPayload;
+
+
 export interface Tag {
   name: string;
   tag_fg: string;
@@ -301,3 +309,4 @@ export interface BauIncomeData {
   price: number;
   total: number;
 }
+

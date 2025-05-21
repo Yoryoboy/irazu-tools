@@ -255,6 +255,7 @@ export async function sendBatchedRequests<T, R>(
   batchSize: number,
   postRequestCallback: (payload: T) => Promise<R>
 ): Promise<R[]> {
+
   const batches = chunkArray(payloads, batchSize);
   const results: R[] = [];
 
