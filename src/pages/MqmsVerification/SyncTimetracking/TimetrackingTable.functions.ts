@@ -3,7 +3,6 @@ import { createNewtimeEntry } from "../../../utils/clickUpApi";
 import { sendBatchedRequests } from "../../../utils/helperFunctions";
 
 export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
-  // Group payloads by clickUpID manually since Object.groupBy is not standard
   const groupedPayload: Record<string, TimetrackingPayload[]> = payloads.reduce<Record<string, TimetrackingPayload[]>>((acc, payload) => {
     const key = payload.clickUpID as string;
     if (!acc[key]) {
@@ -22,7 +21,6 @@ export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
 
   for (const [clickUpID, values] of Object.entries(groupedPayload)) {
     const designDuration = values?.reduce((acc: number, value: TimetrackingPayload) => {
-      // Check if the payload is a newTimeEntryPayload (has start and stop properties)
       if ('start' in value && 'stop' in value) {
         const time = value.stop ? value.stop - value.start : 0;
         return acc + (time ?? 0);
@@ -31,7 +29,6 @@ export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
     }, 0);
 
     const qcDuration = values?.reduce((acc: number, value: TimetrackingPayload) => {
-      // Check if the payload is a newTimeEntryPayload (has duration property)
       if ('duration' in value) {
         const time = value.duration ?? 0;
         return acc + (time ?? 0);
