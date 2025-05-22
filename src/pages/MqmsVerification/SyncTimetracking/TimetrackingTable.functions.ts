@@ -9,7 +9,6 @@ export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
 
   for (const [clickUpID, values] of Object.entries(groupedPayload)) {
     const designDuration = values?.reduce((acc, value) => {
-      // Check if the payload is a newTimeEntryPayload (has start and stop properties)
       if ('start' in value && 'stop' in value) {
         const time = value.stop ? value.stop - value.start : 0;
         return acc + (time ?? 0);
@@ -18,7 +17,6 @@ export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
     }, 0);
 
     const qcDuration = values?.reduce((acc, value) => {
-      // Check if the payload is a newTimeEntryPayload (has duration property)
       if ('duration' in value) {
         const time = value.duration ?? 0;
         return acc + (time ?? 0);

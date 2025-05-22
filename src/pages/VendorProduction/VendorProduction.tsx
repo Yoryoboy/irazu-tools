@@ -11,7 +11,7 @@ import VendorBauProductionTable from "./VendorBauProductionTable";
 
 function VendorProduction() {
 
-  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia } = vendors;
+  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia, eliusmir, carlos } = vendors;
 
   // Anais Archila
 
@@ -72,6 +72,18 @@ function VendorProduction() {
     getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
   );
 
+  // Eliusmir
+
+  const {filteredTasks: bauForEliusmir} = useFilteredTasks(
+    getBAUSearchParamsForVendor(eliusmir.id.toString())
+  );
+
+  // Carlos
+
+  const {filteredTasks: bauForCarlos} = useFilteredTasks(
+    getBAUSearchParamsForVendor(carlos.id.toString())
+  );
+
   return (
     <main>
       <VendorBauProductionTable
@@ -99,6 +111,14 @@ function VendorProduction() {
       <VendorBauProductionTable
         bau={bauForBarbaraGarcia}
         vendor={barbaraGarcia}
+      />
+      <VendorBauProductionTable
+        bau={bauForEliusmir}
+        vendor={eliusmir}
+      />
+      <VendorBauProductionTable
+        bau={bauForCarlos}
+        vendor={carlos}
       />
     </main>
   );
