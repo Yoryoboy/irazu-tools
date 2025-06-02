@@ -83,6 +83,6 @@ export const vendors: Record<string, Vendor> = {
     last_active: '1747924025078',
     date_joined: '1747766079959',
     date_invited: '1747057182285',
-    reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - CARLOS.xlsx',
+    reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - CARLOSMORGADO.xlsx',
   },
 };
