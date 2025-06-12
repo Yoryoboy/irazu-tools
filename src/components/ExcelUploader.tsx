@@ -37,11 +37,15 @@ function ExcelUploader({ setData }: Props) {
 
       const parsedData = rows.map((row: string[]) =>
         headers.reduce((acc, header, index) => {
-          acc[header as string] = row[index];
+          // Convertir explícitamente a string si el valor existe
+          const value = row[index];
+          acc[header as string] =
+            value !== undefined && value !== null ? String(value) : value;
           return acc;
         }, {} as ParsedData)
       );
       const parsedDataCleaned = cleanData(parsedData, DESIRED_KEYS);
+      console.log("parsed", parsedDataCleaned);
       setData(parsedDataCleaned);
     };
     reader.readAsArrayBuffer(file);
