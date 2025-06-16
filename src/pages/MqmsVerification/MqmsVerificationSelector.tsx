@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 const options: CheckboxGroupProps<string>["options"] = [
   { label: "Check Approved Tasks", value: "check-approved-tasks" },
-  { label: "Sync Timetracking", value: "timetracking" },
+  // { label: "Sync Timetracking", value: "timetracking" },
 ];
 
 function MqmsVerificationSelector() {
