@@ -38,6 +38,8 @@ export const codeMapping: Record<string, string> = {
   'FIBER ASBUILT FOOTAGE > 1,500’ / 27530 (FT)': 'CCI - BAU Fiber Asbuilt Footage > 1,500’/27530',
   'COAX NEW BUILD < 1,500’ / 27281 (EA)': 'CCI - BAU Coax New Build 1,500’/27281',
   'NEW COAX FOOTAGE OVER 1500 (FT)': 'CCI - BAU Fiber and/or Coax Footage > 1,500’/27280',
+  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)':
+    'CCI - BAU Fiber and/or Coax Footage > 1,500’/27280',
   'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 'CCI - BAU Fiber New Build  1,500’/27282',
   'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)':
     'CCI - BAU SUBCO ONLY Node Seg/Split Asbuild/35473',

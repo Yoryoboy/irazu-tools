@@ -1,9 +1,9 @@
-import { Flex, Table } from "antd";
-import ProductionReportGenerator from "./ProductionReportGenerator";
-import { CustomField, Task, TaskRow } from "../../types/Task";
-import { Vendor } from "../../types/Vendor";
-import UpdateCheckedForSubcoLabels from "./UpdateCheckedForSubcoLabels";
-import { codeMapping, columns } from "./VendorBauProductionTable.config";
+import { Flex, Table } from 'antd';
+import ProductionReportGenerator from './ProductionReportGenerator';
+import { CustomField, Task, TaskRow } from '../../types/Task';
+import { Vendor } from '../../types/Vendor';
+import UpdateCheckedForSubcoLabels from './UpdateCheckedForSubcoLabels';
+import { codeMapping, columns } from './VendorBauProductionTable.config';
 
 interface Props {
   bau: Task[];
@@ -11,20 +11,19 @@ interface Props {
 }
 
 function VendorBauProductionTable({ bau, vendor }: Props) {
-  const bauFieldsValues = bau.map((task) => {
-    const receivedDate = task?.custom_fields?.find(
-      (field) => field.name === "RECEIVED DATE"
-    )?.value as string;
+  const bauFieldsValues = bau.map(task => {
+    const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
+      ?.value as string;
     const completionDate = task?.custom_fields?.find(
-      (field) => field.name === "ACTUAL COMPLETION DATE"
+      field => field.name === 'ACTUAL COMPLETION DATE'
     )?.value as string;
     const codes = task?.custom_fields?.filter(
-      (field) =>
-        field.type === "number" &&
+      field =>
+        field.type === 'number' &&
         field.value &&
-        (field.name?.includes("(EA)") ||
-          field.name?.includes("(FT)") ||
-          field.name?.includes("(HR)"))
+        (field.name?.includes('(EA)') ||
+          field.name?.includes('(FT)') ||
+          field.name?.includes('(HR)'))
     ) as CustomField[];
 
     return {
@@ -37,14 +36,14 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
   });
 
   const dataSource = bauFieldsValues.reduce((acc: TaskRow[], task) => {
-    const row = task?.codes?.map((code) => {
+    const row = task?.codes?.map(code => {
       return {
         id: task.id,
         name: task.name,
         receivedDate: task?.receivedDate,
         completionDate: task?.completionDate,
         quantity: code.value as string,
-        projectCode: codeMapping[code.name as string] ?? "invalid code",
+        projectCode: codeMapping[code.name as string] ?? 'invalid code',
         key: crypto.randomUUID(),
       };
     });
