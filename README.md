@@ -1,50 +1,111 @@
-# React + TypeScript + Vite
+# Irazu Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.6.2-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-5.4.10-646CFF?style=for-the-badge&logo=vite" alt="Vite" />
+  <img src="https://img.shields.io/badge/Ant_Design-5.22.3-0170FE?style=for-the-badge&logo=ant-design" alt="Ant Design" />
+</p>
 
-Currently, two official plugins are available:
+## 📋 Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Irazu Tools is an enterprise web application developed to optimize and automate workflows between MQMS and ClickUp. This tool provides a unified interface for task management, time tracking, data verification, and report generation, facilitating synchronization between systems and improving team productivity.
 
-## Expanding the ESLint configuration
+## 🚀 Key Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Task Synchronization
 
-- Configure the top-level `parserOptions` property like this:
+- Import and process data from MQMS Excel files
+- Bidirectional synchronization with ClickUp through its API
+- Automatic comparison between systems to identify discrepancies
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Contractor Production Management
+
+- Task tracking by contractor with custom filters
+- Visualization of performance metrics by vendor
+- Specialized interface for different project types (BAU, High Split)
+
+### MQMS Verification
+
+- Validation of approved tasks
+- Time tracking synchronization between systems`
+- Automated quality control for design processes
+
+### Income Reports
+
+- Generation of financial reports based on production data
+- Data export in formats compatible with analysis tools
+
+## 🛠️ Technologies Used
+
+### Frontend
+
+- **React 18**: Main library for building interfaces
+- **TypeScript**: Static typing to improve code quality
+- **React Router**: Navigation between components
+- **Ant Design**: Design system for a consistent and professional interface
+- **MUI Data Grid**: Advanced tabular data visualization
+
+### Data Processing
+
+- **XLSX/ExcelJS**: Excel file manipulation
+- **Axios**: HTTP client for API communication
+- **DayJS**: Manipulación avanzada de fechas y horas
+
+### Herramientas de Desarrollo
+
+- **Vite**: Entorno de desarrollo rápido y optimizado
+- **ESLint/Prettier**: Garantía de calidad y consistencia del código
+- **Vitest**: Framework de testing para componentes y lógica
+
+## 🔄 Flujo de Trabajo
+
+1. **Importación de Datos**: Carga de archivos Excel con información de tareas de MQMS
+2. **Procesamiento**: Transformación y validación de datos (incluyendo conversión a tipos adecuados)
+3. **Sincronización**: Comunicación con ClickUp para actualizar o crear tareas
+4. **Verificación**: Comprobación de consistencia entre sistemas
+5. **Reportes**: Generación de informes basados en los datos sincronizados
+
+## 🧩 Arquitectura
+
+La aplicación sigue un patrón de arquitectura modular con:
+
+- **Componentes Reutilizables**: Elementos UI como `FileUploader` y `ExcelUploader`
+- **Hooks Personalizados**: Lógica encapsulada para autenticación, filtrado y procesamiento
+- **Patrón Result<T>**: Manejo estructurado de errores y respuestas de API
+- **Separación de Responsabilidades**: Funciones específicas para sincronización, validación y presentación
+
+## 💼 Soluciones Implementadas
+
+- **Validación de Tipos**: Conversión automática de valores a string para garantizar consistencia
+- **Manejo de Estado Local**: Actualización eficiente de componentes sin afectar el estado global
+- **Sincronización Asíncrona**: Procesamiento por lotes para mejorar el rendimiento
+- **Integración de APIs**: Comunicación robusta con sistemas externos
+
+## 🔧 Instalación y Uso
+
+```bash
+# Clonar el repositorio
+git clone [url-del-repositorio]
+
+# Instalar dependencias
+pnpm install
+
+# Iniciar servidor de desarrollo
+pnpm run dev
+
+# Compilar para producción
+pnpm run build
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 🔒 Configuración
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+La aplicación requiere configuración de variables de entorno para la conexión con ClickUp:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+VITE_CLICKUP_API_AKEY=tu_api_key
+```
+
+---
+
+Desarrollado por [Tu Nombre] para Irazu © 2025
