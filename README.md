@@ -50,62 +50,62 @@ Irazu Tools is an enterprise web application developed to optimize and automate 
 
 - **XLSX/ExcelJS**: Excel file manipulation
 - **Axios**: HTTP client for API communication
-- **DayJS**: Manipulación avanzada de fechas y horas
+- **DayJS**: Advanced date and time manipulation
 
-### Herramientas de Desarrollo
+### Development Tools
 
-- **Vite**: Entorno de desarrollo rápido y optimizado
-- **ESLint/Prettier**: Garantía de calidad y consistencia del código
-- **Vitest**: Framework de testing para componentes y lógica
+- **Vite**: Fast and optimized development environment
+- **ESLint/Prettier**: Code quality and consistency assurance
+- **Vitest**: Testing framework for components and logic
 
-## 🔄 Flujo de Trabajo
+## 🔄 Workflow
 
-1. **Importación de Datos**: Carga de archivos Excel con información de tareas de MQMS
-2. **Procesamiento**: Transformación y validación de datos (incluyendo conversión a tipos adecuados)
-3. **Sincronización**: Comunicación con ClickUp para actualizar o crear tareas
-4. **Verificación**: Comprobación de consistencia entre sistemas
-5. **Reportes**: Generación de informes basados en los datos sincronizados
+1. **Data Import**: Loading Excel files with MQMS task information
+2. **Processing**: Data transformation and validation (including conversion to appropriate types)
+3. **Synchronization**: Communication with ClickUp to update or create tasks
+4. **Verification**: Checking consistency between systems
+5. **Reports**: Generation of reports based on synchronized data
 
-## 🧩 Arquitectura
+## 🧩 Architecture
 
-La aplicación sigue un patrón de arquitectura modular con:
+The application follows a modular architecture pattern with:
 
-- **Componentes Reutilizables**: Elementos UI como `FileUploader` y `ExcelUploader`
-- **Hooks Personalizados**: Lógica encapsulada para autenticación, filtrado y procesamiento
-- **Patrón Result<T>**: Manejo estructurado de errores y respuestas de API
-- **Separación de Responsabilidades**: Funciones específicas para sincronización, validación y presentación
+- **Reusable Components**: UI elements like `FileUploader` and `ExcelUploader`
+- **Custom Hooks**: Encapsulated logic for authentication, filtering, and processing
+- **Result<T> Pattern**: Structured handling of errors and API responses
+- **Separation of Concerns**: Specific functions for synchronization, validation, and presentation
 
-## 💼 Soluciones Implementadas
+## 💼 Implemented Solutions
 
-- **Validación de Tipos**: Conversión automática de valores a string para garantizar consistencia
-- **Manejo de Estado Local**: Actualización eficiente de componentes sin afectar el estado global
-- **Sincronización Asíncrona**: Procesamiento por lotes para mejorar el rendimiento
-- **Integración de APIs**: Comunicación robusta con sistemas externos
+- **Type Validation**: Automatic conversion of values to string to ensure consistency
+- **Local State Management**: Efficient component updates without affecting global state
+- **Asynchronous Synchronization**: Batch processing to improve performance
+- **API Integration**: Robust communication with external systems
 
-## 🔧 Instalación y Uso
+## 🔧 Installation and Usage
 
 ```bash
-# Clonar el repositorio
-git clone [url-del-repositorio]
+# Clone the repository
+git clone [repository-url]
 
-# Instalar dependencias
+# Install dependencies
 pnpm install
 
-# Iniciar servidor de desarrollo
+# Start development server
 pnpm run dev
 
-# Compilar para producción
+# Build for production
 pnpm run build
 ```
 
-## 🔒 Configuración
+## 🔒 Configuration
 
-La aplicación requiere configuración de variables de entorno para la conexión con ClickUp:
+The application requires environment variables configuration for ClickUp connection:
 
 ```
-VITE_CLICKUP_API_AKEY=tu_api_key
+VITE_CLICKUP_API_AKEY=your_api_key
 ```
 
 ---
 
-Desarrollado por [Tu Nombre] para Irazu © 2025
+Developed by Jorge Diaz for Irazu © 2025
