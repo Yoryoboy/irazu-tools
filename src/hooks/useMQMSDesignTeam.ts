@@ -3,6 +3,7 @@ import { FetchUserHierarchyResponse, UserHierarchy } from "../types/MQMS";
 
 const jorgeEmpID = "d1425720-916f-4e82-b4c7-4a624bbc9289";
 const anaisEmpID = "2a37f9ca-fafa-4188-a0c9-ee18f60ac43d";
+const eliasEmpID = "a9fd8123-6b2a-413d-9459-f10ffbd492e7";
 
 export function useMQMSDesignTeam(accessToken: string | undefined) {
   const [userHierarchy, setUserHierarchy] = useState<UserHierarchy[]>([]);
@@ -50,6 +51,7 @@ export function useMQMSDesignTeam(accessToken: string | undefined) {
         const results = await Promise.all([
           fetchUserHierarchy(jorgeEmpID),
           fetchUserHierarchy(anaisEmpID),
+          fetchUserHierarchy(eliasEmpID),
         ]);
 
         const combinedHierarchy = results.flat();
