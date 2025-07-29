@@ -1,22 +1,15 @@
-import { useMemo } from "react";
-import { useMQMSFetchTasks } from "../../../hooks/useMQMS";
-import ComparisonTable from "./ComparisonTable";
-import { extractTaskFields } from "../../../utils/helperFunctions";
-import { Task } from "../../../types/Task";
+import { useMemo } from 'react';
+import { useMQMSFetchTasks } from '../../../hooks/useMQMS';
+import ComparisonTable from './ComparisonTable';
+import { extractTaskFields } from '../../../utils/helperFunctions';
+import { Task } from '../../../types/Task';
 
 interface Props {
   accessToken: string | undefined;
   clickUpTasks: Task[];
 }
 
-const FIELDS = [
-  "id",
-  "name",
-  "SECONDARY ID",
-  "status",
-  "assignees",
-  "WORK REQUEST ID",
-];
+const FIELDS = ['id', 'name', 'SECONDARY ID', 'status', 'assignees', 'WORK REQUEST ID'];
 
 // const LISTSENTTASK = [
 //   "5227be92-e8b0-4c5d-8699-5fd3dbfae5b6",
@@ -26,7 +19,7 @@ const FIELDS = [
 
 function MqmsCheckApprovedTasks({ accessToken, clickUpTasks }: Props) {
   const sentTasks = useMemo(() => {
-    return clickUpTasks.map((task) => {
+    return clickUpTasks.map(task => {
       const taskFields = extractTaskFields(task, FIELDS);
       return {
         ...taskFields,
@@ -36,14 +29,14 @@ function MqmsCheckApprovedTasks({ accessToken, clickUpTasks }: Props) {
 
   const listOfSentTasks = useMemo(() => {
     return sentTasks
-      .map((task) => {
-        if (task["WORK REQUEST ID"] === "") {
+      .map(task => {
+        if (task['WORK REQUEST ID'] === '') {
           console.log(`NO WORK REQUEST ID FOUND FOR TASK: ${task.name}`);
         }
-        return task["WORK REQUEST ID"] as string;
+        return task['WORK REQUEST ID'] as string;
       })
-      .filter((task) => {
-        return task !== "";
+      .filter(task => {
+        return task !== '';
       });
   }, [sentTasks]);
 
@@ -52,7 +45,9 @@ function MqmsCheckApprovedTasks({ accessToken, clickUpTasks }: Props) {
     listOfSentTasks
   );
 
-  console.log("MQMSTasksRejected: ", MQMSTasksRejected);
+  if (MQMSTasksRejected.length > 0) {
+    console.log('MQMSTasksRejected: ', MQMSTasksRejected);
+  }
 
   return (
     <main>
