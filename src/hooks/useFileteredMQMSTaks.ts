@@ -29,16 +29,14 @@ export function useFileteredMQMSTaks(
   );
 
   const closedAndPreclosedTasksWithClickUpID: MQMSTasksWithClickUpID[] =
-    closedAndPreclosedTasks.map((task) => {
-      const sentTask = ClickUpSentTasks.find(
-        (currSentTask) =>
-          currSentTask.name === task.externalID &&
-          currSentTask["SECONDARY ID"] === task.secondaryExternalID
-      );
+    closedAndPreclosedTasks?.map((task) => {
+      const sentTask = ClickUpSentTasks?.find((currSentTask) => {
+        return currSentTask?.["WORK REQUEST ID"] === task?.uuid;
+      });
 
       if (!sentTask?.id) {
         console.log(
-          `Task ${task.externalID} with secondary ID ${task.secondaryExternalID} not found in ClickUp sent tasks`
+          `MQMS Task ${task.externalID} with uuid ${task.uuid} not found in ClickUp sent tasks`
         );
       }
 
