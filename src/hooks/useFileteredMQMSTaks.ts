@@ -38,9 +38,10 @@ export function useFileteredMQMSTaks(
         console.log(
           `MQMS Task ${task.externalID} with uuid ${task.uuid} not found in ClickUp sent tasks`
         );
+        return { ...task, clickUpID: "" };
       }
 
-      return { ...task, clickUpID: sentTask?.id?.toString() || "" };
+      return { ...task, clickUpID: sentTask.id.toString() };
     });
 
   return {
