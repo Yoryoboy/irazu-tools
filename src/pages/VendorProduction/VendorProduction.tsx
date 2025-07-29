@@ -1,45 +1,37 @@
-import { useFilteredTasks } from "../../hooks/useFilteredTasks";
+import { useFilteredTasks } from '../../hooks/useFilteredTasks';
 import {
   getAsbuiltSearchParamsForVendor,
   getBAUSearchParamsForVendor,
   getDesignSearchParamsForVendor,
   getRedesignSearchParamsForVendor,
-} from "./VendorProduction.SearchParams";
-import VendorProductionTable from "./VendorProductionTable";
-import { vendors } from "./VendorProduction.vendors";
-import VendorBauProductionTable from "./VendorBauProductionTable";
+} from './VendorProduction.SearchParams';
+import VendorProductionTable from './VendorProductionTable';
+import { vendors } from './VendorProduction.vendors';
+import VendorBauProductionTable from './VendorBauProductionTable';
 
 function VendorProduction() {
-
-  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia, eliusmir, carlos } = vendors;
+  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia, eliusmir, carlos } =
+    vendors;
 
   // Anais Archila
 
-  const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(
-      getAsbuiltSearchParamsForVendor(
-        anaisDelValleArchilaGonzalez.id.toString()
-      )
-    );
+  const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
+    getAsbuiltSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+  );
 
-  const { filteredTasks: designForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(
-      getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
-    );
+  const { filteredTasks: designForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
+    getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+  );
 
-  const { filteredTasks: redesignForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(
-      getRedesignSearchParamsForVendor(
-        anaisDelValleArchilaGonzalez.id.toString()
-      )
-    );
+  const { filteredTasks: redesignForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
+    getRedesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+  );
 
-  const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } =
-    useFilteredTasks(
-      getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
-    );
+  const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
+    getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+  );
 
-  // Beatriz Leal 
+  // Beatriz Leal
 
   const { filteredTasks: asbuiltForBeatrizLeal } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(beatrizLeal.id.toString())
@@ -68,19 +60,19 @@ function VendorProduction() {
 
   // Barbara Garcia
 
-  const {filteredTasks: bauForBarbaraGarcia} = useFilteredTasks(
+  const { filteredTasks: bauForBarbaraGarcia } = useFilteredTasks(
     getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
   );
 
   // Eliusmir
 
-  const {filteredTasks: bauForEliusmir} = useFilteredTasks(
+  const { filteredTasks: bauForEliusmir } = useFilteredTasks(
     getBAUSearchParamsForVendor(eliusmir.id.toString())
   );
 
   // Carlos
 
-  const {filteredTasks: bauForCarlos} = useFilteredTasks(
+  const { filteredTasks: bauForCarlos } = useFilteredTasks(
     getBAUSearchParamsForVendor(carlos.id.toString())
   );
 
@@ -108,18 +100,9 @@ function VendorProduction() {
         redesigns={redesignForNathaly}
         vendor={nathaly}
       />
-      <VendorBauProductionTable
-        bau={bauForBarbaraGarcia}
-        vendor={barbaraGarcia}
-      />
-      <VendorBauProductionTable
-        bau={bauForEliusmir}
-        vendor={eliusmir}
-      />
-      <VendorBauProductionTable
-        bau={bauForCarlos}
-        vendor={carlos}
-      />
+      <VendorBauProductionTable bau={bauForBarbaraGarcia} vendor={barbaraGarcia} />
+      <VendorBauProductionTable bau={bauForEliusmir} vendor={eliusmir} />
+      <VendorBauProductionTable bau={bauForCarlos} vendor={carlos} />
     </main>
   );
 }

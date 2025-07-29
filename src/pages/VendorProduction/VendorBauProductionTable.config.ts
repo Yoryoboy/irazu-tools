@@ -37,11 +37,12 @@ export const codeMapping: Record<string, string> = {
   'FIBER ASBUILD / 27242 (EA)': 'CCI - BAU Fiber Asbuild/27242',
   'FIBER ASBUILT FOOTAGE > 1,500’ / 27530 (FT)': 'CCI - BAU Fiber Asbuilt Footage > 1,500’/27530',
   'COAX NEW BUILD < 1,500’ / 27281 (EA)': 'CCI - BAU Coax New Build 1,500’/27281',
-  'NEW COAX FOOTAGE OVER 1500 (FT)': 'CCI - BAU Fiber and/or Coax Footage > 1,500’/27280',
-  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)':
+  'FIBER AND/OR COAX FOOTAGE >1,500’ / 27280 (FT)':
     'CCI - BAU Fiber and/or Coax Footage > 1,500’/27280',
+  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)': 'CCI - BAU Fiber & Coax New Build 1,500’/27283',
   'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 'CCI - BAU Fiber New Build  1,500’/27282',
   'SUBCO ONLY Node Seg/Split Asbuild / 35473 (EA)':
     'CCI - BAU SUBCO ONLY Node Seg/Split Asbuild/35473',
   'NODE SPLIT PRELIM / 35539 (EA)': 'CCI - BAU Node Split Prelim/35539',
+  'REDESIGN / 13406 (HR)': 'CCI - REDESIGN',
 };

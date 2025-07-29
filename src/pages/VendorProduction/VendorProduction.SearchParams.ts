@@ -11,7 +11,6 @@ const designBillingStatusField = getCustomField('DESIGN BILLING STATUS');
 const redesignBillingStatusField = getCustomField('REDESIGN BILLING STATUS');
 const designAssigneeField = getCustomField('DESIGN ASSIGNEE');
 const bauBillingStatusField = getCustomField('BAU BILLING STATUS');
-const customerCompanyField = getCustomField('Customer Company');
 
 // Anais Del Valle Archila Gonzalez
 
@@ -89,7 +88,7 @@ export function getRedesignSearchParamsForVendor(vendorId: string): SearchParams
 }
 
 export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
-  return {
+  const params = {
     page: '0',
     'assignees[]': vendorId,
     'list_ids[]': CLICKUP_LIST_IDS.cciBau,
@@ -107,11 +106,8 @@ export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
         field_id: bauChecked.id,
         operator: 'IS NULL',
       },
-      {
-        field_id: customerCompanyField.id,
-        operator: '=',
-        value: customerCompanyField.type_config?.options?.find(option => option.name === 'CCI')?.id,
-      },
     ]),
   };
+  console.log('params: ', params);
+  return params;
 }
