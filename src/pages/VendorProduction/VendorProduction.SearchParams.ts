@@ -88,7 +88,7 @@ export function getRedesignSearchParamsForVendor(vendorId: string): SearchParams
 }
 
 export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
-  const params = {
+  return {
     page: '0',
     'assignees[]': vendorId,
     'list_ids[]': CLICKUP_LIST_IDS.cciBau,
@@ -108,5 +108,4 @@ export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
       },
     ]),
   };
-  return params;
 }
