@@ -108,6 +108,5 @@ export function getBAUSearchParamsForVendor(vendorId: string): SearchParams {
       },
     ]),
   };
-  console.log('params: ', params);
   return params;
 }
