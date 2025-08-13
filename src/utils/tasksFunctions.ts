@@ -22,8 +22,19 @@ import {
 } from "../constants/clickUpCustomFields";
 import { SearchParams } from "../types/SearchParams";
 import { TaskTimeData, TaskTimeDataWithClickUpID } from "../types/MQMS";
+import { CLICKUP_LIST_IDS } from "./config";
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
+
+// Map listId to the "Customer Company" dropdown option name
+const LIST_ID_TO_CUSTOMER_COMPANY: Record<
+  string,
+  "CCI" | "TRUENET" | "TECHSERV"
+> = {
+  [CLICKUP_LIST_IDS.cciBau]: "CCI",
+  [CLICKUP_LIST_IDS.trueNetBau]: "TRUENET",
+  [CLICKUP_LIST_IDS.techservBau]: "TECHSERV",
+};
 
 export function getNewTasksFromMqms(
   MQMSTasks: MQMSTask[],
@@ -88,7 +99,10 @@ export async function postNewTasks(
   });
 }
 
-export function getNewTask(row: MQMSTask): Task {
+export function getNewTask(
+  row: MQMSTask,
+  customerCompanyName?: "CCI" | "TRUENET" | "TECHSERV"
+): Task {
   const [plantTypeUnformatted, projectType, jobType] =
     row.PROJECT_TYPE.split(" - ");
   const plantType = formatString(plantTypeUnformatted);
@@ -138,6 +152,18 @@ export function getNewTask(row: MQMSTask): Task {
     hubCustomFieldValue,
   ];
 
+  // Include Customer Company only when a valid option name is provided (BAU lists)
+  if (customerCompanyName) {
+    const customerCompanyCustomFieldValue = getNewDropdownCustomFieldObject(
+      "Customer Company",
+      customerCompanyName,
+      "null"
+    );
+    customFields.push(customerCompanyCustomFieldValue);
+  }
+
+  console.log(customFields);
+
   return {
     name: row.EXTERNAL_ID,
     description: row.JOB_NAME,
@@ -156,7 +182,8 @@ export const handleAction = async (
   setMQMSTasks: (tasks: MQMSTask[]) => void,
   listId: string
 ) => {
-  const newTask: Task[] = [getNewTask(row)];
+  const customerCompanyName = LIST_ID_TO_CUSTOMER_COMPANY[listId];
+  const newTask: Task[] = [getNewTask(row, customerCompanyName)];
   console.log(newTask);
   const results = await postNewTasks(newTask, listId, apikey);
 
@@ -182,7 +209,10 @@ export const handleSyncAll = async (
   setMQMSTasks: (tasks: MQMSTask[]) => void,
   listId: string
 ) => {
-  const allNewTasks = newMqmsTasks.map((row) => getNewTask(row));
+  const customerCompanyName = LIST_ID_TO_CUSTOMER_COMPANY[listId];
+  const allNewTasks = newMqmsTasks.map((row) =>
+    getNewTask(row, customerCompanyName)
+  );
   const results = await postNewTasks(allNewTasks, listId, apikey);
 
   const successfulTasks = results.filter(
