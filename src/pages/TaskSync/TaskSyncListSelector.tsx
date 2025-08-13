@@ -11,7 +11,7 @@ const options: CheckboxGroupProps<string>['options'] = [
   { label: 'BAU', value: 'bau' },
 ];
 
-const { cciBau, cciHs, trueNetBau } = CLICKUP_LIST_IDS;
+const { cciBau, cciHs, trueNetBau, techservBau } = CLICKUP_LIST_IDS;
 
 // Options for the BAU sublist selector
 const bauOptions: CheckboxGroupProps<string>['options'] = [
