@@ -17,6 +17,7 @@ const { cciBau, cciHs, trueNetBau, techservBau } = CLICKUP_LIST_IDS;
 const bauOptions: CheckboxGroupProps<string>['options'] = [
   { label: 'CCI', value: 'cci' },
   { label: 'TrueNet', value: 'truenet' },
+  { label: 'TechServ', value: 'techserv' },
 ];
 const DEFAULT_SEARCH_PARAMS = {};
 
@@ -44,6 +45,11 @@ function TaskSyncListSelector() {
     } else if (selectedBauType === 'truenet') {
       taskSyncOptions = {
         listId: trueNetBau,
+        searchParams: DEFAULT_SEARCH_PARAMS,
+      };
+    } else if (selectedBauType === 'techserv') {
+      taskSyncOptions = {
+        listId: techservBau,
         searchParams: DEFAULT_SEARCH_PARAMS,
       };
     }
