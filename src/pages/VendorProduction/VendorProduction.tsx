@@ -10,8 +10,15 @@ import { vendors } from './VendorProduction.vendors';
 import VendorBauProductionTable from './VendorBauProductionTable';
 
 function VendorProduction() {
-  const { anaisDelValleArchilaGonzalez, beatrizLeal, nathaly, barbaraGarcia, eliusmir, carlos } =
-    vendors;
+  const {
+    anaisDelValleArchilaGonzalez,
+    beatrizLeal,
+    nathaly,
+    barbaraGarcia,
+    eliusmir,
+    carlos,
+    rosaAtempa,
+  } = vendors;
 
   // Anais Archila
 
@@ -76,6 +83,12 @@ function VendorProduction() {
     getBAUSearchParamsForVendor(carlos.id.toString())
   );
 
+  // Rosa Atempa
+
+  const { filteredTasks: bauForRosaAtempa } = useFilteredTasks(
+    getBAUSearchParamsForVendor(rosaAtempa.id.toString())
+  );
+
   return (
     <main>
       <VendorBauProductionTable
@@ -103,6 +116,7 @@ function VendorProduction() {
       <VendorBauProductionTable bau={bauForBarbaraGarcia} vendor={barbaraGarcia} />
       <VendorBauProductionTable bau={bauForEliusmir} vendor={eliusmir} />
       <VendorBauProductionTable bau={bauForCarlos} vendor={carlos} />
+      <VendorBauProductionTable bau={bauForRosaAtempa} vendor={rosaAtempa} />
     </main>
   );
 }
