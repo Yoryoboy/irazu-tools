@@ -7,6 +7,37 @@ interface CustomFields {
 export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: "900b7126-22be-4d6e-a6d8-3f5edfce0363",
+      name: "Customer Company",
+      type: "drop_down",
+      type_config: {
+        sorting: "manual",
+        options: [
+          {
+            id: "54ba19de-dd35-4f9e-acab-e59c6df38eac",
+            name: "CCI",
+            color: "#0231E8",
+            orderindex: 0,
+          },
+          {
+            id: "fa594393-37b8-4d35-8add-75d3f7671910",
+            name: "TRUENET",
+            color: "#1bbc9c",
+            orderindex: 1,
+          },
+          {
+            id: "9d8d72ad-960a-4c53-9dba-6dcb196c54aa",
+            name: "TECHSERV",
+            color: "#7C4DFF",
+            orderindex: 2,
+          },
+        ],
+      },
+      date_created: "1749247611476",
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: "29022a6c-d455-48c8-aa05-293518a5f2a6",
       name: "BAU CHECKED",
       type: "checkbox",
