@@ -85,4 +85,18 @@ export const vendors: Record<string, Vendor> = {
     date_invited: '1747057182285',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - CARLOSMORGADO.xlsx',
   },
+  rosaAtempa: {
+    id: 49788771,
+    username: 'Rosa Atempa',
+    email: 'rosa.atempa@bl-technology.com',
+    color: '#827718',
+    profilePicture: null,
+    initials: 'RA',
+    role: 4,
+    custom_role: null,
+    last_active: '1755145826481',
+    date_joined: '1671465032097',
+    date_invited: '1671449357203',
+    reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ROSAATEMPA.xlsx',
+  },
 };
