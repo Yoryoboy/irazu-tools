@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   CreateNewTimeEntryData,
   CreateNewTimeEntryResponse,
@@ -6,24 +6,24 @@ import {
   TimetrackingPayload,
   TimetrackingVerificationPayload,
   newTimeEntryPayload,
-} from "../types/Task";
-import { CLICKUP_API_AKEY, TEAM_ID } from "./config";
-import { Result } from "../types/AsyncResult";
+} from '../types/Task';
+import { CLICKUP_API_AKEY, TEAM_ID } from './config';
+import { Result } from '../types/AsyncResult';
 
 const clickUp = axios.create({
-  baseURL: "https://api.clickup.com/api/v2",
+  baseURL: 'https://api.clickup.com/api/v2',
   headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
 });
 
 clickUp.interceptors.request.use(
-  (config) => {
+  config => {
     config.headers.Authorization = CLICKUP_API_AKEY;
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 );
 
 export async function getTask(taskId: string): Promise<Result<Task>> {
@@ -45,7 +45,7 @@ export async function getTask(taskId: string): Promise<Result<Task>> {
 
     return {
       success: false,
-      error: { status: 500, message: "Unknown error" },
+      error: { status: 500, message: 'Unknown error' },
     };
   }
 }
@@ -58,10 +58,10 @@ export async function updateCustomFieldLabel(
   const url = `https://api.clickup.com/api/v2/task/${taskId}/field/${fieldId}`;
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         Authorization: CLICKUP_API_AKEY,
       },
       body: JSON.stringify({ value }),
@@ -69,15 +69,15 @@ export async function updateCustomFieldLabel(
     if (!response.ok) {
       const errorData = await response.json();
       console.error(`Error updating field for task ${taskId}:`, errorData);
-      return { success: false, error: errorData.message || "Unknown error" };
+      return { success: false, error: errorData.message || 'Unknown error' };
     }
     return { success: true };
   } catch (error) {
     console.error(`Error updating field for task ${taskId}:`, error);
     if (error instanceof Error) {
-      return { success: false, error: error.message || "Unknown error" };
+      return { success: false, error: error.message || 'Unknown error' };
     }
-    return { success: false, error: "Unknown error" };
+    return { success: false, error: 'Unknown error' };
   }
 }
 
@@ -89,10 +89,10 @@ export async function changeTaskStatus(status: string, taskId: string) {
   });
 
   const options = {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      accept: "application/json",
-      "content-type": "application/json",
+      accept: 'application/json',
+      'content-type': 'application/json',
       Authorization: CLICKUP_API_AKEY,
     },
     body,
@@ -104,16 +104,16 @@ export async function changeTaskStatus(status: string, taskId: string) {
     if (!response.ok) {
       const errorData = await response.json();
       console.error(`Error updating task ${taskId}:`, errorData);
-      return { status: "error", message: `Error updating task ${taskId}:` };
+      return { status: 'error', message: `Error updating task ${taskId}:` };
     }
 
     return {
-      status: "success",
+      status: 'success',
       message: `Task ${taskId} status updated successfully`,
     };
   } catch (error) {
     console.error(`Error updating task ${taskId}:`, error);
-    return { status: "error", message: `Error updating task ${taskId}:` };
+    return { status: 'error', message: `Error updating task ${taskId}:` };
   }
 }
 
@@ -124,23 +124,23 @@ export async function updateTimetracked(
   payload: TimetrackingVerificationPayload
 ): Promise<CreateNewTimeEntryResponse> {
   try {
-    const customFieldId = "e4ae3c81-f4cd-4e07-a8c1-0e50490e6bdb";
+    const customFieldId = 'e4ae3c81-f4cd-4e07-a8c1-0e50490e6bdb';
     const URL = `https://api.clickup.com/api/v2/task/${payload.clickUpID}/field/${customFieldId}`;
     const options = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         Authorization: CLICKUP_API_AKEY,
       },
       body: JSON.stringify({
-        value: true
+        value: true,
       }),
     };
 
     const response = await fetch(URL, options);
     let responseData;
-    
+
     try {
       responseData = await response.json();
     } catch {
@@ -148,26 +148,29 @@ export async function updateTimetracked(
     }
 
     if (!response.ok) {
-      console.error(`Error updating timetracked field for task ${payload.clickUpID}:`, responseData);
-      return { 
-        status: "error", 
+      console.error(
+        `Error updating timetracked field for task ${payload.clickUpID}:`,
+        responseData
+      );
+      return {
+        status: 'error',
         message: `Error updating timetracked field for task ${payload.clickUpID}`,
-        data: { data: responseData }
+        data: { data: responseData },
       };
     }
 
     console.log(`Timetracked field updated successfully for task ${payload.clickUpID}`);
 
     return {
-      status: "success",
+      status: 'success',
       message: `Timetracked field updated successfully for task ${payload.clickUpID}`,
-      data: { data: responseData }
+      data: { data: responseData },
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Error in updateTimetracked:`, error);
-    return { 
-      status: "error", 
+    return {
+      status: 'error',
       message: errorMessage,
     };
   }
@@ -182,10 +185,10 @@ export async function createNewTimeEntry(
   try {
     const URL = `https://api.clickup.com/api/v2/team/${TEAM_ID}/time_entries`;
     const options = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "application/json",
-        "content-type": "application/json",
+        accept: 'application/json',
+        'content-type': 'application/json',
         Authorization: CLICKUP_API_AKEY,
       },
       body: JSON.stringify({
@@ -200,7 +203,7 @@ export async function createNewTimeEntry(
 
     const response = await fetch(URL, options);
     let responseData;
-    
+
     try {
       responseData = await response.json();
     } catch {
@@ -209,27 +212,23 @@ export async function createNewTimeEntry(
 
     if (!response.ok) {
       console.error(`Error creating new time entry:`, responseData);
-      return { 
-        status: "error", 
+      return {
+        status: 'error',
         message: `Error creating new time entry:`,
-        data: { data: responseData }
+        data: { data: responseData },
       };
     }
 
-    console.log(
-      `New time entry created successfully for task ${payload.clickUpID}`
-    );
-
     return {
-      status: "success",
+      status: 'success',
       message: `New time entry created successfully for task ${payload.clickUpID}`,
-      data: responseData as CreateNewTimeEntryData
+      data: responseData as CreateNewTimeEntryData,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Error in createNewTimeEntry:`, error);
-    return { 
-      status: "error", 
+    return {
+      status: 'error',
       message: errorMessage,
     };
   }
@@ -241,8 +240,6 @@ export async function createNewTimeEntry(
 export async function createNewtimeEntry(
   payload: TimetrackingPayload
 ): Promise<CreateNewTimeEntryResponse> {
-  console.log("createNewtimeEntry", payload);
-  
   if ('timetracked' in payload) {
     return updateTimetracked(payload);
   } else {
