@@ -1,6 +1,6 @@
-import { CLICKUP_BAU_CUSTOM_FIELDS } from "../constants/clickUpCustomFields";
-import { members } from "../constants/members";
-import { TaskTimeDataWithClickUpID } from "../types/MQMS";
+import { CLICKUP_BAU_CUSTOM_FIELDS } from '../constants/clickUpCustomFields';
+import { members } from '../constants/members';
+import { TaskTimeDataWithClickUpID } from '../types/MQMS';
 import {
   CheckedSubcoBillingStatusPayloads,
   CustomField,
@@ -12,20 +12,20 @@ import {
   Task,
   TaskRow,
   User,
-} from "../types/Task";
-import { getCustomField } from "./tasksFunctions";
+} from '../types/Task';
+import { getCustomField } from './tasksFunctions';
 
 export function formatString(input: string) {
   const regex = /(\w+)\/\s+(\w+)/; // Patrón: string/[espacio]string
   if (regex.test(input)) {
-    return input.replace(regex, "$1 / $2"); // Reemplazo con espacios alrededor de "/"
+    return input.replace(regex, '$1 / $2'); // Reemplazo con espacios alrededor de "/"
   }
   return input; // Si no coincide, retorna el string original
 }
 
 export function getCustomFieldDetails(fieldName: string): CustomField {
   const customFieldDetails = CLICKUP_BAU_CUSTOM_FIELDS.fields.find(
-    (field) => field.name === fieldName
+    field => field.name === fieldName
   );
 
   if (!customFieldDetails) {
@@ -41,8 +41,8 @@ export function getDropdownCustomFieldOption(
   const options = customFieldDetails.type_config?.options || [];
 
   const customFieldOption =
-    options.find((option) => option.name === optionName) ||
-    options.find((option) => option.name === "UNKNOWN");
+    options.find(option => option.name === optionName) ||
+    options.find(option => option.name === 'UNKNOWN');
 
   if (!customFieldOption) {
     throw new Error(`Custom field options not found`);
@@ -62,10 +62,7 @@ export function getNewDropdownCustomFieldObject(
     throw new Error(`Custom field ID is missing for field: ${fieldName}`);
   }
 
-  const customFieldOption = getDropdownCustomFieldOption(
-    customFieldDetails,
-    optionName
-  );
+  const customFieldOption = getDropdownCustomFieldOption(customFieldDetails, optionName);
 
   if (!customFieldOption.id) {
     return {
@@ -80,10 +77,7 @@ export function getNewDropdownCustomFieldObject(
   };
 }
 
-export function getTextCustomFieldObject(
-  fieldName: string,
-  value: string
-): NewCustomFieldObject {
+export function getTextCustomFieldObject(fieldName: string, value: string): NewCustomFieldObject {
   const fieldDetails = getCustomFieldDetails(fieldName);
 
   if (!fieldDetails.id) {
@@ -101,62 +95,51 @@ export function extractTaskFields(
 ): ExtractedTaskFieldValues {
   const result: Partial<ExtractedTaskFieldValues> = {};
 
-  fields.forEach((field) => {
+  fields.forEach(field => {
     // Si el campo existe directamente en el objeto task
     if (field in task) {
       const value = task[field as keyof Task];
-      if (typeof value === "string" && !Array.isArray(value)) {
+      if (typeof value === 'string' && !Array.isArray(value)) {
         result[field] = value.toString();
       } else if (Array.isArray(value)) {
-        result[field] = task.assignees
-          ? value?.map((user) => user?.username)
-          : "";
-      } else if (field === "status" && typeof value === "object") {
+        result[field] = task.assignees ? value?.map(user => user?.username) : '';
+      } else if (field === 'status' && typeof value === 'object') {
         result[field] = (value as Status).status;
       }
     } else {
       // Buscar en custom_fields si es un campo personalizado
-      const customField = task.custom_fields?.find((cf) => cf.name === field);
+      const customField = task.custom_fields?.find(cf => cf.name === field);
       if (customField) {
-        if (
-          customField.type === "drop_down" &&
-          customField.type_config?.options
-        ) {
+        if (customField.type === 'drop_down' && customField.type_config?.options) {
           // Si el campo es de tipo drop_down, buscar el nombre de la opción correspondiente
           const selectedOption = customField.type_config.options.find(
-            (option) => option.orderindex === customField.value
+            option => option.orderindex === customField.value
           );
-          result[field] =
-            selectedOption != null ? selectedOption.name?.toString() : ""; // Asignar el nombre de la opción o null
-        } else if (
-          customField.type === "labels" &&
-          customField.type_config?.options
-        ) {
+          result[field] = selectedOption != null ? selectedOption.name?.toString() : ''; // Asignar el nombre de la opción o null
+        } else if (customField.type === 'labels' && customField.type_config?.options) {
           // Si el campo es de tipo labels, mapear los IDs a sus etiquetas correspondientes
           result[field] =
             customField.value && Array.isArray(customField.value)
               ? customField.value
                   // Filtrar para asegurarte de que son cadenas
                   .map(
-                    (id) =>
-                      customField.type_config?.options?.find(
-                        (option) => option.id === id
-                      )?.label || ""
+                    id =>
+                      customField.type_config?.options?.find(option => option.id === id)?.label ||
+                      ''
                   )
-                  .filter((label) => label !== "")
+                  .filter(label => label !== '')
               : [];
           // Filtrar valores nulos
-        } else if (customField.type === "date") {
-          result[field] =
-            new Date(Number(customField.value)).toLocaleDateString() || "";
-        } else if (customField.type === "users") {
+        } else if (customField.type === 'date') {
+          result[field] = new Date(Number(customField.value)).toLocaleDateString() || '';
+        } else if (customField.type === 'users') {
           result[field] =
             customField.value && Array.isArray(customField.value)
-              ? customField.value.map((user) => user?.id)
-              : "";
+              ? customField.value.map(user => user?.id)
+              : '';
         } else {
           // Para otros tipos de campos personalizados, usar el valor directamente
-          result[field] = (customField.value as string) ?? "";
+          result[field] = (customField.value as string) ?? '';
         }
       }
     }
@@ -173,40 +156,40 @@ export function unifyProjects(
   const unifiedArray: ExtractedTaskFieldValues[] = [];
 
   // Procesar ASBUILT
-  asbuiltArray.forEach((item) => {
+  asbuiltArray.forEach(item => {
     unifiedArray.push({
       id: item.id,
       name: item.name,
-      receivedDate: item["RECEIVED DATE"],
-      completionDate: item["PREASBUILT ACTUAL COMPLETION DATE "] || "",
-      quantity: item["ASBUILT ROUNDED MILES"] || "0",
-      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
+      receivedDate: item['RECEIVED DATE'],
+      completionDate: item['PREASBUILT ACTUAL COMPLETION DATE '] || '',
+      quantity: item['ASBUILT ROUNDED MILES'] || '0',
+      checkedForSubco: item['CHECKED FOR SUBCO'] || [],
       projectCode: item.projectCode,
     });
   });
 
   // Procesar DESIGN
-  designArray.forEach((item) => {
+  designArray.forEach(item => {
     unifiedArray.push({
       id: item.id,
       name: item.name,
-      receivedDate: item["RECEIVED DATE"],
-      completionDate: item["ACTUAL COMPLETION DATE"] || "",
-      quantity: item["DESIGN ROUNDED MILES"] || "0",
-      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
+      receivedDate: item['RECEIVED DATE'],
+      completionDate: item['ACTUAL COMPLETION DATE'] || '',
+      quantity: item['DESIGN ROUNDED MILES'] || '0',
+      checkedForSubco: item['CHECKED FOR SUBCO'] || [],
       projectCode: item.projectCode,
     });
   });
 
   // Procesar REDESIGN
-  redesignArray.forEach((item) => {
+  redesignArray.forEach(item => {
     unifiedArray.push({
       id: item.id,
       name: item.name,
-      receivedDate: item["RECEIVED DATE"],
-      completionDate: item["REDESIGN ACTUAL COMPLETION DATE"] || "",
-      quantity: item["TIME SPENT BY VENDOR"] || item["REDESIGN TIME"] || "0",
-      checkedForSubco: item["CHECKED FOR SUBCO"] || [],
+      receivedDate: item['RECEIVED DATE'],
+      completionDate: item['REDESIGN ACTUAL COMPLETION DATE'] || '',
+      quantity: item['TIME SPENT BY VENDOR'] || item['REDESIGN TIME'] || '0',
+      checkedForSubco: item['CHECKED FOR SUBCO'] || [],
       projectCode: item.projectCode,
     });
   });
@@ -215,7 +198,7 @@ export function unifyProjects(
 }
 
 export function getUser(userId: number): User {
-  return members.find((member) => member.user?.id === userId)?.user || {};
+  return members.find(member => member.user?.id === userId)?.user || {};
 }
 
 export function splitTaskArray(array: string[], chunkSize: number): string[][] {
@@ -230,16 +213,16 @@ export function getTimetrackingPayloadForTask(
   tasksList: TaskTimeDataWithClickUpID
 ): newTimeEntryPayload[] {
   const { clickUpID, assignee, data } = tasksList;
-  const payload = data.map((time) => {
+  const payload = data.map(time => {
     return {
       clickUpID,
       assignee,
       start: new Date(time.start).getTime(),
       stop: new Date(time.stop).getTime(),
-      tags: [{ name: "mqms time", tag_bg: "#6E56CF", tag_fg: "#6E56CF" }],
+      tags: [{ name: 'mqms time', tag_bg: '#6E56CF', tag_fg: '#6E56CF' }],
     };
   });
-  return payload.filter((payload) => payload.start < payload.stop);
+  return payload.filter(payload => payload.start < payload.stop);
 }
 
 export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
@@ -255,62 +238,171 @@ export async function sendBatchedRequests<T, R>(
   batchSize: number,
   postRequestCallback: (payload: T) => Promise<R>
 ): Promise<R[]> {
+  // Safety: normalize batch size to respect ClickUp's 100 req/min limit
+  const safeBatchSize = Math.max(1, Math.min(batchSize, 100));
 
-  const batches = chunkArray(payloads, batchSize);
-  const results: R[] = [];
-
-  for (let i = 0; i < batches.length; i++) {
-    console.log(`Sending batch ${i + 1} of ${batches.length}...`);
-
-    const batchResults = await Promise.all(
-      batches[i].map((payload) => postRequestCallback(payload))
-    );
-
-    results.push(...batchResults);
-
-    console.log(`Batch ${i + 1} sent successfully.`);
-
-    if (i < batches.length - 1) {
-      console.log("Waiting 60 seconds before sending the next batch...");
-      await new Promise((resolve) => setTimeout(resolve, 60000));
-    }
+  if (!Array.isArray(payloads) || payloads.length === 0) {
+    console.log('No payloads provided. Nothing to send.');
+    return [];
   }
 
-  console.log("All batches sent successfully!");
-  return results;
+  // Maximum number of attempts (1 initial + 4 retries = 5 total)
+  const MAX_ATTEMPTS = 5;
+
+  // Store the final result for each payload index (undefined when not yet successful)
+  const finalResults: (R | undefined)[] = new Array(payloads.length).fill(undefined);
+
+  // Start with all indices pending
+  let pendingIndices: number[] = payloads.map((_, idx) => idx);
+  let attempt = 1;
+
+  // Helper to summarize payloads in logs without dumping huge objects
+  const summarizePayload = (p: T): unknown => {
+    try {
+      if (p && typeof p === 'object') {
+        const rec = p as Record<string, unknown>;
+        const idLike = rec['clickUpID'] ?? rec['id'] ?? rec['taskId'] ?? rec['tid'];
+        if (idLike !== undefined) {
+          const summary: Record<string, unknown> = { id: idLike };
+          if ('assignee' in rec) summary.assignee = rec['assignee'];
+          return summary;
+        }
+      }
+      return p;
+    } catch {
+      return p;
+    }
+  };
+
+  // Narrow responses that include a string status field
+  const hasStringStatus = (x: unknown): x is { status: string } => {
+    if (typeof x !== 'object' || x === null) return false;
+    if (!('status' in x)) return false;
+    const s = (x as { status: unknown }).status;
+    return typeof s === 'string';
+  };
+
+  // Loop attempts until no pending or attempts exhausted
+  while (pendingIndices.length > 0 && attempt <= MAX_ATTEMPTS) {
+    console.log(
+      `Attempt ${attempt}/${MAX_ATTEMPTS} - sending ${pendingIndices.length} payload(s) in batches of ${safeBatchSize}...`
+    );
+
+    // Split indices into batches to comply with rate limiting
+    const indexBatches = chunkArray(pendingIndices, safeBatchSize);
+    const failedThisAttempt: number[] = [];
+
+    for (let i = 0; i < indexBatches.length; i++) {
+      const indices = indexBatches[i];
+      console.log(`Sending batch ${i + 1} of ${indexBatches.length} (attempt ${attempt})...`);
+
+      // Execute the batch concurrently
+      const batchPromises = indices.map(async idx => {
+        const payload = payloads[idx];
+        try {
+          const res = await postRequestCallback(payload);
+
+          // Heuristic: if response has a string "status" field, treat 'error' as failure
+          const isSuccess = hasStringStatus(res) ? res.status === 'success' : true;
+
+          if (isSuccess) {
+            finalResults[idx] = res;
+          } else {
+            // Server-like failure (as far as we can infer) -> mark for retry
+            failedThisAttempt.push(idx);
+          }
+        } catch (e) {
+          // Network/Thrown error -> retryable
+          void e; // mark as used to satisfy lint without verbose logging
+          failedThisAttempt.push(idx);
+        }
+      });
+
+      await Promise.all(batchPromises);
+
+      console.log(
+        `Batch ${i + 1} processed. Success so far: ${finalResults.filter(r => r !== undefined).length}/${payloads.length}. Failed this attempt: ${failedThisAttempt.length}.`
+      );
+
+      // Rate limit: wait 60s between batches within the same attempt
+      if (i < indexBatches.length - 1) {
+        console.log('Waiting 60 seconds before sending the next batch (rate limit 100 req/min)...');
+        await new Promise(resolve => setTimeout(resolve, 60000));
+      }
+    }
+
+    if (failedThisAttempt.length > 0) {
+      // Keep logs concise: show up to first 5 failed payloads as a sample
+      const sample = failedThisAttempt
+        .slice(0, Math.min(5, failedThisAttempt.length))
+        .map(idx => summarizePayload(payloads[idx]));
+      console.warn(
+        `Attempt ${attempt} completed with ${failedThisAttempt.length} failed payload(s). Sample of failed payloads:`,
+        sample
+      );
+    } else {
+      console.log(`Attempt ${attempt} completed. No failures.`);
+    }
+
+    // Prepare next attempt with only failures
+    pendingIndices = failedThisAttempt;
+
+    // Rate limit: wait 60s between attempts if there are still failures to retry
+    if (pendingIndices.length > 0 && attempt < MAX_ATTEMPTS) {
+      console.log('Waiting 60 seconds before retrying failed payloads (respecting rate limit)...');
+      await new Promise(resolve => setTimeout(resolve, 60000));
+    }
+
+    attempt++;
+  }
+
+  // Final reporting after all attempts
+  if (pendingIndices.length > 0) {
+    const notSent = pendingIndices.map(idx => payloads[idx]);
+    console.error(`Failed to send ${notSent.length} payload(s) after ${MAX_ATTEMPTS} attempts.`);
+    console.error(
+      'List of payloads that could not be sent:',
+      notSent.map(p => summarizePayload(p))
+    );
+  } else {
+    console.log('All payloads sent successfully!');
+  }
+
+  // Return only successful results (in original order)
+  return finalResults.filter((r): r is R => r !== undefined);
 }
 
 export function getCheckedSubcoBillingStatusPayloads(
   tasks: ExtractedTaskFieldValues[] | TaskRow[]
 ): CheckedSubcoBillingStatusPayloads[] {
-  const asbuiltChecked = getCustomField("ASBUILT CHECKED");
-  const designChecked = getCustomField("DESIGN CHECKED");
-  const redesignChecked = getCustomField("REDESIGN CHECKED");
-  const bauChecked = getCustomField("BAU CHECKED");
+  const asbuiltChecked = getCustomField('ASBUILT CHECKED');
+  const designChecked = getCustomField('DESIGN CHECKED');
+  const redesignChecked = getCustomField('REDESIGN CHECKED');
+  const bauChecked = getCustomField('BAU CHECKED');
 
-  return tasks.map((task) => {
+  return tasks.map(task => {
     let customFieldId: string;
     let code = task.projectCode as string;
 
-    if (code.includes("CCI - BAU")) {
-      code = "CCI - BAU";
+    if (code.includes('CCI - BAU')) {
+      code = 'CCI - BAU';
     }
 
     switch (code) {
-      case "CCI - HS ASBUILT":
-        customFieldId = asbuiltChecked.id ?? "";
+      case 'CCI - HS ASBUILT':
+        customFieldId = asbuiltChecked.id ?? '';
         break;
-      case "CCI - HS DESIGN":
-        customFieldId = designChecked.id ?? "";
+      case 'CCI - HS DESIGN':
+        customFieldId = designChecked.id ?? '';
         break;
-      case "CCI - REDESIGN":
-        customFieldId = redesignChecked.id ?? "";
+      case 'CCI - REDESIGN':
+        customFieldId = redesignChecked.id ?? '';
         break;
-      case "CCI - BAU":
-        customFieldId = bauChecked.id ?? "";
+      case 'CCI - BAU':
+        customFieldId = bauChecked.id ?? '';
         break;
       default:
-        customFieldId = "";
+        customFieldId = '';
     }
     return {
       taskId: task.id,
