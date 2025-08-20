@@ -1,9 +1,10 @@
 import {
   CreateNewTimeEntryResponse,
   newTimeEntryPayload,
-} from "../../../types/Task";
-import { createNewtimeEntry } from "../../../utils/clickUpApi";
-import { sendBatchedRequests } from "../../../utils/helperFunctions";
+  TimetrackingPayload,
+} from '../../../types/Task';
+import { createNewtimeEntry } from '../../../utils/clickUpApi';
+import { sendBatchedRequests } from '../../../utils/helperFunctions';
 
 export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
   const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
@@ -24,10 +25,8 @@ export function getRowsforMUITable(payloads: newTimeEntryPayload[]) {
     testRow.push({
       id: clickUpID,
       clickUpID,
-      designDuration: designDuration
-        ? (designDuration / 60 / 60 / 1000).toFixed(2)
-        : "0",
-      qcDuration: qcDuration ? (qcDuration / 60 / 60 / 1000).toFixed(2) : "0",
+      designDuration: designDuration ? (designDuration / 60 / 60 / 1000).toFixed(2) : '0',
+      qcDuration: qcDuration ? (qcDuration / 60 / 60 / 1000).toFixed(2) : '0',
     });
   }
 
@@ -41,18 +40,16 @@ export function handleClick(
   if (payloads.length > 0) {
     console.log(`Starting to send ${payloads.length} payloads...`);
 
-    sendBatchedRequests<newTimeEntryPayload, CreateNewTimeEntryResponse>(
+    sendBatchedRequests<TimetrackingPayload, CreateNewTimeEntryResponse>(
       payloads,
-      90,
+      80,
       createNewtimeEntry
-    ).catch((error) => {
-      console.error("Error sending batched requests:", error);
+    ).catch(error => {
+      console.error('Error sending batched requests:', error);
     });
 
-    setLocalPayloads((prevState) =>
-      prevState.filter((payload) => !payloads.includes(payload))
-    );
+    setLocalPayloads(prevState => prevState.filter(payload => !payloads.includes(payload)));
   } else {
-    console.log("No payloads to send.");
+    console.log('No payloads to send.');
   }
 }
