@@ -9,8 +9,8 @@ export const bauPrices = {
   'FIBER ASBUILT FOOTAGE > 1,500’ / 27530 (FT)': 0.0025,
   'COAX NEW BUILD < 1,500’ / 27281 (EA)': 75.0,
   'NEW COAX FOOTAGE OVER 1500 (FT)': 0.02,
-  'FIBER AND/OR COAX FOOTAGE >1,500’ / 27280 (FT)': 0.0025,
-  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)': 0.0025,
+  'FIBER AND/OR COAX FOOTAGE >1,500’ / 27280 (FT)': 0.02,
+  'FIBER & COAX NEW BUILD 1,500’ / 27283 (EA)': 175.0,
   'FIBER NEW BUILD < 1,500’ / 27282 (EA)': 150.0,
   'NEW FIBER FOOTAGE OVER 1500 (FT)': 0.02,
   'RDOF Architecture / 40555 (MILE)': 125.0,
@@ -109,7 +109,7 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
   // Auto-filter for all columns
   worksheet.autoFilter = {
     from: { row: 1, column: 1 },
-    to: { row: 1, column: 8 },
+    to: { row: 1, column: 9 },
   };
 
   workbook.xlsx.writeBuffer().then(data => {
