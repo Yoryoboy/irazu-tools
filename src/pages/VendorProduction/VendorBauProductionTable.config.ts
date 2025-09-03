@@ -45,4 +45,5 @@ export const codeMapping: Record<string, string> = {
     'CCI - BAU SUBCO ONLY Node Seg/Split Asbuild/35473',
   'NODE SPLIT PRELIM / 35539 (EA)': 'CCI - BAU Node Split Prelim/35539',
   'REDESIGN / 13406 (HR)': 'CCI - REDESIGN',
+  'RDOF Architecture / 40555 (MILE)': 'CCI - BAU - RDOF Architecture / 40555',
 };

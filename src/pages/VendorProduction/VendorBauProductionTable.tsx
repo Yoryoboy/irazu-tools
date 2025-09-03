@@ -23,7 +23,8 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
         field.value &&
         (field.name?.includes('(EA)') ||
           field.name?.includes('(FT)') ||
-          field.name?.includes('(HR)'))
+          field.name?.includes('(HR)') ||
+          field.name?.includes('(MILE)'))
     ) as CustomField[];
 
     return {
