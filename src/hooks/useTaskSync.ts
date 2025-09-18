@@ -2,7 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MQMSTask } from '../types/Task';
 import ClickUp, { Task as SdkTask } from '@yoryoboy/clickup-sdk';
 import { Result } from '../types/AsyncResult';
-import { buildClickUpTaskFromMqms, getCustomerCompanyByListId, extractWorkRequestIds } from '../features/taskSync/taskDomain';
+import {
+  buildClickUpTaskFromMqms,
+  getCustomerCompanyByListId,
+  extractWorkRequestIds,
+} from '../features/taskSync/taskDomain';
 import { CLICKUP_API_AKEY } from '../utils/config';
 
 export interface UseTaskSyncState {
@@ -11,8 +15,14 @@ export interface UseTaskSyncState {
   mqmsRows: MQMSTask[];
   setMqmsRows: (rows: MQMSTask[]) => void;
   newMqmsRows: MQMSTask[];
-  syncOne: (row: MQMSTask, listId: string) => Promise<Result<{ created: number; tasks: SdkTask[] }>>;
-  syncAll: (rows: MQMSTask[], listId: string) => Promise<Result<{ created: number; tasks: SdkTask[] }>>;
+  syncOne: (
+    row: MQMSTask,
+    listId: string
+  ) => Promise<Result<{ created: number; tasks: SdkTask[] }>>;
+  syncAll: (
+    rows: MQMSTask[],
+    listId: string
+  ) => Promise<Result<{ created: number; tasks: SdkTask[] }>>;
   removeRowsByExternalId: (externalIds: string[]) => void;
 }
 
@@ -35,7 +45,7 @@ export function useTaskSync(listId: string): UseTaskSyncState {
     setLoadingClickUp(true);
     setError(undefined);
     sdk.tasks
-      .getTasks({ list_id: listId, page: 'all', include_closed: true })
+      .getTasks({ list_id: listId, page: 'all' })
       .then(tasks => {
         if (cancelled) return;
         setClickupTasks(tasks);
@@ -83,11 +93,18 @@ export function useTaskSync(listId: string): UseTaskSyncState {
   );
 
   const syncAll = useCallback(
-    async (rows: MQMSTask[], list: string): Promise<Result<{ created: number; tasks: SdkTask[] }>> => {
+    async (
+      rows: MQMSTask[],
+      list: string
+    ): Promise<Result<{ created: number; tasks: SdkTask[] }>> => {
       try {
         const customer = getCustomerCompanyByListId(list);
         const payloads = rows.map(r => buildClickUpTaskFromMqms(r, customer));
-        const tasks = await sdk.tasks.createTasks(list, payloads, { batchSize: 100, delayBetweenBatches: 60000, verbose: true });
+        const tasks = await sdk.tasks.createTasks(list, payloads, {
+          batchSize: 100,
+          delayBetweenBatches: 60000,
+          verbose: true,
+        });
         return { success: true, data: { created: tasks.length, tasks } };
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'Failed creating tasks';
