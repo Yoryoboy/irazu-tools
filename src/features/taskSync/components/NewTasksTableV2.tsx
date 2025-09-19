@@ -30,8 +30,8 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
         accessorKey: 'JOB_NAME',
         cell: ({ getValue, row }) => (
           <div className="space-y-1">
-            <p className="font-medium text-zinc-50">{getValue<string>() || 'Sin nombre'}</p>
-            <p className="text-xs text-zinc-400">Nodo: {row.original.NODE_NAME || 'N/A'}</p>
+            <p className="font-semibold text-slate-100">{getValue<string>() || 'Sin nombre'}</p>
+            <p className="text-xs text-slate-400">Nodo: {row.original.NODE_NAME || 'N/A'}</p>
           </div>
         ),
       },
@@ -40,9 +40,13 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
         accessorKey: 'EXTERNAL_ID',
         cell: ({ getValue, row }) => (
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">{getValue<string>() || '—'}</Badge>
+            <Badge variant="secondary" className="bg-slate-800/80 text-slate-100">
+              {getValue<string>() || '—'}
+            </Badge>
             {row.original.SECONDARY_EXTERNAL_ID && (
-              <Badge variant="secondary">{row.original.SECONDARY_EXTERNAL_ID}</Badge>
+              <Badge variant="secondary" className="bg-slate-800/80 text-slate-100">
+                {row.original.SECONDARY_EXTERNAL_ID}
+              </Badge>
             )}
           </div>
         ),
@@ -52,8 +56,8 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
         accessorKey: 'REQUEST_NAME',
         cell: ({ getValue, row }) => (
           <div className="space-y-1">
-            <p>{getValue<string>() || 'Sin descripción'}</p>
-            <p className="text-xs text-zinc-500">WR ID: {row.original.REQUEST_ID || 'N/A'}</p>
+            <p className="text-slate-200">{getValue<string>() || 'Sin descripción'}</p>
+            <p className="text-xs text-slate-500">WR ID: {row.original.REQUEST_ID || 'N/A'}</p>
           </div>
         ),
       },
@@ -61,7 +65,7 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
         header: 'Proyecto',
         accessorKey: 'PROJECT_TYPE',
         cell: ({ getValue }) => (
-          <Badge variant="default" className="bg-emerald-500/80 text-zinc-950">
+          <Badge variant="default" className="bg-emerald-400/90 text-slate-950">
             {getValue<string>() || 'Sin tipo'}
           </Badge>
         ),
@@ -70,7 +74,7 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
         header: 'Hub',
         accessorKey: 'HUB',
         cell: ({ getValue }) => (
-          <Badge variant="secondary" className="bg-zinc-800/80">
+          <Badge variant="secondary" className="bg-slate-800/80 text-slate-200">
             {getValue<string>() || 'N/A'}
           </Badge>
         ),
@@ -82,7 +86,7 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
           <Button
             type="button"
             size="sm"
-            variant="secondary"
+            className="bg-emerald-500 text-slate-950 hover:bg-emerald-400"
             onClick={() => onSyncOne(row.original.EXTERNAL_ID)}
           >
             Sincronizar
@@ -100,7 +104,7 @@ export default function NewTasksTableV2({ rows, onSyncOne }: Props) {
   });
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/60">
+    <div className="overflow-hidden rounded-2xl border border-slate-800/70 bg-slate-950/60">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

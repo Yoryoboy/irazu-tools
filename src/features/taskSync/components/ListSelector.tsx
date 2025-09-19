@@ -65,17 +65,25 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
   }, [main, bau]);
 
   return (
-    <Card className="border-zinc-800/70">
-      <CardHeader>
-        <CardTitle>Selecciona la lista destino</CardTitle>
-        <CardDescription>
-          Elige el flujo de ClickUp al que quieres sincronizar las tareas nuevas detectadas en el Excel de MQMS.
-        </CardDescription>
+    <Card className="border-slate-800/80 bg-slate-900/70 shadow-[0_40px_120px_-60px_rgba(16,185,129,0.75)] backdrop-blur">
+      <CardHeader className="space-y-6">
+        <div className="flex flex-wrap items-center gap-3 text-[0.65rem] uppercase tracking-[0.35em] text-emerald-300">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-400/10 text-xs font-semibold text-emerald-200">
+            PASO 1
+          </span>
+          <span className="font-semibold tracking-[0.28em] text-emerald-200">Selecciona el flujo destino</span>
+        </div>
+        <div className="space-y-2">
+          <CardTitle className="text-2xl font-semibold text-slate-50">Selecciona la lista destino</CardTitle>
+          <CardDescription className="text-sm text-slate-400">
+            Elige el flujo de ClickUp al que quieres sincronizar las tareas nuevas detectadas en el Excel de MQMS.
+          </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-8">
-        <div className="space-y-3">
-          <p className="text-xs uppercase tracking-widest text-zinc-500">Flujo principal</p>
-          <div className="grid gap-3 sm:grid-cols-2">
+      <CardContent className="space-y-10">
+        <div className="space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Flujo principal</p>
+          <div className="grid gap-4 sm:grid-cols-2">
             {mainOptions.map(option => {
               const isActive = main === option.value;
               return (
@@ -84,11 +92,10 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
                   type="button"
                   variant={isActive ? 'default' : 'outline'}
                   className={cn(
-                    'h-auto justify-start rounded-2xl border border-transparent px-5 py-4 text-left shadow-inner transition-all',
-                    'bg-gradient-to-br from-zinc-900/70 via-zinc-900/40 to-zinc-900/20',
+                    'group h-auto flex-col items-start justify-start gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 px-6 py-5 text-left shadow-[0_12px_30px_-20px_rgba(15,23,42,0.8)] transition-all',
                     isActive
-                      ? 'ring-2 ring-emerald-400/60 shadow-[0_12px_45px_-28px_rgba(16,185,129,0.8)]'
-                      : 'hover:border-zinc-700 hover:shadow-[0_15px_35px_-30px_rgba(0,0,0,0.8)]'
+                      ? 'border-emerald-400/80 bg-emerald-500/10 ring-2 ring-emerald-400/40'
+                      : 'hover:border-slate-700 hover:bg-slate-900/60 hover:shadow-[0_25px_45px_-32px_rgba(16,185,129,0.55)]'
                   )}
                   onClick={() => {
                     setMain(option.value);
@@ -101,8 +108,22 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
                     }
                   }}
                 >
-                  <span className="text-sm font-semibold text-zinc-100">{option.label}</span>
-                  <span className="mt-1 block text-xs text-zinc-400">{option.description}</span>
+                  <span className="inline-flex items-center gap-3 text-sm font-semibold text-slate-100">
+                    <span
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold transition-colors',
+                        isActive
+                          ? 'border-emerald-300 bg-emerald-400/20 text-emerald-100'
+                          : 'border-slate-700 bg-slate-900/70 text-slate-400'
+                      )}
+                    >
+                      {option.label.charAt(0)}
+                    </span>
+                    {option.label}
+                  </span>
+                  <span className="block text-xs text-slate-400 transition-colors group-hover:text-slate-300">
+                    {option.description}
+                  </span>
                 </Button>
               );
             })}
@@ -110,9 +131,9 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
         </div>
 
         {main === 'bau' && (
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-widest text-zinc-500">Tipo de BAU</p>
-            <div className="grid gap-3 sm:grid-cols-3">
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Tipo de BAU</p>
+            <div className="grid gap-4 sm:grid-cols-3">
               {bauOptions.map(option => {
                 const isActive = bau === option.value;
                 return (
@@ -121,11 +142,10 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
                     type="button"
                     variant={isActive ? 'default' : 'outline'}
                     className={cn(
-                      'h-auto justify-start rounded-2xl border border-transparent px-4 py-4 text-left shadow-inner transition-all',
-                      'bg-zinc-950/40',
+                      'group h-auto flex-col items-start justify-start gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 px-5 py-4 text-left transition-all',
                       isActive
-                        ? 'ring-2 ring-emerald-400/50'
-                        : 'hover:border-zinc-700 hover:bg-zinc-900/50'
+                        ? 'border-emerald-400/70 bg-emerald-500/10 ring-1 ring-emerald-400/40'
+                        : 'hover:border-slate-700 hover:bg-slate-900/60'
                     )}
                     onClick={() => {
                       setBau(option.value);
@@ -134,8 +154,10 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
                       if (option.value === 'techserv') onListResolved(CLICKUP_LIST_IDS.techservBau);
                     }}
                   >
-                    <span className="text-sm font-semibold text-zinc-100">{option.label}</span>
-                    <span className="mt-1 block text-xs text-zinc-400">{option.description}</span>
+                    <span className="text-sm font-semibold text-slate-100">{option.label}</span>
+                    <span className="block text-xs text-slate-400 transition-colors group-hover:text-slate-300">
+                      {option.description}
+                    </span>
                   </Button>
                 );
               })}
@@ -143,12 +165,19 @@ export default function ListSelector({ main, setMain, bau, setBau, onListResolve
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-3 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Badge variant={listId ? 'default' : 'secondary'}>{listId ? 'Listo para sincronizar' : 'Selecciona una lista'}</Badge>
-          <span className="text-xs text-zinc-500">{main === 'bau' ? 'BAU requiere un subtipo.' : 'High Split se resuelve automáticamente.'}</span>
+      <CardFooter className="flex flex-col gap-3 border-t border-slate-800/70 bg-slate-900/60 px-6 py-5 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-3">
+          <Badge
+            variant={listId ? 'default' : 'secondary'}
+            className={cn(listId ? 'bg-emerald-400/90 text-slate-950' : 'bg-slate-800/90 text-slate-200')}
+          >
+            {listId ? 'Listo para sincronizar' : 'Selecciona una lista'}
+          </Badge>
+          <span className="text-xs text-slate-500">
+            {main === 'bau' ? 'BAU requiere un subtipo.' : 'High Split se resuelve automáticamente.'}
+          </span>
         </div>
-        {listId && <span className="text-xs text-zinc-500">ID seleccionado: {listId}</span>}
+        {listId && <span className="text-xs text-slate-500">ID seleccionado: {listId}</span>}
       </CardFooter>
     </Card>
   );
