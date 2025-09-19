@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
-import { useTaskSync } from '../../hooks/useTaskSync';
+import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import ExcelUploadCard from '../../features/taskSync/components/ExcelUploadCard';
 import NewTasksTableV2 from '../../features/taskSync/components/NewTasksTableV2';
+import { useTaskSync } from '../../hooks/useTaskSync';
 
 interface Props {
   listId: string;
@@ -36,26 +39,40 @@ function TaskSync({ listId }: Props) {
   }, [newMqmsRows, listId, syncAll, removeRowsByExternalId]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-6">
+    <div className="space-y-8">
       <ExcelUploadCard setData={setMqmsRows} />
 
-      {loadingClickUp && <p className="text-sm text-zinc-400">Obteniendo datos de ClickUp…</p>}
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {loadingClickUp && (
+        <Alert variant="info">
+          <AlertTitle>Consultando ClickUp…</AlertTitle>
+          <AlertDescription>Obteniendo tareas existentes para evitar duplicados.</AlertDescription>
+        </Alert>
+      )}
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertTitle>Ocurrió un error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       {newMqmsRows.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold">Tareas nuevas detectadas ({newMqmsRows.length})</h3>
-            <button
-              type="button"
-              onClick={handleSyncAll}
-              className="px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white text-sm"
-            >
+        <Card className="border-zinc-800/60">
+          <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <CardTitle>Tareas nuevas detectadas</CardTitle>
+              <CardDescription>
+                {newMqmsRows.length} {newMqmsRows.length === 1 ? 'fila lista' : 'filas listas'} para sincronizar con ClickUp.
+              </CardDescription>
+            </div>
+            <Button onClick={handleSyncAll} className="w-full md:w-auto" disabled={newMqmsRows.length === 0}>
               Sincronizar todas
-            </button>
-          </div>
-          <NewTasksTableV2 rows={newMqmsRows} onSyncOne={handleSyncOne} />
-        </div>
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <NewTasksTableV2 rows={newMqmsRows} onSyncOne={handleSyncOne} />
+          </CardContent>
+        </Card>
       )}
     </div>
   );
