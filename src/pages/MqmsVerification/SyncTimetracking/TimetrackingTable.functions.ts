@@ -1,8 +1,4 @@
-import {
-  CreateNewTimeEntryResponse,
-  newTimeEntryPayload,
-  TimetrackingPayload,
-} from '../../../types/Task';
+import { CreateNewTimeEntryResponse, TimetrackingPayload } from '../../../types/Task';
 import { createNewtimeEntry } from '../../../utils/clickUpApi';
 import { sendBatchedRequests } from '../../../utils/helperFunctions';
 
