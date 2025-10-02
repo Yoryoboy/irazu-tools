@@ -2,7 +2,7 @@ import { Button, notification } from "antd";
 import { ExtractedTaskFieldValues, TaskRow } from "../../types/Task";
 import { useState } from "react";
 import { updateCustomFieldLabel } from "../../utils/clickUpApi";
-import { getCheckedSubcoBillingStatusPayloads } from "../../utils/helperFunctions";
+import { getCheckedSubcoBillingStatusPayloads, sendBatchedRequests } from "../../utils/helperFunctions";
 
 interface Props {
   tasks: ExtractedTaskFieldValues[] | TaskRow[];
@@ -19,42 +19,53 @@ function UpdateCheckedForSubcoLabels({ tasks }: Props) {
     const checkedSubcoBillingStatusPayloads =
       getCheckedSubcoBillingStatusPayloads(tasks);
 
-    console.log(checkedSubcoBillingStatusPayloads);
+    console.log(`Preparing to update ${checkedSubcoBillingStatusPayloads.length} tasks...`);
 
-    const results = await Promise.allSettled(
-      checkedSubcoBillingStatusPayloads.map((task) => {
-        const { taskId, customFieldId, value } = task;
-        if (!taskId || !customFieldId || !value) {
-          return Promise.reject("Missing required parameters");
+    try {
+      // Usar sendBatchedRequests para respetar el rate limit de ClickUp (100 req/min)
+      const results = await sendBatchedRequests(
+        checkedSubcoBillingStatusPayloads,
+        80, // Batch size: 80 requests por lote
+        async (payload) => {
+          const { taskId, customFieldId, value } = payload;
+          if (!taskId || !customFieldId || value === undefined) {
+            throw new Error("Missing required parameters");
+          }
+          return await updateCustomFieldLabel(taskId, customFieldId, value);
         }
-        return updateCustomFieldLabel(taskId, customFieldId, value);
-      })
-    );
-
-    const errors = results.filter((result) => result.status === "rejected");
-    const successes = results.filter((result) => result.status === "fulfilled");
-
-    setLoading(false);
-
-    if (errors.length > 0) {
-      setError(
-        `${errors.length} tasks failed to update. Check console for details.`
       );
+
+      setLoading(false);
+
+      // Calcular éxitos y fallos
+      const successes = results.filter((result) => result.success);
+      const errors = results.filter((result) => !result.success);
+
+      if (errors.length > 0) {
+        setError(
+          `${errors.length} tasks failed to update. Check console for details.`
+        );
+        notification.error({
+          message: "Error",
+          description: `${errors.length} tasks failed to update.`,
+        });
+        console.error("Failed tasks:", errors);
+      }
+
+      if (successes.length > 0) {
+        notification.success({
+          message: "Success",
+          description: `${successes.length} tasks updated successfully!`,
+        });
+      }
+    } catch (error) {
+      setLoading(false);
+      setError("An unexpected error occurred. Check console for details.");
       notification.error({
         message: "Error",
-        description: `${errors.length} tasks failed to update.`,
+        description: "An unexpected error occurred while updating tasks.",
       });
-      console.error(
-        "Failed tasks:",
-        errors.map((e) => (e.status === "rejected" ? e.reason : null))
-      );
-    }
-
-    if (successes.length > 0) {
-      notification.success({
-        message: "Success",
-        description: `${successes.length} tasks updated successfully!`,
-      });
+      console.error("Error in handleUpdateLabels:", error);
     }
   };
 
