@@ -8,6 +8,9 @@ import {
 import VendorProductionTable from './VendorProductionTable';
 import { vendors } from './VendorProduction.vendors';
 import VendorBauProductionTable from './VendorBauProductionTable';
+import { useConsolidatedVendorTasks } from './useConsolidatedVendorTasks';
+import { useUpdateAllVendorTasks } from './useUpdateAllVendorTasks';
+import GlobalUpdateButton from './GlobalUpdateButton';
 
 function VendorProduction() {
   const {
@@ -89,8 +92,49 @@ function VendorProduction() {
     getBAUSearchParamsForVendor(rosaAtempa.id.toString())
   );
 
+  // Consolidar todas las tareas usando el hook personalizado
+  const allTasks = useConsolidatedVendorTasks({
+    anais: {
+      asbuilts: asbuiltForAnaisDelValleArchilaGonzalez,
+      designs: designForAnaisDelValleArchilaGonzalez,
+      redesigns: redesignForAnaisDelValleArchilaGonzalez,
+      bau: bauForAnaisDelValleArchilaGonzalez,
+    },
+    beatriz: {
+      asbuilts: asbuiltForBeatrizLeal,
+      designs: designForBeatrizLeal,
+      redesigns: redesignForBeatrizLeal,
+    },
+    nathaly: {
+      asbuilts: asbuiltForNathaly,
+      designs: designForNathaly,
+      redesigns: redesignForNathaly,
+    },
+    barbara: {
+      bau: bauForBarbaraGarcia,
+    },
+    eliusmir: {
+      bau: bauForEliusmir,
+    },
+    carlos: {
+      bau: bauForCarlos,
+    },
+    rosa: {
+      bau: bauForRosaAtempa,
+    },
+  });
+
+  // Hook para manejar la actualización de todas las tareas
+  const { loading, error, handleUpdateAllTasks } = useUpdateAllVendorTasks(allTasks);
+
   return (
     <main>
+      <GlobalUpdateButton
+        totalTasks={allTasks.length}
+        loading={loading}
+        error={error}
+        onUpdate={handleUpdateAllTasks}
+      />
       <VendorBauProductionTable
         bau={bauForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
