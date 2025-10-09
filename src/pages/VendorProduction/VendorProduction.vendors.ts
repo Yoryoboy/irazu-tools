@@ -14,6 +14,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1645726537024',
     date_invited: '1644501013523',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ANAIS ARCHILA.xlsx',
+    protectedSheetName: 'Datos',
   },
   beatrizLeal: {
     id: 43076423,
@@ -28,6 +29,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1645726617452',
     date_invited: '1644501018940',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - BEATRIZ LEAL.xlsx',
+    protectedSheetName: 'Datos',
   },
   nathaly: {
     id: 43076424,
@@ -42,6 +44,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1644838243645',
     date_invited: '1644501024880',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - NATHALY PINZON.xlsx',
+    protectedSheetName: 'Datos',
   },
   barbaraGarcia: {
     id: 88296360,
@@ -56,6 +59,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1744201624549',
     date_invited: '1744199963870',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - BARBARA.xlsx',
+    protectedSheetName: 'Datos',
   },
   eliusmir: {
     id: 88309272,
@@ -70,6 +74,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1747059439546',
     date_invited: '1747053717806',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ELIUSMIR.xlsx',
+    protectedSheetName: 'Datos',
   },
   carlos: {
     id: 88309316,
@@ -84,6 +89,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1747766079959',
     date_invited: '1747057182285',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - CARLOSMORGADO.xlsx',
+    protectedSheetName: 'Datos',
   },
   rosaAtempa: {
     id: 49788771,
@@ -98,5 +104,6 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1671465032097',
     date_invited: '1671449357203',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ROSAATEMPA.xlsx',
+    protectedSheetName: 'Datos',
   },
 };
