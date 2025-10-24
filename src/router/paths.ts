@@ -1,3 +1,5 @@
+import { DESIGNER_VIEW } from "../utils/config";
+
 export const appPaths = {
   root: "/" as const,
   taskSync: "/task-sync" as const,
@@ -37,11 +39,11 @@ export function deriveNavigationKey(pathname: string): NavigationKey | null {
     return appPaths.taskSync;
   }
 
-  if (pathname.startsWith(appPaths.vendorProduction)) {
+  if (!DESIGNER_VIEW && pathname.startsWith(appPaths.vendorProduction)) {
     return appPaths.vendorProduction;
   }
 
-  if (pathname.startsWith(appPaths.incomeReports)) {
+  if (!DESIGNER_VIEW && pathname.startsWith(appPaths.incomeReports)) {
     return appPaths.incomeReports;
   }
 
@@ -51,4 +53,3 @@ export function deriveNavigationKey(pathname: string): NavigationKey | null {
 
   return null;
 }
-
