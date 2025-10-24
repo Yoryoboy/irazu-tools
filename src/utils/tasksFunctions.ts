@@ -217,10 +217,18 @@ export async function fetchFilteredTasks(
   searchParams: SearchParams,
   apiKey: string
 ): Promise<Task[]> {
-  const query = new URLSearchParams(searchParams).toString();
+  const query = new URLSearchParams();
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => query.append(key, item));
+    } else {
+      query.append(key, value);
+    }
+  });
+  const queryString = query.toString();
 
   try {
-    const response = await fetch(`https://api.clickup.com/api/v2/team/${teamId}/task?${query}`, {
+    const response = await fetch(`https://api.clickup.com/api/v2/team/${teamId}/task?${queryString}`, {
       method: 'GET',
       headers: {
         Authorization: apiKey,
@@ -308,25 +316,25 @@ function addQcerToTaskByStatus(
       case 'asbuilt in qc by irazu':
         return {
           ...payload,
-          assignee: taskField['PREASBUILT QC BY'][0] || 0,
+          assignee: (taskField['PREASBUILT QC BY'] as number[])?.[0] || 0,
         };
 
       case 'design in qc by irazu':
         return {
           ...payload,
-          assignee: taskField['DESIGN QC BY'][0] || 0,
+          assignee: (taskField['DESIGN QC BY'] as number[])?.[0] || 0,
         };
 
       case 'redesign in qc by irazu':
         return {
           ...payload,
-          assignee: taskField['REDESIGN QC BY'][0] || 0,
+          assignee: (taskField['REDESIGN QC BY'] as number[])?.[0] || 0,
         };
 
       case 'internal qc':
         return {
           ...payload,
-          assignee: taskField['QC PERFORMED BY'][0] || 0,
+          assignee: (taskField['QC PERFORMED BY'] as number[])?.[0] || 0,
         };
 
       default:
