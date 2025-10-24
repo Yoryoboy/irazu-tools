@@ -327,7 +327,7 @@ async function extractTemplateProtection(
     const sheetXml = await templateZip.file(sheetPath)?.async("text");
     if (!sheetXml) {
       return {
-        workbookProtectionXml,
+        workbookProtectionAttributes: workbookAttrs.size ? workbookAttrs : undefined,
       };
     }
 

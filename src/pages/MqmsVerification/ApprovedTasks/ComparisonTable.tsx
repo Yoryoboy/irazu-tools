@@ -10,6 +10,19 @@ interface Props {
   sentTasks: ExtractedTaskFieldValues[];
 }
 
+export interface DataSourceItem {
+  key: string;
+  jobID: string;
+  secondaryID: string;
+  clickupStatus: string;
+  clickupAssignee: string;
+  mqmsStatus: string;
+  mqmsAssignedUser: string;
+  mqmsModule: string;
+  clickUpID: string;
+  action: JSX.Element;
+}
+
 function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
   const {
     filteredMQMSTasksWithClickUpID,
@@ -63,7 +76,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
     filteredMQMSTasksWithClickUpID
   );
 
-  const dataSource = filteredMQMSTasksWithClickUpID.map((task) => ({
+  const dataSource: DataSourceItem[] = filteredMQMSTasksWithClickUpID.map((task) => ({
     key: task.uuid,
     jobID: task.externalID,
     secondaryID: task.secondaryExternalID,
@@ -72,9 +85,9 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
         .find((sentTask) => sentTask.name === task.externalID)
         ?.status?.toString()
         .toUpperCase() ?? "",
-    clickupAssignee: sentTasks.find(
+    clickupAssignee: (sentTasks.find(
       (sentTask) => sentTask.name === task.externalID
-    )?.assignees,
+    )?.assignees as string[] | undefined)?.join(", ") ?? "",
     mqmsStatus: task.status.name,
     mqmsAssignedUser: `${task.currentAssignedUser.firstName} ${task.currentAssignedUser.lastName}`,
     mqmsModule: task.currentAssignedModule.name ?? "",
@@ -105,7 +118,7 @@ function ComparisonTable({ MQMSTasks, sentTasks }: Props) {
           Approve All Closed and Preclose Tasks
         </Button>
       )}
-      <Table dataSource={dataSource} columns={columns} pagination={false} />
+      <Table<DataSourceItem> dataSource={dataSource} columns={columns} pagination={false} />
     </div>
   );
 }

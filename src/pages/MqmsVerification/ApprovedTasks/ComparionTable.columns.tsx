@@ -1,5 +1,6 @@
 import { Key } from "antd/es/table/interface";
 import { TaskDatum } from "../../../types/MQMS";
+import { DataSourceItem } from "./ComparisonTable";
 
 export function createColumnsForComparisonTable(
   filteredMQMSTasks: TaskDatum[]
@@ -39,7 +40,7 @@ export function createColumnsForComparisonTable(
             })),
             onFilter: (
               value: boolean | Key,
-              record: { [key: string]: string }
+              record: DataSourceItem
             ) => record.mqmsStatus === value,
           },
           {
@@ -59,7 +60,7 @@ export function createColumnsForComparisonTable(
             })),
             onFilter: (
               value: boolean | Key,
-              record: { [key: string]: string }
+              record: DataSourceItem
             ) => record.mqmsAssignedUser === value,
           },
           {

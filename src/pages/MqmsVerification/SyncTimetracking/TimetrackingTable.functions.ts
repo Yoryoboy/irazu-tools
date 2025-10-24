@@ -1,18 +1,25 @@
 import {
   CreateNewTimeEntryResponse,
-  newTimeEntryPayload,
   TimetrackingPayload,
 } from '../../../types/Task';
 import { createNewtimeEntry } from '../../../utils/clickUpApi';
 import { sendBatchedRequests } from '../../../utils/helperFunctions';
 
 export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
-  const groupedPayload = Object.groupBy(payloads, ({ clickUpID }) => clickUpID);
+  // Manual groupBy implementation since Object.groupBy is not available in ES2023
+  const groupedPayload: Record<string, TimetrackingPayload[]> = {};
+  payloads.forEach((payload) => {
+    const key = payload.clickUpID;
+    if (!groupedPayload[key]) {
+      groupedPayload[key] = [];
+    }
+    groupedPayload[key].push(payload);
+  });
 
   const testRow = [];
 
   for (const [clickUpID, values] of Object.entries(groupedPayload)) {
-    const designDuration = values?.reduce((acc, value) => {
+    const designDuration = values?.reduce((acc: number, value) => {
       if ('start' in value && 'stop' in value) {
         const time = value.stop ? value.stop - value.start : 0;
         return acc + (time ?? 0);
@@ -20,7 +27,7 @@ export function getRowsforMUITable(payloads: TimetrackingPayload[]) {
       return acc;
     }, 0);
 
-    const qcDuration = values?.reduce((acc, value) => {
+    const qcDuration = values?.reduce((acc: number, value) => {
       if ('duration' in value) {
         const time = value.duration ?? 0;
         return acc + (time ?? 0);
