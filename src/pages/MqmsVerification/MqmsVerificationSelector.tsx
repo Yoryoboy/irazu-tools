@@ -1,22 +1,39 @@
 import { Flex, Radio } from "antd";
 import { CheckboxGroupProps } from "antd/es/checkbox";
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { appPaths, routeSegments } from "../../router/paths";
 
 const options: CheckboxGroupProps<string>["options"] = [
-  { label: "Check Approved Tasks", value: "check-approved-tasks" },
-  { label: "Sync Timetracking", value: "timetracking" },
+  {
+    label: "Check Approved Tasks",
+    value: routeSegments.mqmsVerification.checkApproved,
+  },
+  {
+    label: "Sync Timetracking",
+    value: routeSegments.mqmsVerification.timetracking,
+  },
 ];
 
 function MqmsVerificationSelector() {
-  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (selectedFeature) {
-      navigate(`/mqms-verification/${selectedFeature}`);
+  const selectedFeature = useMemo(() => {
+    if (
+      location.pathname.startsWith(appPaths.mqmsVerification.checkApproved)
+    ) {
+      return routeSegments.mqmsVerification.checkApproved;
     }
-  }, [selectedFeature, navigate]);
+
+    if (
+      location.pathname.startsWith(appPaths.mqmsVerification.timetracking)
+    ) {
+      return routeSegments.mqmsVerification.timetracking;
+    }
+
+    return null;
+  }, [location.pathname]);
 
   return (
     <Flex vertical gap="small" align="center" justify="center">
@@ -29,10 +46,10 @@ function MqmsVerificationSelector() {
         optionType="button"
         value={selectedFeature}
         buttonStyle="solid"
-        onChange={(e) => setSelectedFeature(e.target.value)}
+        onChange={(e) => navigate(e.target.value, { relative: "path" })}
         style={{ width: "50%" }}
       />
-      {selectedFeature && <Outlet />}
+      <Outlet />
     </Flex>
   );
 }

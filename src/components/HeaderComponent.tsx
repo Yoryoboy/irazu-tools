@@ -1,30 +1,37 @@
 import { Layout, Menu } from "antd";
 import type { MenuProps } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import { appPaths, deriveNavigationKey } from "../router/paths";
 
 const { Header } = Layout;
 
 function HeaderComponent() {
   const items1: MenuProps["items"] = [
-    { key: "/", label: <Link to="/">Home</Link> },
-    { key: "/task-sync", label: <Link to="/task-sync">Tasks Sync</Link> },
+    { key: appPaths.root, label: <Link to={appPaths.root}>Home</Link> },
     {
-      key: "/production-contratistas",
+      key: appPaths.taskSync,
+      label: <Link to={appPaths.taskSync}>Tasks Sync</Link>,
+    },
+    {
+      key: appPaths.vendorProduction,
       label: (
-        <Link to="/production-contratistas">Producción de Contratistas</Link>
+        <Link to={appPaths.vendorProduction}>
+          Producción de Contratistas
+        </Link>
       ),
     },
     {
-      key: "/income-reports",
-      label: <Link to="/income-reports">Income Reports</Link>,
+      key: appPaths.incomeReports,
+      label: <Link to={appPaths.incomeReports}>Income Reports</Link>,
     },
     {
-      key: "/mqms-verification",
-      label: <Link to="/mqms-verification">MQMS</Link>,
+      key: appPaths.mqmsVerification.root,
+      label: <Link to={appPaths.mqmsVerification.root}>MQMS</Link>,
     },
   ];
 
   const currentPath = useLocation().pathname;
+  const selectedKey = deriveNavigationKey(currentPath);
 
   const headerStyle: React.CSSProperties = {
     textAlign: "center",
@@ -41,7 +48,7 @@ function HeaderComponent() {
       <Menu
         theme="dark"
         mode="horizontal"
-        defaultSelectedKeys={[currentPath]}
+        selectedKeys={selectedKey ? [selectedKey] : []}
         items={items1}
         style={{ flex: 1, minWidth: 0, height: "100%" }}
       ></Menu>
