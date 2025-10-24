@@ -13,6 +13,7 @@ This document walks through the routing setup introduced in the new React Router
 - `src/router/routes/` contains route modules, one per feature area, each exporting a `RouteObject` (or array) so the tree stays composable.
 - `src/router/paths.ts` centralises absolute paths, relative segments, and navigation helpers such as `deriveNavigationKey`.
 - `src/pages/NotFound/NotFound.tsx` is wired as the catch-all `*` route so unknown URLs get a friendly message.
+- `VITE_DESIGNER_VIEW=true` hides Vendor Production and Income Reports so designer profiles only see relevant sections.
 
 The application entry (`src/App.tsx`) simply renders:
 
@@ -70,6 +71,7 @@ export const rootRoute: RouteObject = {
 
 ```tsx
 import type { RouteObject } from "react-router-dom";
+import { DESIGNER_VIEW } from "../../utils/config";
 import { incomeReportsRoute } from "./incomeReports";
 import { mqmsRoutes } from "./mqmsVerification";
 import { notFoundRoute } from "./notFound";
@@ -78,9 +80,9 @@ import { vendorProductionRoute } from "./vendorProduction";
 
 export const childRoutes: RouteObject[] = [
   ...taskSyncRoutes,
-  vendorProductionRoute,
+  ...(DESIGNER_VIEW ? [] : [vendorProductionRoute]),
   mqmsRoutes,
-  incomeReportsRoute,
+  ...(DESIGNER_VIEW ? [] : [incomeReportsRoute]),
   notFoundRoute,
 ];
 ```
@@ -88,6 +90,7 @@ export const childRoutes: RouteObject[] = [
 - Exports a single array so `rootRoute` can stay small.
 - `taskSyncRoutes` exports an array (supports index + path variants).
 - `notFoundRoute` is appended last; it matches any unmatched path.
+- `DESIGNER_VIEW` omits routes that designers shouldn’t reach.
 
 ### Feature Route Modules
 
@@ -228,8 +231,12 @@ export type NavigationKey =
 export function deriveNavigationKey(pathname: string): NavigationKey | null {
   if (pathname === appPaths.root) return appPaths.root;
   if (pathname.startsWith(appPaths.taskSync)) return appPaths.taskSync;
-  if (pathname.startsWith(appPaths.vendorProduction)) return appPaths.vendorProduction;
-  if (pathname.startsWith(appPaths.incomeReports)) return appPaths.incomeReports;
+  if (!DESIGNER_VIEW && pathname.startsWith(appPaths.vendorProduction)) {
+    return appPaths.vendorProduction;
+  }
+  if (!DESIGNER_VIEW && pathname.startsWith(appPaths.incomeReports)) {
+    return appPaths.incomeReports;
+  }
   if (pathname.startsWith(appPaths.mqmsVerification.root)) return appPaths.mqmsVerification.root;
   return null;
 }
@@ -240,6 +247,7 @@ export function deriveNavigationKey(pathname: string): NavigationKey | null {
 - `deriveNavigationKey`: inspects the current `pathname` and returns the top-level navigation key for the header menu.
   - Called inside `HeaderComponent` via `selectedKeys={selectedKey ? [selectedKey] : []}`.
   - Ensures nested paths (`/mqms-verification/check-approved-tasks`) still highlight the “MQMS” menu entry.
+  - Automatically ignores designer-hidden paths (Vendor Production/Income Reports) when `DESIGNER_VIEW` is true.
   - Returns `null` when the path is outside the known sections (e.g., on the 404 page).
 
 ### `HeaderComponent`
@@ -247,6 +255,7 @@ export function deriveNavigationKey(pathname: string): NavigationKey | null {
 - Uses `Menu` items keyed by `appPaths`.
 - Reads `selectedKey` from `deriveNavigationKey`.
 - Keeps nav state in sync without duplicating hard-coded path logic.
+- Automatically hides designer-restricted entries (Vendor Production, Income Reports) when `DESIGNER_VIEW` is true.
 
 ### `MqmsVerificationSelector`
 
@@ -312,6 +321,7 @@ Example: adding a “Reports Dashboard” page at `/reports`.
    ```
 
 5. **Update navigation** to include the new menu item in `HeaderComponent`.
+   - Mirror the existing `DESIGNER_VIEW` guard if the route should be hidden for designer profiles.
 
 6. **Optional**: add loaders, actions, or nested children if the feature needs data fetching or sub-pages. Because routes are modular, the new file can export additional objects or arrays as needed without bloating existing modules.
 
@@ -334,4 +344,3 @@ This approach ensures routes stay under ~100 lines and remain discoverable by fe
 - Leverage `router.prefetch` and `<ViewTransition>` once the app targets React Router future flags.
 
 By keeping each route module focused and leveraging centralised path constants, adding new routes or restructuring the tree stays controlled and predictable.
-
