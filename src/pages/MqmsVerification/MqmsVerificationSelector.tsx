@@ -3,16 +3,21 @@ import { CheckboxGroupProps } from "antd/es/checkbox";
 import { useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { appPaths, routeSegments } from "../../router/paths";
+import { DESIGNER_VIEW } from "../../utils/config";
 
 const options: CheckboxGroupProps<string>["options"] = [
   {
     label: "Check Approved Tasks",
     value: routeSegments.mqmsVerification.checkApproved,
   },
-  {
-    label: "Sync Timetracking",
-    value: routeSegments.mqmsVerification.timetracking,
-  },
+  ...(DESIGNER_VIEW
+    ? []
+    : [
+        {
+          label: "Sync Timetracking",
+          value: routeSegments.mqmsVerification.timetracking,
+        },
+      ]),
 ];
 
 function MqmsVerificationSelector() {
@@ -27,6 +32,7 @@ function MqmsVerificationSelector() {
     }
 
     if (
+      !DESIGNER_VIEW &&
       location.pathname.startsWith(appPaths.mqmsVerification.timetracking)
     ) {
       return routeSegments.mqmsVerification.timetracking;
