@@ -408,22 +408,13 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
 
 export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
-    let designers: string = '';
+    const designersFromAssignees = task?.assignees?.map(assignee => assignee.username).filter(Boolean) ?? [];
 
-    if (task?.assignees && task?.assignees.length > 0) {
-      task?.assignees?.forEach(assignee => {
-        designers += assignee.username + ', ';
-      });
-    } else {
-      const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
-        ?.value as User[];
+    const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
+      ?.value as User[];
+    const designersFromCustomField = designAssignee?.map(({ username }) => username).filter(Boolean) ?? [];
 
-      if (designAssignee) {
-        designAssignee.forEach(assignee => {
-          designers += assignee.username + ', ';
-        });
-      }
-    }
+    const designers = (designersFromAssignees.length > 0 ? designersFromAssignees : designersFromCustomField).join(', ');
 
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
