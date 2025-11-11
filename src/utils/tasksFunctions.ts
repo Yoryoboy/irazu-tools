@@ -220,7 +220,7 @@ export async function fetchFilteredTasks(
   const query = new URLSearchParams();
   Object.entries(searchParams).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      value.forEach((item) => query.append(key, item));
+      value.forEach(item => query.append(key, item));
     } else {
       query.append(key, value);
     }
@@ -228,12 +228,15 @@ export async function fetchFilteredTasks(
   const queryString = query.toString();
 
   try {
-    const response = await fetch(`https://api.clickup.com/api/v2/team/${teamId}/task?${queryString}`, {
-      method: 'GET',
-      headers: {
-        Authorization: apiKey,
-      },
-    });
+    const response = await fetch(
+      `https://api.clickup.com/api/v2/team/${teamId}/task?${queryString}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: apiKey,
+        },
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -408,13 +411,17 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
 
 export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
-    const designersFromAssignees = task?.assignees?.map(assignee => assignee.username).filter(Boolean) ?? [];
+    const designersFromAssignees =
+      task?.assignees?.map(assignee => assignee.username).filter(Boolean) ?? [];
 
     const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
       ?.value as User[];
-    const designersFromCustomField = designAssignee?.map(({ username }) => username).filter(Boolean) ?? [];
+    const designersFromCustomField =
+      designAssignee?.map(({ username }) => username).filter(Boolean) ?? [];
 
-    const designers = (designersFromAssignees.length > 0 ? designersFromAssignees : designersFromCustomField).join(', ');
+    const designers = (
+      designersFromAssignees.length > 0 ? designersFromAssignees : designersFromCustomField
+    ).join(', ');
 
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
@@ -459,7 +466,7 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
         receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
         code: code.name || '',
-        quantity: code.value as string,
+        quantity,
         price,
         total: quantity * price,
       });
