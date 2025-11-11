@@ -24,8 +24,9 @@ function HsReport() {
     CLICKUP_LIST_IDS.cciHs,
     redesignSearchParams
   );
-
   const approvedHsTasks = formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks]);
+
+  console.log(approvedHsTasks);
 
   const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks, hsPrices);
 

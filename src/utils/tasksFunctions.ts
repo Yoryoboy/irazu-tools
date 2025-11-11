@@ -434,10 +434,17 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       : (task?.custom_fields?.find(field => field.name === 'REDESIGN ACTUAL COMPLETION DATE')
           ?.value as string);
 
-    const codeNames = ['ASBUILT ROUNDED MILES', 'DESIGN ROUNDED MILES', 'REDESIGN TIME'];
+    const codeNames = [
+      'ASBUILT ROUNDED MILES',
+      'DESIGN ROUNDED MILES',
+      'REDESIGN TIME',
+      'REDESIGN QC BY',
+      'PREASBUILT QC BY',
+      'DESIGN QC BY',
+    ];
 
     const codes = task?.custom_fields?.filter(
-      field => codeNames.includes(field.name as string) && field.value && field.type === 'number'
+      field => codeNames.includes(field.name as string) && field.value
     ) as CustomField[];
 
     return {
