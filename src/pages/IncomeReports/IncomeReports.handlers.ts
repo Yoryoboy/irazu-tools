@@ -10,7 +10,7 @@ export function createOnChangeHandler(setSearchParams: (params: SearchParams) =>
     const startTimestamp = startDate.unix() * 1000;
     const endTimestamp = endDate.unix() * 1000;
 
-    const fieldId = getCustomField('ACTUAL COMPLETION DATE').id;
+    const fieldId = getCustomField('ACTUAL COMPLETION DATE', 'bau').id;
     const customFields = [
       {
         field_id: fieldId,
@@ -37,8 +37,11 @@ export function createHsOnChangeHandler(
     const startTimestamp = startDate.unix() * 1000;
     const endTimestamp = endDate.unix() * 1000;
 
-    const actualCompletionDateId = getCustomField('ACTUAL COMPLETION DATE').id;
-    const redesignActualCompletionDateId = getCustomField('REDESIGN ACTUAL COMPLETION DATE').id;
+    const actualCompletionDateId = getCustomField('ACTUAL COMPLETION DATE', 'hs').id;
+    const redesignActualCompletionDateId = getCustomField(
+      'REDESIGN ACTUAL COMPLETION DATE',
+      'hs'
+    ).id;
     const hsCustomFields = [
       {
         field_id: actualCompletionDateId,

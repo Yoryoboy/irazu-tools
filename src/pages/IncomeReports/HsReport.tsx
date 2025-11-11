@@ -28,8 +28,6 @@ function HsReport() {
 
   const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks, hsPrices);
 
-  console.log(HsIncome);
-
   return (
     <main>
       <h1>HS Income Report</h1>

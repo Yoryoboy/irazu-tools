@@ -1,6 +1,5 @@
 import {
   ApprovedBauTasks,
-  BauIncomeCodeName,
   BauIncomeData,
   BulkTasksTimeStatus,
   CustomField,
@@ -36,14 +35,6 @@ const LIST_ID_TO_CUSTOMER_COMPANY: Record<string, 'CCI' | 'TRUENET' | 'TECHSERV'
   [CLICKUP_LIST_IDS.trueNetBau]: 'TRUENET',
   [CLICKUP_LIST_IDS.techservBau]: 'TECHSERV',
 };
-
-const BAU_INCOME_CODE_NAMES: readonly BauIncomeCodeName[] = [
-  'ASBUILT ROUNDED MILES',
-  'DESIGN ROUNDED MILES',
-  'REDESIGN TIME',
-];
-
-const BAU_INCOME_CODE_NAMES_SET = new Set<BauIncomeCodeName>(BAU_INCOME_CODE_NAMES);
 
 export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[]): MQMSTask[] {
   const clickUpTasksUUID = clickUpTasks.map(task => {
@@ -158,8 +149,6 @@ export function getNewTask(
     customFields.push(customerCompanyCustomFieldValue);
   }
 
-  console.log(customFields);
-
   return {
     name: row.EXTERNAL_ID,
     description: row.JOB_NAME,
@@ -261,10 +250,19 @@ export async function fetchFilteredTasks(
   }
 }
 
-export function getCustomField(fieldName: string): CustomField {
-  const foundField =
-    CLICKUP_HS_CUSTOM_FIELDS.fields.find(field => field.name === fieldName) ||
-    CLICKUP_BAU_CUSTOM_FIELDS.fields.find(field => field.name === fieldName);
+export type CustomFieldSource = 'hs' | 'bau';
+
+export function getCustomField(
+  fieldName: string,
+  preferredSource: CustomFieldSource | null = null
+): CustomField {
+  const sources = preferredSource === 'bau'
+    ? [CLICKUP_BAU_CUSTOM_FIELDS, CLICKUP_HS_CUSTOM_FIELDS]
+    : [CLICKUP_HS_CUSTOM_FIELDS, CLICKUP_BAU_CUSTOM_FIELDS];
+
+  const foundField = sources
+    .map(source => source.fields.find(field => field.name === fieldName))
+    .find((field): field is CustomField => Boolean(field));
 
   if (!foundField) {
     throw new Error("Field with name '" + fieldName + "' not found");
@@ -471,11 +469,13 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
   tasks: ApprovedBauTasks[],
   prices: T
 ): BauIncomeData[] {
-  const qcFieldNameByCode: Record<BauIncomeCodeName, string> = {
+  const qcFieldNameByCode: Record<string, string> = {
     'ASBUILT ROUNDED MILES': 'PREASBUILT QC BY',
     'DESIGN ROUNDED MILES': 'DESIGN QC BY',
     'REDESIGN TIME': 'REDESIGN QC BY',
   };
+
+  const priceKeys = new Set(Object.keys(prices));
 
   const getQcUsernames = (value: CustomField['value']): string | undefined => {
     if (!Array.isArray(value)) {
@@ -499,13 +499,12 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
       }
 
       const codeName = code.name;
-      if (!codeName || !BAU_INCOME_CODE_NAMES_SET.has(codeName as BauIncomeCodeName)) {
+      if (!codeName || !priceKeys.has(codeName)) {
         return;
       }
 
-      const typedCodeName = codeName as BauIncomeCodeName;
-      const price = prices[typedCodeName as keyof T] || 0;
-      const qcFieldName = qcFieldNameByCode[typedCodeName];
+      const price = prices[codeName as keyof T] || 0;
+      const qcFieldName = qcFieldNameByCode[codeName];
       const qcField = qcFieldName ? lookupField(qcFieldName) : undefined;
       const qcBy = qcField ? getQcUsernames(qcField.value) : undefined;
 
@@ -516,7 +515,7 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
         qcBy,
         receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
-        code: typedCodeName,
+        code: codeName,
         quantity,
         price,
         total: quantity * price,
