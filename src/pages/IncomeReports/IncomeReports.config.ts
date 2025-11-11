@@ -37,6 +37,7 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
     { header: 'ID', key: 'id', width: 15 },
     { header: 'Name', key: 'name', width: 30 },
     { header: 'Designers', key: 'designers', width: 30 },
+    { header: 'QC By', key: 'qcBy', width: 30 },
     { header: 'Received Date', key: 'receivedDate', width: 15 },
     { header: 'Completion Date', key: 'completionDate', width: 15 },
     { header: 'Code', key: 'code', width: 15 },
@@ -51,6 +52,7 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
       id: row.id,
       name: row.name,
       designers: row.designers,
+      qcBy: row.qcBy,
       receivedDate: row.receivedDate,
       completionDate: row.completionDate,
       code: row.code,
@@ -109,7 +111,7 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
   // Auto-filter for all columns
   worksheet.autoFilter = {
     from: { row: 1, column: 1 },
-    to: { row: 1, column: 9 },
+    to: { row: 1, column: 10 },
   };
 
   workbook.xlsx.writeBuffer().then(data => {

@@ -1,5 +1,6 @@
 import {
   ApprovedBauTasks,
+  BauIncomeCodeName,
   BauIncomeData,
   BulkTasksTimeStatus,
   CustomField,
@@ -35,6 +36,14 @@ const LIST_ID_TO_CUSTOMER_COMPANY: Record<string, 'CCI' | 'TRUENET' | 'TECHSERV'
   [CLICKUP_LIST_IDS.trueNetBau]: 'TRUENET',
   [CLICKUP_LIST_IDS.techservBau]: 'TECHSERV',
 };
+
+const BAU_INCOME_CODE_NAMES: readonly BauIncomeCodeName[] = [
+  'ASBUILT ROUNDED MILES',
+  'DESIGN ROUNDED MILES',
+  'REDESIGN TIME',
+];
+
+const BAU_INCOME_CODE_NAMES_SET = new Set<BauIncomeCodeName>(BAU_INCOME_CODE_NAMES);
 
 export function getNewTasksFromMqms(MQMSTasks: MQMSTask[], clickUpTasks: Task[]): MQMSTask[] {
   const clickUpTasksUUID = clickUpTasks.map(task => {
@@ -462,17 +471,52 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
   tasks: ApprovedBauTasks[],
   prices: T
 ): BauIncomeData[] {
+  const qcFieldNameByCode: Record<BauIncomeCodeName, string> = {
+    'ASBUILT ROUNDED MILES': 'PREASBUILT QC BY',
+    'DESIGN ROUNDED MILES': 'DESIGN QC BY',
+    'REDESIGN TIME': 'REDESIGN QC BY',
+  };
+
+  const getQcUsernames = (value: CustomField['value']): string | undefined => {
+    if (!Array.isArray(value)) {
+      return undefined;
+    }
+
+    const usernames = value
+      .map(user => (user as User | undefined)?.username)
+      .filter((username): username is string => Boolean(username));
+
+    return usernames.length ? usernames.join(', ') : undefined;
+  };
+
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
+    const lookupField = (name: string) => task.codes?.find(field => field.name === name);
+
     task.codes?.forEach(code => {
-      const price = prices[code.name as keyof T] || 0;
       const quantity = Number(code.value);
+      if (!Number.isFinite(quantity)) {
+        return;
+      }
+
+      const codeName = code.name;
+      if (!codeName || !BAU_INCOME_CODE_NAMES_SET.has(codeName as BauIncomeCodeName)) {
+        return;
+      }
+
+      const typedCodeName = codeName as BauIncomeCodeName;
+      const price = prices[typedCodeName as keyof T] || 0;
+      const qcFieldName = qcFieldNameByCode[typedCodeName];
+      const qcField = qcFieldName ? lookupField(qcFieldName) : undefined;
+      const qcBy = qcField ? getQcUsernames(qcField.value) : undefined;
+
       acc.push({
         id: task.id,
         name: task.name,
         designers: task.designers,
+        qcBy,
         receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
-        code: code.name || '',
+        code: typedCodeName,
         quantity,
         price,
         total: quantity * price,

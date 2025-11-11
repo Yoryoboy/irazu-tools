@@ -298,13 +298,16 @@ export interface ApprovedBauTasks {
   codes: CustomField[];
 }
 
+export type BauIncomeCodeName = 'ASBUILT ROUNDED MILES' | 'DESIGN ROUNDED MILES' | 'REDESIGN TIME';
+
 export interface BauIncomeData {
   id: string;
   name: string;
   designers: string;
+  qcBy?: string;
   receivedDate: Date | null;
   completionDate: Date | null;
-  code: string;
+  code: BauIncomeCodeName;
   quantity: string | number | null | undefined;
   price: number;
   total: number;
