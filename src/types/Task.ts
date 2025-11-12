@@ -295,7 +295,7 @@ export interface ApprovedBauTasks {
   name: string;
   receivedDate: string;
   completionDate: string;
-  codes: CustomField[];
+  customFields: CustomField[];
 }
 
 export interface BauIncomeData {

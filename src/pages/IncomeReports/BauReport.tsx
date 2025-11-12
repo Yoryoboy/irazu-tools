@@ -19,6 +19,8 @@ function BauReport() {
 
   const approvedBauTasks = formatApprovedBauTasks(clickUpTasks);
 
+  console.log(approvedBauTasks);
+
   const bauIncome = formatBauIncomeDataForExcel(approvedBauTasks, bauPrices);
 
   return (

@@ -256,9 +256,10 @@ export function getCustomField(
   fieldName: string,
   preferredSource: CustomFieldSource | null = null
 ): CustomField {
-  const sources = preferredSource === 'bau'
-    ? [CLICKUP_BAU_CUSTOM_FIELDS, CLICKUP_HS_CUSTOM_FIELDS]
-    : [CLICKUP_HS_CUSTOM_FIELDS, CLICKUP_BAU_CUSTOM_FIELDS];
+  const sources =
+    preferredSource === 'bau'
+      ? [CLICKUP_BAU_CUSTOM_FIELDS, CLICKUP_HS_CUSTOM_FIELDS]
+      : [CLICKUP_HS_CUSTOM_FIELDS, CLICKUP_BAU_CUSTOM_FIELDS];
 
   const foundField = sources
     .map(source => source.fields.find(field => field.name === fieldName))
@@ -384,6 +385,9 @@ export function getMQMSTaskTimetrackerWithID(
 }
 
 export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
+  const UNIT_TYPES = ['(EA)', '(FT)', '(HR)', '(MILE)'];
+  const CUSTOM_FIELD_NAMES = ['QC PERFORMED BY'];
+
   return tasks.map(task => {
     let designers: string = '';
 
@@ -395,14 +399,12 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
     const completionDate = task?.custom_fields?.find(
       field => field.name === 'ACTUAL COMPLETION DATE'
     )?.value as string;
-    const codes = task?.custom_fields?.filter(
+    const customFields = task?.custom_fields?.filter(
       field =>
-        field.type === 'number' &&
-        field.value &&
-        (field.name?.includes('(EA)') ||
-          field.name?.includes('(FT)') ||
-          field.name?.includes('(HR)') ||
-          field.name?.includes('(MILE)'))
+        (field.type === 'number' &&
+          field.value &&
+          UNIT_TYPES.some(unit => field.name?.includes(unit))) ||
+        (CUSTOM_FIELD_NAMES.includes(field?.name as string) && field.value)
     ) as CustomField[];
 
     return {
@@ -411,7 +413,7 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
       name: task.name,
       receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
       completionDate: new Date(Number(completionDate)).toLocaleDateString(),
-      codes,
+      customFields,
     };
   });
 }
@@ -450,7 +452,7 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       'DESIGN QC BY',
     ];
 
-    const codes = task?.custom_fields?.filter(
+    const customFields = task?.custom_fields?.filter(
       field => codeNames.includes(field.name as string) && field.value
     ) as CustomField[];
 
@@ -460,7 +462,7 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       name: task.name,
       receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
       completionDate: new Date(Number(completionDate)).toLocaleDateString(),
-      codes,
+      customFields,
     };
   });
 }
@@ -490,9 +492,9 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
   };
 
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
-    const lookupField = (name: string) => task.codes?.find(field => field.name === name);
+    const lookupField = (name: string) => task.customFields?.find(field => field.name === name);
 
-    task.codes?.forEach(code => {
+    task.customFields?.forEach(code => {
       const quantity = Number(code.value);
       if (!Number.isFinite(quantity)) {
         return;
