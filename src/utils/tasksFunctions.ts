@@ -31,7 +31,12 @@ const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
 // Helper function to format assignee usernames
 function formatAssigneeNames(assignees?: User[]): string {
-  return assignees?.map(assignee => assignee.username).filter(Boolean).join(', ') ?? '';
+  return (
+    assignees
+      ?.map(assignee => assignee.username)
+      .filter(Boolean)
+      .join(', ') ?? ''
+  );
 }
 
 // Map listId to the "Customer Company" dropdown option name
@@ -448,10 +453,11 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       'REDESIGN QC BY',
       'PREASBUILT QC BY',
       'DESIGN QC BY',
+      'ASBUILT BILLING STATUS',
     ];
 
     const customFields = task?.custom_fields?.filter(
-      field => codeNames.includes(field.name as string) && field.value
+      field => codeNames.includes(field.name as string) && field.value && field.value !== '0'
     ) as CustomField[];
 
     return {
@@ -552,7 +558,7 @@ export function formatHsIncomeDataForExcel<T extends Record<string, number>>(
       }
 
       const price = prices[codeName as keyof T] || 0;
-      
+
       // Get QC specific to this code/phase (HS-specific logic)
       const qcFieldName = qcFieldNameByCode[codeName];
       const qcField = qcFieldName ? lookupField(qcFieldName) : undefined;
