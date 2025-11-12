@@ -471,32 +471,33 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
   tasks: ApprovedBauTasks[],
   prices: T
 ): BauIncomeData[] {
-  const qcFieldNameByCode: Record<string, string> = {
-    'ASBUILT ROUNDED MILES': 'PREASBUILT QC BY',
-    'DESIGN ROUNDED MILES': 'DESIGN QC BY',
-    'REDESIGN TIME': 'REDESIGN QC BY',
-  };
-
   const priceKeys = new Set(Object.keys(prices));
 
-  const getQcUsernames = (value: CustomField['value']): string | undefined => {
-    if (!Array.isArray(value)) {
-      return undefined;
+  const getQcUsernames = (value: CustomField['value']): string => {
+    if (!Array.isArray(value) || value.length === 0) {
+      return 'QC NO ASIGNADO';
     }
 
     const usernames = value
       .map(user => (user as User | undefined)?.username)
       .filter((username): username is string => Boolean(username));
 
-    return usernames.length ? usernames.join(', ') : undefined;
+    return usernames.length ? usernames.join(', ') : 'QC NO ASIGNADO';
   };
 
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
-    const lookupField = (name: string) => task.customFields?.find(field => field.name === name);
+    // Get QC once per task (applies to all codes in BAU)
+    const qcField = task.customFields?.find(field => field.name === 'QC PERFORMED BY');
+    const qcBy = getQcUsernames(qcField?.value);
 
     task.customFields?.forEach(code => {
+      // Skip non-numeric fields (like QC PERFORMED BY itself)
+      if (code.type !== 'number') {
+        return;
+      }
+
       const quantity = Number(code.value);
-      if (!Number.isFinite(quantity)) {
+      if (!Number.isFinite(quantity) || quantity === 0) {
         return;
       }
 
@@ -506,9 +507,6 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
       }
 
       const price = prices[codeName as keyof T] || 0;
-      const qcFieldName = qcFieldNameByCode[codeName];
-      const qcField = qcFieldName ? lookupField(qcFieldName) : undefined;
-      const qcBy = qcField ? getQcUsernames(qcField.value) : undefined;
 
       acc.push({
         id: task.id,
