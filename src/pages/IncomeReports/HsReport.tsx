@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { DatePicker } from 'antd';
 import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
-import { formatApprovedHsTasks, formatBauIncomeDataForExcel } from '../../utils/tasksFunctions';
+import { formatApprovedHsTasks, formatHsIncomeDataForExcel } from '../../utils/tasksFunctions';
 import { createHsOnChangeHandler } from './IncomeReports.handlers';
 import { generateBauIncomeExcel, hsPrices } from './IncomeReports.config';
 
@@ -26,7 +26,7 @@ function HsReport() {
   );
   const approvedHsTasks = formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks]);
 
-  const HsIncome = formatBauIncomeDataForExcel(approvedHsTasks, hsPrices);
+  const HsIncome = formatHsIncomeDataForExcel(approvedHsTasks, hsPrices);
 
   return (
     <main>

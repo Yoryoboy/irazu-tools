@@ -29,6 +29,11 @@ import { CLICKUP_LIST_IDS } from './config';
 
 const apikey = import.meta.env.VITE_CLICKUP_API_AKEY;
 
+// Helper function to format assignee usernames
+function formatAssigneeNames(assignees?: User[]): string {
+  return assignees?.map(assignee => assignee.username).filter(Boolean).join(', ') ?? '';
+}
+
 // Map listId to the "Customer Company" dropdown option name
 const LIST_ID_TO_CUSTOMER_COMPANY: Record<string, 'CCI' | 'TRUENET' | 'TECHSERV'> = {
   [CLICKUP_LIST_IDS.cciBau]: 'CCI',
@@ -389,11 +394,8 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
   const CUSTOM_FIELD_NAMES = ['QC PERFORMED BY'];
 
   return tasks.map(task => {
-    let designers: string = '';
+    const designers = formatAssigneeNames(task?.assignees);
 
-    task?.assignees?.forEach(assignee => {
-      designers += assignee.username + ', ';
-    });
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
     const completionDate = task?.custom_fields?.find(
@@ -420,17 +422,13 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
 
 export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
-    const designersFromAssignees =
-      task?.assignees?.map(assignee => assignee.username).filter(Boolean) ?? [];
+    const designersFromAssignees = formatAssigneeNames(task?.assignees);
 
     const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
       ?.value as User[];
-    const designersFromCustomField =
-      designAssignee?.map(({ username }) => username).filter(Boolean) ?? [];
+    const designersFromCustomField = formatAssigneeNames(designAssignee);
 
-    const designers = (
-      designersFromAssignees.length > 0 ? designersFromAssignees : designersFromCustomField
-    ).join(', ');
+    const designers = designersFromAssignees || designersFromCustomField;
 
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
@@ -467,23 +465,24 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   });
 }
 
+// Helper function to extract QC usernames from custom field value
+function getQcUsernames(value: CustomField['value']): string {
+  if (!Array.isArray(value) || value.length === 0) {
+    return 'QC NO ASIGNADO';
+  }
+
+  const usernames = value
+    .map(user => (user as User | undefined)?.username)
+    .filter((username): username is string => Boolean(username));
+
+  return usernames.length ? usernames.join(', ') : 'QC NO ASIGNADO';
+}
+
 export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
   tasks: ApprovedBauTasks[],
   prices: T
 ): BauIncomeData[] {
   const priceKeys = new Set(Object.keys(prices));
-
-  const getQcUsernames = (value: CustomField['value']): string => {
-    if (!Array.isArray(value) || value.length === 0) {
-      return 'QC NO ASIGNADO';
-    }
-
-    const usernames = value
-      .map(user => (user as User | undefined)?.username)
-      .filter((username): username is string => Boolean(username));
-
-    return usernames.length ? usernames.join(', ') : 'QC NO ASIGNADO';
-  };
 
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
     // Get QC once per task (applies to all codes in BAU)
@@ -507,6 +506,57 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
       }
 
       const price = prices[codeName as keyof T] || 0;
+
+      acc.push({
+        id: task.id,
+        name: task.name,
+        designers: task.designers,
+        qcBy,
+        receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
+        completionDate: task.completionDate ? new Date(task.completionDate) : null,
+        code: codeName,
+        quantity,
+        price,
+        total: quantity * price,
+      });
+    });
+    return acc;
+  }, []);
+}
+
+export function formatHsIncomeDataForExcel<T extends Record<string, number>>(
+  tasks: ApprovedBauTasks[],
+  prices: T
+): BauIncomeData[] {
+  // Map code names to their corresponding QC field names (HS-specific logic)
+  const qcFieldNameByCode: Record<string, string> = {
+    'ASBUILT ROUNDED MILES': 'PREASBUILT QC BY',
+    'DESIGN ROUNDED MILES': 'DESIGN QC BY',
+    'REDESIGN TIME': 'REDESIGN QC BY',
+  };
+
+  const priceKeys = new Set(Object.keys(prices));
+
+  return tasks.reduce<BauIncomeData[]>((acc, task) => {
+    const lookupField = (name: string) => task.customFields?.find(field => field.name === name);
+
+    task.customFields?.forEach(code => {
+      const quantity = Number(code.value);
+      if (!Number.isFinite(quantity)) {
+        return;
+      }
+
+      const codeName = code.name;
+      if (!codeName || !priceKeys.has(codeName)) {
+        return;
+      }
+
+      const price = prices[codeName as keyof T] || 0;
+      
+      // Get QC specific to this code/phase (HS-specific logic)
+      const qcFieldName = qcFieldNameByCode[codeName];
+      const qcField = qcFieldName ? lookupField(qcFieldName) : undefined;
+      const qcBy = qcField ? getQcUsernames(qcField.value) : undefined;
 
       acc.push({
         id: task.id,
