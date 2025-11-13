@@ -18,15 +18,17 @@ function BauReport() {
 
   return (
     <main>
-      <h1>BAU Income Report</h1>
-      <RangePicker onChange={onBauParamsChange} />
-      <>
-        {incomeData.length > 0 && (
-          <Button type="primary" onClick={() => generateBauIncomeExcel(incomeData, 'BAU')}>
-            Download Income Report
-          </Button>
-        )}
-      </>
+      <h1 className="text-2xl font-bold">BAU Income Report</h1>
+      <div className="flex justify-center gap-5 py-5">
+        <RangePicker onChange={onBauParamsChange} />
+        <>
+          {incomeData.length > 0 && (
+            <Button type="primary" onClick={() => generateBauIncomeExcel(incomeData, 'BAU')}>
+              Download Income Report
+            </Button>
+          )}
+        </>
+      </div>
     </main>
   );
 }

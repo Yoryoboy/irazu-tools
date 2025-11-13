@@ -23,8 +23,8 @@ function HsReport() {
 
   return (
     <main>
-      <h1>HS Income Report</h1>
-      <div>
+      <h1 className="text-2xl font-bold">HS Income Report</h1>
+      <div className="flex justify-center gap-5 py-5">
         <RangePicker onChange={onParamsChange} />
         <>
           {incomeData.length > 0 && (
