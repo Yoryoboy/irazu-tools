@@ -1,12 +1,11 @@
-import { useFetchClickUpTasks } from '../../hooks/useClickUp';
-import { CLICKUP_LIST_IDS } from '../../utils/config';
 import { Button } from 'antd';
 import { DatePicker } from 'antd';
 import { useState } from 'react';
 import { SearchParams } from '../../types/SearchParams';
-import { formatApprovedHsTasks, formatHsIncomeDataForExcel } from '../../utils/tasksFunctions';
+import { CLICKUP_LIST_IDS } from '../../utils/config';
+import { useHsIncomeReport } from '../../hooks/useHsIncomeReport';
 import { createHsOnChangeHandler } from './IncomeReports.handlers';
-import { generateBauIncomeExcel, hsPrices } from './IncomeReports.config';
+import { generateBauIncomeExcel } from './IncomeReports.config';
 
 const { RangePicker } = DatePicker;
 
@@ -16,25 +15,19 @@ function HsReport() {
 
   const onParamsChange = createHsOnChangeHandler(setHsSearchParams, setRedesignSearchParams);
 
-  const { clickUpTasks: hsClickUpTasks } = useFetchClickUpTasks(
+  const { incomeData } = useHsIncomeReport(
     CLICKUP_LIST_IDS.cciHs,
-    hsSearchParams
-  );
-  const { clickUpTasks: redesignClickUpTasks } = useFetchClickUpTasks(
-    CLICKUP_LIST_IDS.cciHs,
+    hsSearchParams,
     redesignSearchParams
   );
-  const approvedHsTasks = formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks]);
-
-  const HsIncome = formatHsIncomeDataForExcel(approvedHsTasks, hsPrices);
 
   return (
     <main>
       <h1>HS Income Report</h1>
       <RangePicker onChange={onParamsChange} />
       <>
-        {HsIncome.length > 0 && (
-          <Button type="primary" onClick={() => generateBauIncomeExcel(HsIncome, 'HS')}>
+        {incomeData.length > 0 && (
+          <Button type="primary" onClick={() => generateBauIncomeExcel(incomeData, 'HS')}>
             Download Income Report
           </Button>
         )}
