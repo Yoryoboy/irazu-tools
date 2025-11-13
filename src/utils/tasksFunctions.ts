@@ -446,10 +446,15 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       : (task?.custom_fields?.find(field => field.name === 'REDESIGN ACTUAL COMPLETION DATE')
           ?.value as string);
 
-    const codeNames = [
+    // Fields that represent billable codes (with prices)
+    const billableCodeNames = [
       'ASBUILT ROUNDED MILES',
       'DESIGN ROUNDED MILES',
       'REDESIGN TIME',
+    ];
+
+    // Fields needed for QC lookup and billing status
+    const supportFieldNames = [
       'REDESIGN QC BY',
       'PREASBUILT QC BY',
       'DESIGN QC BY',
@@ -457,7 +462,9 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
     ];
 
     const customFields = task?.custom_fields?.filter(
-      field => codeNames.includes(field.name as string) && field.value && field.value !== '0'
+      field =>
+        (billableCodeNames.includes(field.name as string) && field.value) ||
+        supportFieldNames.includes(field.name as string)
     ) as CustomField[];
 
     return {
@@ -546,13 +553,23 @@ export function formatHsIncomeDataForExcel<T extends Record<string, number>>(
   return tasks.reduce<BauIncomeData[]>((acc, task) => {
     const lookupField = (name: string) => task.customFields?.find(field => field.name === name);
 
+    // Check if ASBUILT BILLING STATUS is 2 (exclude ASBUILT ROUNDED MILES if true)
+    const billingStatus = lookupField('ASBUILT BILLING STATUS');
+    const shouldExcludeAsbuilt = billingStatus?.value === 2;
+
     task.customFields?.forEach(code => {
-      const quantity = Number(code.value);
-      if (!Number.isFinite(quantity)) {
+      const codeName = code.name;
+
+      // Skip ASBUILT ROUNDED MILES if billing status is 2
+      if (shouldExcludeAsbuilt && codeName === 'ASBUILT ROUNDED MILES') {
         return;
       }
 
-      const codeName = code.name;
+      const quantity = Number(code.value);
+      if (!Number.isFinite(quantity) || quantity === 0) {
+        return;
+      }
+
       if (!codeName || !priceKeys.has(codeName)) {
         return;
       }
