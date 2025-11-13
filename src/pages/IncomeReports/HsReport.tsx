@@ -24,14 +24,16 @@ function HsReport() {
   return (
     <main>
       <h1>HS Income Report</h1>
-      <RangePicker onChange={onParamsChange} />
-      <>
-        {incomeData.length > 0 && (
-          <Button type="primary" onClick={() => generateBauIncomeExcel(incomeData, 'HS')}>
-            Download Income Report
-          </Button>
-        )}
-      </>
+      <div>
+        <RangePicker onChange={onParamsChange} />
+        <>
+          {incomeData.length > 0 && (
+            <Button type="primary" onClick={() => generateBauIncomeExcel(incomeData, 'HS')}>
+              Download Income Report
+            </Button>
+          )}
+        </>
+      </div>
     </main>
   );
 }
