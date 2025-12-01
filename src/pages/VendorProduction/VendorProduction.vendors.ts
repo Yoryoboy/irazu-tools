@@ -14,6 +14,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1645726537024',
     date_invited: '1644501013523',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ANAIS ARCHILA.xlsx',
+    company_name: 'Aurea Networks',
     protectedSheetName: 'Datos',
   },
   beatrizLeal: {
@@ -29,6 +30,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1645726617452',
     date_invited: '1644501018940',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - BEATRIZ LEAL.xlsx',
+    company_name: 'Oldyl Tech',
     protectedSheetName: 'Datos',
   },
   nathaly: {
@@ -44,6 +46,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1644838243645',
     date_invited: '1644501024880',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - NATHALY PINZON.xlsx',
+    company_name: 'NPI Telecoms',
     protectedSheetName: 'Datos',
   },
   barbaraGarcia: {
@@ -59,6 +62,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1744201624549',
     date_invited: '1744199963870',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - BARBARA.xlsx',
+    company_name: 'Barbara Garcia',
     protectedSheetName: 'Datos',
   },
   eliusmir: {
@@ -74,6 +78,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1747059439546',
     date_invited: '1747053717806',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ELIUSMIR.xlsx',
+    company_name: 'Eliusmir Ramirez',
     protectedSheetName: 'Datos',
   },
   carlos: {
@@ -89,6 +94,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1747766079959',
     date_invited: '1747057182285',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - CARLOSMORGADO.xlsx',
+    company_name: 'Carlos Morgado',
     protectedSheetName: 'Datos',
   },
   rosaAtempa: {
@@ -104,6 +110,7 @@ export const vendors: Record<string, Vendor> = {
     date_joined: '1671465032097',
     date_invited: '1671449357203',
     reportTemplatePath: 'excel_templates/IRAZU - Planilla Produccion - ROSAATEMPA.xlsx',
+    company_name: 'Mexcla',
     protectedSheetName: 'Datos',
   },
 };

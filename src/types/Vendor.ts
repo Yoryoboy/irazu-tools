@@ -11,5 +11,6 @@ export interface Vendor {
   date_joined: string;
   date_invited: string;
   reportTemplatePath: string;
+  company_name: string;
   protectedSheetName?: string;
 }

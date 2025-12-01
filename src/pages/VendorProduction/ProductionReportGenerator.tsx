@@ -51,7 +51,7 @@ function ProductionReportGenerator({ vendor, tasks }: Props) {
         templateProtection,
         'moyano1'
       );
-      saveAs(new Blob([protectedBuffer]), `Production_Report_${vendor.username}.xlsx`);
+      saveAs(new Blob([protectedBuffer]), `Production_Report_${vendor.company_name}_(${vendor.username}).xlsx`);
     } catch (error) {
       console.error('Error generating the Excel file:', error);
     }
