@@ -1,4 +1,4 @@
-import { Flex, Table } from "antd";
+import { Flex, Table, Collapse, Typography, Space, Badge } from "antd";
 import { extractTaskFields, unifyProjects } from "../../utils/helperFunctions";
 import {
   asbuiltFields,
@@ -61,14 +61,37 @@ function VendorProductionTable({
     key: `${item.name}-${index}`, // Asegura que cada fila tenga un key único
   }));
 
+  const items = [
+    {
+      key: "1",
+      label: (
+        <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+          <Typography.Text strong>
+            Planilla de {vendor.username}
+          </Typography.Text>
+          <Badge count={unifiedTasks.length} showZero color="#108ee9" />
+        </Flex>
+      ),
+      children: (
+        <Table dataSource={dataSource} columns={columns} pagination={false} />
+      ),
+      extra: (
+        <Space
+          onClick={(event: React.MouseEvent) => {
+            // If you don't want click extra trigger collapse, you can stop propagation:
+            event.stopPropagation();
+          }}
+        >
+          <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
+          <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
-    <main>
-      <h1>Planilla de {vendor.username}</h1>
-      <Table dataSource={dataSource} columns={columns} pagination={false} />
-      <Flex justify="center" gap="small">
-        <ProductionReportGenerator vendor={vendor} tasks={unifiedTasks} />
-        <UpdateCheckedForSubcoLabels tasks={unifiedTasks} />
-      </Flex>
+    <main style={{ marginBottom: "1rem" }}>
+      <Collapse items={items} />
     </main>
   );
 }
