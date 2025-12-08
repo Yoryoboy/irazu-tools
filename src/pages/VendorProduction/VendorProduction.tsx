@@ -21,6 +21,7 @@ function VendorProduction() {
     eliusmir,
     carlos,
     rosaAtempa,
+    ximena,
   } = vendors;
 
   // Anais Archila
@@ -92,6 +93,20 @@ function VendorProduction() {
     getBAUSearchParamsForVendor(rosaAtempa.id.toString())
   );
 
+  // Ximena
+
+    const { filteredTasks: asbuiltForXimena } = useFilteredTasks(
+    getAsbuiltSearchParamsForVendor(ximena.id.toString())
+  );
+
+  const { filteredTasks: designForXimena } = useFilteredTasks(
+    getDesignSearchParamsForVendor(ximena.id.toString())
+  );
+
+  const { filteredTasks: redesignForXimena } = useFilteredTasks(
+    getRedesignSearchParamsForVendor(ximena.id.toString())
+  );
+
   // Consolidar todas las tareas usando el hook personalizado
   const allTasks = useConsolidatedVendorTasks({
     anais: {
@@ -121,6 +136,11 @@ function VendorProduction() {
     },
     rosa: {
       bau: bauForRosaAtempa,
+    },
+    ximena: {
+      asbuilts: asbuiltForXimena,
+      designs: designForXimena,
+      redesigns: redesignForXimena,
     },
   });
 
@@ -161,6 +181,12 @@ function VendorProduction() {
       <VendorBauProductionTable bau={bauForEliusmir} vendor={eliusmir} />
       <VendorBauProductionTable bau={bauForCarlos} vendor={carlos} />
       <VendorBauProductionTable bau={bauForRosaAtempa} vendor={rosaAtempa} />
+      <VendorProductionTable
+        asbuilts={asbuiltForXimena}
+        designs={designForXimena}
+        redesigns={redesignForXimena}
+        vendor={ximena}
+      />
     </main>
   );
 }
