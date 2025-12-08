@@ -18,6 +18,7 @@ interface UseConsolidatedVendorTasksProps {
   carlos: VendorTasks;
   rosa: VendorTasks;
   ximena: VendorTasks;
+  ccc: VendorTasks;
 }
 
 /**
@@ -33,6 +34,7 @@ export function useConsolidatedVendorTasks({
   carlos,
   rosa,
   ximena,
+  ccc,
 }: UseConsolidatedVendorTasksProps): (ExtractedTaskFieldValues | TaskRow)[] {
   return useMemo(() => {
     const consolidatedTasks: (ExtractedTaskFieldValues | TaskRow)[] = [];
@@ -96,6 +98,11 @@ export function useConsolidatedVendorTasks({
       consolidatedTasks.push(...ximenaBau);
     }
 
+    if (ccc.bau) {
+      const cccBau = processBauTasks(ccc.bau);
+      consolidatedTasks.push(...cccBau);
+    }
+
     return consolidatedTasks;
-  }, [anais, beatriz, nathaly, barbara, eliusmir, carlos, rosa, ximena]);
+  }, [anais, beatriz, nathaly, barbara, eliusmir, carlos, rosa, ximena, ccc]);
 }

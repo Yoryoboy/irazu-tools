@@ -22,6 +22,7 @@ function VendorProduction() {
     carlos,
     rosaAtempa,
     ximena,
+    ccc,
   } = vendors;
 
   // Anais Archila
@@ -107,6 +108,20 @@ function VendorProduction() {
     getRedesignSearchParamsForVendor(ximena.id.toString())
   );
 
+  // CCC
+
+  const { filteredTasks: asbuiltForCCC } = useFilteredTasks(
+    getAsbuiltSearchParamsForVendor(ccc.id.toString())
+  );
+
+  const { filteredTasks: designForCCC } = useFilteredTasks(
+    getDesignSearchParamsForVendor(ccc.id.toString())
+  );
+
+  const { filteredTasks: redesignForCCC } = useFilteredTasks(
+    getRedesignSearchParamsForVendor(ccc.id.toString())
+  );
+
   // Consolidar todas las tareas usando el hook personalizado
   const allTasks = useConsolidatedVendorTasks({
     anais: {
@@ -141,6 +156,11 @@ function VendorProduction() {
       asbuilts: asbuiltForXimena,
       designs: designForXimena,
       redesigns: redesignForXimena,
+    },
+    ccc: {
+      asbuilts: asbuiltForCCC,
+      designs: designForCCC,
+      redesigns: redesignForCCC,
     },
   });
 
@@ -186,6 +206,12 @@ function VendorProduction() {
         designs={designForXimena}
         redesigns={redesignForXimena}
         vendor={ximena}
+      />
+      <VendorProductionTable
+        asbuilts={asbuiltForCCC}
+        designs={designForCCC}
+        redesigns={redesignForCCC}
+        vendor={ccc}
       />
     </main>
   );
