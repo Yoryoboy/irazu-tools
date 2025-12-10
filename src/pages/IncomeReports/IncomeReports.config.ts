@@ -38,6 +38,8 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
     { header: 'Name', key: 'name', width: 30 },
     { header: 'Designers', key: 'designers', width: 30 },
     { header: 'QC By', key: 'qcBy', width: 30 },
+    { header: 'Design Points', key: 'designPoints', width: 15 },
+    { header: 'QC Points', key: 'qcPoints', width: 12 },
     { header: 'Received Date', key: 'receivedDate', width: 15 },
     { header: 'Completion Date', key: 'completionDate', width: 15 },
     { header: 'Code', key: 'code', width: 15 },
@@ -53,6 +55,8 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
       name: row.name,
       designers: row.designers,
       qcBy: row.qcBy,
+      designPoints: row.designPoints,
+      qcPoints: row.qcPoints,
       receivedDate: row.receivedDate,
       completionDate: row.completionDate,
       code: row.code,
@@ -108,10 +112,14 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
     });
   });
 
+  // Format points columns
+  worksheet.getColumn('designPoints').numFmt = '#,##0.00';
+  worksheet.getColumn('qcPoints').numFmt = '#,##0.00';
+
   // Auto-filter for all columns
   worksheet.autoFilter = {
     from: { row: 1, column: 1 },
-    to: { row: 1, column: 10 },
+    to: { row: 1, column: 12 },
   };
 
   workbook.xlsx.writeBuffer().then(data => {

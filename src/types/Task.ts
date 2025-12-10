@@ -208,7 +208,6 @@ export interface TimetrackingVerificationPayload {
 
 export type TimetrackingPayload = newTimeEntryPayload | TimetrackingVerificationPayload;
 
-
 export interface Tag {
   name: string;
   tag_fg: string;
@@ -303,6 +302,8 @@ export interface BauIncomeData {
   name: string;
   designers: string;
   qcBy?: string;
+  designPoints?: number;
+  qcPoints?: number;
   receivedDate: Date | null;
   completionDate: Date | null;
   code: string;
@@ -310,4 +311,3 @@ export interface BauIncomeData {
   price: number;
   total: number;
 }
-

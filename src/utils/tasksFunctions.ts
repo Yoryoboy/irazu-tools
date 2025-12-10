@@ -396,7 +396,7 @@ export function getMQMSTaskTimetrackerWithID(
 
 export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
   const UNIT_TYPES = ['(EA)', '(FT)', '(HR)', '(MILE)'];
-  const CUSTOM_FIELD_NAMES = ['QC PERFORMED BY'];
+  const CUSTOM_FIELD_NAMES = ['QC PERFORMED BY', 'DESIGN POINTS', 'QC POINTS'];
 
   return tasks.map(task => {
     const designers = formatAssigneeNames(task?.assignees);
@@ -447,11 +447,7 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
           ?.value as string);
 
     // Fields that represent billable codes (with prices)
-    const billableCodeNames = [
-      'ASBUILT ROUNDED MILES',
-      'DESIGN ROUNDED MILES',
-      'REDESIGN TIME',
-    ];
+    const billableCodeNames = ['ASBUILT ROUNDED MILES', 'DESIGN ROUNDED MILES', 'REDESIGN TIME'];
 
     // Fields needed for QC lookup and billing status
     const supportFieldNames = [
@@ -502,6 +498,13 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
     const qcField = task.customFields?.find(field => field.name === 'QC PERFORMED BY');
     const qcBy = getQcUsernames(qcField?.value);
 
+    // Extract design points and QC points once per task
+    const designPointsField = task.customFields?.find(field => field.name === 'DESIGN POINTS');
+    const designPoints = Number(designPointsField?.value) || undefined;
+
+    const qcPointsField = task.customFields?.find(field => field.name === 'QC POINTS');
+    const qcPoints = Number(qcPointsField?.value) || undefined;
+
     task.customFields?.forEach(code => {
       // Skip non-numeric fields (like QC PERFORMED BY itself)
       if (code.type !== 'number') {
@@ -525,6 +528,8 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
         name: task.name,
         designers: task.designers,
         qcBy,
+        designPoints,
+        qcPoints,
         receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
         completionDate: task.completionDate ? new Date(task.completionDate) : null,
         code: codeName,
