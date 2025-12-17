@@ -26,6 +26,20 @@ export const hsPrices = {
   'DESIGN ROUNDED MILES': 70.0,
 } as const;
 
+export const trueNetPrices = {
+  'DE-ALL-CAP-103A': 16.5,
+  'DE-ALL-CAP-103B': 22.28,
+  'DE-ALL-CAP-103C': 0.00253,
+  'DE-ALL-MISC-100A': 26.4,
+  'DE-ALL-MISC-100C': 52.8,
+  'DE-BAU-CAP-100A': 56.1,
+  'DE-BAU-CAP-100B': 112.2,
+  'DE-BAU-CAP-100C': 132.0,
+  'DE-BAU-CAP-100D': 0.02,
+  'DE-ALL-CAP-104': 29.7,
+  'DE-ALL-CAP-106': 0.01,
+} as const;
+
 export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName: string) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Income', {

@@ -425,6 +425,32 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
   });
 }
 
+export function formatApprovedTrueNetTasks(tasks: Task[]): ApprovedBauTasks[] {
+  const TRUENET_CODE_PREFIX = 'DE-';
+
+  return tasks.map(task => {
+    const designers = formatAssigneeNames(task?.assignees);
+
+    const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
+      ?.value as string;
+    const completionDate = task?.custom_fields?.find(
+      field => field.name === 'ACTUAL COMPLETION DATE'
+    )?.value as string;
+    const customFields = task?.custom_fields?.filter(
+      field => field.type === 'number' && field.value && field.name?.startsWith(TRUENET_CODE_PREFIX)
+    ) as CustomField[];
+
+    return {
+      designers,
+      id: task.id as string,
+      name: task.name,
+      receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
+      completionDate: new Date(Number(completionDate)).toLocaleDateString(),
+      customFields,
+    };
+  });
+}
+
 export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
   return tasks.map(task => {
     const designersFromAssignees = formatAssigneeNames(task?.assignees);
