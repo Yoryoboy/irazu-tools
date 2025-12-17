@@ -427,6 +427,7 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
 
 export function formatApprovedTrueNetTasks(tasks: Task[]): ApprovedBauTasks[] {
   const TRUENET_CODE_PREFIX = 'DE-';
+  const CUSTOM_FIELD_NAMES = ['QC PERFORMED BY', 'DESIGN POINTS', 'QC POINTS'];
 
   return tasks.map(task => {
     const designers = formatAssigneeNames(task?.assignees);
@@ -437,7 +438,9 @@ export function formatApprovedTrueNetTasks(tasks: Task[]): ApprovedBauTasks[] {
       field => field.name === 'ACTUAL COMPLETION DATE'
     )?.value as string;
     const customFields = task?.custom_fields?.filter(
-      field => field.type === 'number' && field.value && field.name?.startsWith(TRUENET_CODE_PREFIX)
+      field =>
+        (field.type === 'number' && field.value && field.name?.startsWith(TRUENET_CODE_PREFIX)) ||
+        (CUSTOM_FIELD_NAMES.includes(field?.name as string) && field.value)
     ) as CustomField[];
 
     return {
