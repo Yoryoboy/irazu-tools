@@ -27,6 +27,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",
     "tailwindcss": "^4.1.17",
+    "workflowSDK": "git+https://github.com/Yoryoboy/workflowSDK.git",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
