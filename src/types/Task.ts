@@ -311,3 +311,24 @@ export interface BauIncomeData {
   price: number;
   total: number;
 }
+
+export type SyncPlatform = 'clickup' | 'workflow';
+
+export interface PlatformSyncResult {
+  platform: SyncPlatform;
+  status: 'success' | 'error';
+  taskName: string;
+  taskId?: string;
+  error?: string;
+}
+
+export interface SyncOptions {
+  platforms: SyncPlatform[];
+}
+
+export interface MQMSTaskWithSyncStatus extends MQMSTask {
+  syncStatus?: {
+    clickup?: PlatformSyncResult;
+    workflow?: PlatformSyncResult;
+  };
+}

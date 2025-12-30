@@ -7,11 +7,15 @@ import {
   FulfilledPostNewTaskResult,
   MQMSTask,
   newTimeEntryPayload,
+  PlatformSyncResult,
   PostNewTaskResult,
   RejectedPostNewTaskResult,
+  SyncPlatform,
   Task,
   User,
 } from '../types/Task';
+
+import { postTaskToWorkflow } from './workflowFunctions';
 
 import {
   formatString,
@@ -630,4 +634,98 @@ export function formatHsIncomeDataForExcel<T extends Record<string, number>>(
     });
     return acc;
   }, []);
+}
+
+export async function syncTaskToPlatforms(
+  row: MQMSTask,
+  platforms: SyncPlatform[],
+  listId: string
+): Promise<PlatformSyncResult[]> {
+  const results: PlatformSyncResult[] = [];
+
+  if (platforms.includes('clickup')) {
+    const customerCompanyName = LIST_ID_TO_CUSTOMER_COMPANY[listId];
+    const newTask: Task[] = [getNewTask(row, customerCompanyName)];
+    const clickUpResults = await postNewTasks(newTask, listId, apikey);
+
+    const clickUpResult = clickUpResults[0];
+    if (clickUpResult.status === 'fulfilled') {
+      results.push({
+        platform: 'clickup',
+        status: 'success',
+        taskName: (clickUpResult as FulfilledPostNewTaskResult).value.taskName,
+        taskId: (clickUpResult as FulfilledPostNewTaskResult).value.clickUpTaskId,
+      });
+    } else {
+      results.push({
+        platform: 'clickup',
+        status: 'error',
+        taskName: row.EXTERNAL_ID,
+        error: (clickUpResult as RejectedPostNewTaskResult).reason,
+      });
+      return results;
+    }
+  }
+
+  if (platforms.includes('workflow')) {
+    const workflowResult = await postTaskToWorkflow(row);
+    results.push(workflowResult);
+  }
+
+  return results;
+}
+
+export async function handleActionWithPlatforms(
+  row: MQMSTask,
+  newMqmsTasks: MQMSTask[],
+  setMQMSTasks: (tasks: MQMSTask[]) => void,
+  listId: string,
+  platforms: SyncPlatform[] = ['clickup', 'workflow']
+): Promise<PlatformSyncResult[]> {
+  const results = await syncTaskToPlatforms(row, platforms, listId);
+
+  const allSuccess = results.every(r => r.status === 'success');
+  const selectedPlatformsSuccess = platforms.every(platform =>
+    results.find(r => r.platform === platform && r.status === 'success')
+  );
+
+  if (allSuccess && selectedPlatformsSuccess) {
+    setMQMSTasks(updateNewMqmsTasks(row.EXTERNAL_ID, newMqmsTasks));
+  }
+
+  const failedResults = results.filter(r => r.status === 'error');
+  if (failedResults.length > 0) {
+    console.error('Error syncing tasks:', failedResults);
+  }
+
+  return results;
+}
+
+export async function handleSyncAllWithPlatforms(
+  newMqmsTasks: MQMSTask[],
+  setMQMSTasks: (tasks: MQMSTask[]) => void,
+  listId: string,
+  platforms: SyncPlatform[] = ['clickup', 'workflow']
+): Promise<Map<string, PlatformSyncResult[]>> {
+  const allResults = new Map<string, PlatformSyncResult[]>();
+
+  for (const task of newMqmsTasks) {
+    const results = await syncTaskToPlatforms(task, platforms, listId);
+    allResults.set(task.EXTERNAL_ID, results);
+  }
+
+  const successfulTasks = Array.from(allResults.entries())
+    .filter(([, results]) => {
+      return platforms.every(platform =>
+        results.find(r => r.platform === platform && r.status === 'success')
+      );
+    })
+    .map(([taskName]) => taskName);
+
+  if (successfulTasks.length > 0) {
+    const updatedTasks = newMqmsTasks.filter(task => !successfulTasks.includes(task.EXTERNAL_ID));
+    setMQMSTasks(updatedTasks);
+  }
+
+  return allResults;
 }

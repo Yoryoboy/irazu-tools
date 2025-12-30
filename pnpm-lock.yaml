@@ -57,7 +57,7 @@ importers:
         specifier: ^4.1.17
         version: 4.1.17
       workflowSDK:
-        specifier: git+https://github.com/Yoryoboy/workflowSDK.git
+        specifier: github:Yoryoboy/workflowSDK
         version: https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/23edc74460639a19e6efcaee8bcefef1d6288793
       xlsx:
         specifier: ^0.18.5
