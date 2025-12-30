@@ -1,4 +1,4 @@
-import { TaskCreateDto } from 'workflowSDK/src/index';
+import { TaskCreateDto } from 'workflow-sdk';
 import { MQMSTask, PlatformSyncResult } from '../types/Task';
 import { danellaHighSplitDetails } from '../constants/danella';
 import { getWorkflowClient } from './workflowClient';

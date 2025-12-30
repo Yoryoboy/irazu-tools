@@ -56,9 +56,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.17
         version: 4.1.17
-      workflowSDK:
+      workflow-sdk:
         specifier: github:Yoryoboy/workflowSDK
-        version: https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/23edc74460639a19e6efcaee8bcefef1d6288793
+        version: https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/fa15325300d76e1834eb26115f2ff8ab05ea72bf
       xlsx:
         specifier: ^0.18.5
         version: 0.18.5
@@ -3016,8 +3016,8 @@ packages:
     resolution: {integrity: sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==}
     engines: {node: '>=0.8'}
 
-  workflowSDK@https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/23edc74460639a19e6efcaee8bcefef1d6288793:
-    resolution: {tarball: https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/23edc74460639a19e6efcaee8bcefef1d6288793}
+  workflow-sdk@https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/fa15325300d76e1834eb26115f2ff8ab05ea72bf:
+    resolution: {tarball: https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/fa15325300d76e1834eb26115f2ff8ab05ea72bf}
     version: 1.0.0
 
   wrappy@1.0.2:
@@ -6280,7 +6280,7 @@ snapshots:
 
   word@0.3.0: {}
 
-  workflowSDK@https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/23edc74460639a19e6efcaee8bcefef1d6288793:
+  workflow-sdk@https://codeload.github.com/Yoryoboy/workflowSDK/tar.gz/fa15325300d76e1834eb26115f2ff8ab05ea72bf:
     dependencies:
       axios: 1.13.2
     transitivePeerDependencies:

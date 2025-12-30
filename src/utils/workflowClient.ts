@@ -1,4 +1,4 @@
-import { DanellaSDK } from 'workflowSDK/src/index';
+import { DanellaSDK } from 'workflow-sdk';
 
 const WORKFLOW_API_KEY = import.meta.env.VITE_WORKFLOW_API_KEY;
 const USER_ID = import.meta.env.VITE_WORKFLOW_USER_ID;
@@ -15,6 +15,7 @@ export async function getWorkflowClient(): Promise<DanellaSDK> {
       userId: parseInt(USER_ID),
       employeeId: parseInt(EMPLOYEE_ID),
       name: NAME,
+      debug: import.meta.env.DEV,
     });
   }
 
