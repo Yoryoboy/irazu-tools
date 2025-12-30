@@ -668,7 +668,8 @@ export async function syncTaskToPlatforms(
   }
 
   if (platforms.includes('workflow')) {
-    const workflowResult = await postTaskToWorkflow(row);
+    const clickUpTaskId = results.find(r => r.platform === 'clickup')?.taskId;
+    const workflowResult = await postTaskToWorkflow(row, clickUpTaskId);
     results.push(workflowResult);
   }
 

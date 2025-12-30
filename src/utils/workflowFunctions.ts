@@ -16,7 +16,10 @@ export function getSubProjectID(projectType: string): number {
   return danellaHighSplitDetails.asbuiltSubProjectID;
 }
 
-export function buildWorkflowTaskPayload(mqmsTask: MQMSTask): TaskCreateDto {
+export function buildWorkflowTaskPayload(
+  mqmsTask: MQMSTask,
+  clickUpTaskId?: string
+): TaskCreateDto {
   const projectType = getProjectTypeFromMQMS(mqmsTask.PROJECT_TYPE);
   const subProjectID = getSubProjectID(projectType);
 
@@ -24,10 +27,18 @@ export function buildWorkflowTaskPayload(mqmsTask: MQMSTask): TaskCreateDto {
   const plantType = formatString(plantTypeUnformatted);
   const fullProjectType = `${plantType} - ${projectType}`;
 
+  console.log({
+    mqmsTask,
+    projectType,
+    subProjectID,
+    plantType,
+    fullProjectType,
+  });
+
   return {
     subProjectID,
     jobID: mqmsTask.EXTERNAL_ID,
-    verifierKeyID: null,
+    verifierKeyID: clickUpTaskId || null,
     estimatedClosingDate: null,
     secondaryFields: [
       { fieldName: 'PROJECT_TYPE', value: fullProjectType },
@@ -37,10 +48,13 @@ export function buildWorkflowTaskPayload(mqmsTask: MQMSTask): TaskCreateDto {
   };
 }
 
-export async function postTaskToWorkflow(mqmsTask: MQMSTask): Promise<PlatformSyncResult> {
+export async function postTaskToWorkflow(
+  mqmsTask: MQMSTask,
+  clickUpTaskId?: string
+): Promise<PlatformSyncResult> {
   try {
     const client = await getWorkflowClient();
-    const payload = buildWorkflowTaskPayload(mqmsTask);
+    const payload = buildWorkflowTaskPayload(mqmsTask, clickUpTaskId);
 
     const result = await client.tasks.update(payload);
 
