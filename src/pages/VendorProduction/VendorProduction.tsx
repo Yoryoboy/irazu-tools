@@ -96,7 +96,7 @@ function VendorProduction() {
 
   // Ximena
 
-    const { filteredTasks: asbuiltForXimena } = useFilteredTasks(
+  const { filteredTasks: asbuiltForXimena } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(ximena.id.toString())
   );
 
@@ -120,6 +120,10 @@ function VendorProduction() {
 
   const { filteredTasks: redesignForCCC } = useFilteredTasks(
     getRedesignSearchParamsForVendor(ccc.id.toString())
+  );
+
+  const { filteredTasks: bauForCCC } = useFilteredTasks(
+    getBAUSearchParamsForVendor(ccc.id.toString())
   );
 
   // Consolidar todas las tareas usando el hook personalizado
@@ -161,6 +165,7 @@ function VendorProduction() {
       asbuilts: asbuiltForCCC,
       designs: designForCCC,
       redesigns: redesignForCCC,
+      bau: bauForCCC,
     },
   });
 
@@ -207,6 +212,7 @@ function VendorProduction() {
         redesigns={redesignForXimena}
         vendor={ximena}
       />
+      <VendorBauProductionTable bau={bauForCCC} vendor={ccc} />
       <VendorProductionTable
         asbuilts={asbuiltForCCC}
         designs={designForCCC}
