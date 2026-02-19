@@ -8,12 +8,20 @@ export function useFetchClickUpTasks(
   SearchParams: SearchParams | null
 ) {
   const [clickUpTasks, setClickUpTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchTasks = async () => {
+      setLoading(true);
+      setError(null);
+
       let allTasks: Task[] = [];
       let page = 0;
       let lastPage = false;
+      let fetchFailed = false;
 
       do {
         // Construcción manual de la query string
@@ -47,19 +55,41 @@ export function useFetchClickUpTasks(
           allTasks = [...allTasks, ...data.tasks];
           lastPage = data.last_page;
           page += 1;
-        } catch (error) {
-          console.error("Error fetching tasks:", error);
+        } catch (requestError) {
+          const normalizedError =
+            requestError instanceof Error
+              ? requestError
+              : new Error("Unknown error fetching ClickUp tasks.");
+
+          console.error("Error fetching tasks:", normalizedError);
+
+          if (isMounted) {
+            setError(normalizedError);
+          }
+
+          fetchFailed = true;
           lastPage = true;
         }
       } while (!lastPage);
 
-      setClickUpTasks(allTasks);
+      if (isMounted) {
+        setClickUpTasks(fetchFailed ? [] : allTasks);
+        setLoading(false);
+      }
     };
 
     if (SearchParams) {
       fetchTasks();
+    } else {
+      setClickUpTasks([]);
+      setLoading(false);
+      setError(null);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [listId, SearchParams]);
 
-  return { clickUpTasks };
+  return { clickUpTasks, loading, error };
 }
