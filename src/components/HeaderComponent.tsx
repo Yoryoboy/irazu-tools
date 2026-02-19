@@ -33,6 +33,11 @@ function HeaderComponent() {
       key: appPaths.incomeReports,
       label: <Link to={appPaths.incomeReports}>Income Reports</Link>,
     });
+
+    items.splice(4, 0, {
+      key: appPaths.monthlyGoals,
+      label: <Link to={appPaths.monthlyGoals}>Monthly Goals</Link>,
+    });
   }
 
   const currentPath = useLocation().pathname;

@@ -5,6 +5,7 @@ export const appPaths = {
   taskSync: "/task-sync" as const,
   vendorProduction: "/production-contratistas" as const,
   incomeReports: "/income-reports" as const,
+  monthlyGoals: "/monthly-goals" as const,
   mqmsVerification: {
     root: "/mqms-verification" as const,
     checkApproved: "/mqms-verification/check-approved-tasks" as const,
@@ -16,6 +17,7 @@ export const routeSegments = {
   taskSync: "task-sync" as const,
   vendorProduction: "production-contratistas" as const,
   incomeReports: "income-reports" as const,
+  monthlyGoals: "monthly-goals" as const,
   mqmsVerification: {
     root: "mqms-verification" as const,
     checkApproved: "check-approved-tasks" as const,
@@ -28,6 +30,7 @@ export type NavigationKey =
   | typeof appPaths.taskSync
   | typeof appPaths.vendorProduction
   | typeof appPaths.incomeReports
+  | typeof appPaths.monthlyGoals
   | typeof appPaths.mqmsVerification.root;
 
 export function deriveNavigationKey(pathname: string): NavigationKey | null {
@@ -45,6 +48,10 @@ export function deriveNavigationKey(pathname: string): NavigationKey | null {
 
   if (!DESIGNER_VIEW && pathname.startsWith(appPaths.incomeReports)) {
     return appPaths.incomeReports;
+  }
+
+  if (!DESIGNER_VIEW && pathname.startsWith(appPaths.monthlyGoals)) {
+    return appPaths.monthlyGoals;
   }
 
   if (pathname.startsWith(appPaths.mqmsVerification.root)) {
