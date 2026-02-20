@@ -17,6 +17,7 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
   ]);
   const [syncResults, setSyncResults] = useState<Map<string, PlatformSyncResult[]>>(new Map());
   const [isSyncing, setIsSyncing] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState<Set<string>>(new Set());
 
   const dataSource = newMqmsTasks.map(task => ({
     ...task,
@@ -34,6 +35,7 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
   const handleSyncAllClick = async () => {
     if (selectedPlatforms.length === 0) return;
     setIsSyncing(true);
+    setLoadingTasks(new Set(newMqmsTasks.map(t => t.EXTERNAL_ID)));
     try {
       const results = await handleSyncAllWithPlatforms(
         newMqmsTasks,
@@ -44,6 +46,7 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
       setSyncResults(results);
     } finally {
       setIsSyncing(false);
+      setLoadingTasks(new Set());
     }
   };
 
@@ -53,7 +56,8 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
     listId,
     selectedPlatforms,
     syncResults,
-    setSyncResults
+    setSyncResults,
+    loadingTasks
   );
 
   return (
@@ -75,7 +79,16 @@ function NewTasksTable({ newMqmsTasks, setMQMSTasks, listId }: Props) {
           </Checkbox>
         </Space>
       </Flex>
-      <Table<MQMSTask> columns={columns} dataSource={dataSource} pagination={false} />
+      <Table<MQMSTask>
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
+        rowClassName={record => {
+          const results = syncResults.get(record.EXTERNAL_ID) ?? [];
+          const hasError = results.some(r => r.status === 'error');
+          return hasError ? 'sync-row-error' : '';
+        }}
+      />
       <Button
         type="primary"
         onClick={handleSyncAllClick}

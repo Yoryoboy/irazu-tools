@@ -119,7 +119,8 @@ export const getColumns = (
   listId: string,
   selectedPlatforms: SyncPlatform[],
   syncResults: Map<string, PlatformSyncResult[]>,
-  setSyncResults: React.Dispatch<React.SetStateAction<Map<string, PlatformSyncResult[]>>>
+  setSyncResults: React.Dispatch<React.SetStateAction<Map<string, PlatformSyncResult[]>>>,
+  loadingTasks: Set<string> = new Set()
 ): ColumnsType<MQMSTask> => [
   {
     title: 'JOB_NAME',
@@ -159,6 +160,7 @@ export const getColumns = (
       const results = syncResults.get(record.EXTERNAL_ID) || [];
       const clickupResult = results.find(r => r.platform === 'clickup');
       const workflowResult = results.find(r => r.platform === 'workflow');
+      const isRowLoading = loadingTasks.has(record.EXTERNAL_ID);
 
       return (
         <Space size="small">
@@ -166,13 +168,13 @@ export const getColumns = (
             platform="clickup"
             result={clickupResult}
             isSelected={selectedPlatforms.includes('clickup')}
-            isLoading={false}
+            isLoading={isRowLoading}
           />
           <SyncStatusTag
             platform="workflow"
             result={workflowResult}
             isSelected={selectedPlatforms.includes('workflow')}
-            isLoading={false}
+            isLoading={isRowLoading}
           />
         </Space>
       );

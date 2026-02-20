@@ -53,6 +53,10 @@ svg {
   vertical-align: middle;
 }
 
+.sync-row-error td {
+  background-color: #fff1f0 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

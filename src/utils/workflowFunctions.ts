@@ -1,7 +1,7 @@
 import { TaskCreateDto } from 'workflow-sdk';
 import { MQMSTask, PlatformSyncResult } from '../types/Task';
 import { danellaHighSplitDetails } from '../constants/danella';
-import { getWorkflowClient } from './workflowClient';
+import { getWorkflowClient, resetWorkflowClient } from './workflowClient';
 import { formatString } from './helperFunctions';
 
 export function getProjectTypeFromMQMS(projectTypeString: string): string {
@@ -65,24 +65,19 @@ export async function postTaskToWorkflow(
       taskId: result.taskID?.toString(),
     };
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const isAuthError =
+      message.toLowerCase().includes('unauthorized') ||
+      message.toLowerCase().includes('401') ||
+      message.toLowerCase().includes('token');
+    if (isAuthError) {
+      resetWorkflowClient();
+    }
     return {
       platform: 'workflow',
       status: 'error',
       taskName: mqmsTask.EXTERNAL_ID,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: message,
     };
   }
-}
-
-export async function postMultipleTasksToWorkflow(
-  mqmsTasks: MQMSTask[]
-): Promise<PlatformSyncResult[]> {
-  const results: PlatformSyncResult[] = [];
-
-  for (const task of mqmsTasks) {
-    const result = await postTaskToWorkflow(task);
-    results.push(result);
-  }
-
-  return results;
 }
