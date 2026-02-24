@@ -2221,6 +2221,15 @@ export const CLICKUP_BAU_CUSTOM_FIELDS: CustomFields = {
 export const CLICKUP_HS_CUSTOM_FIELDS: CustomFields = {
   fields: [
     {
+      id: '5d2e1ea0-5d63-4756-be9f-710817bb1740',
+      name: 'REDESIGN ROUNDED MILES',
+      type: 'number',
+      type_config: {},
+      date_created: '1755023587353',
+      hide_from_guests: false,
+      required: false,
+    },
+    {
       id: '44834017-91d2-4076-9c3c-971c90809fa0',
       name: 'DESIGN CHECKED',
       type: 'checkbox',
