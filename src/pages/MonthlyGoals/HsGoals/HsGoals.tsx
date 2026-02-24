@@ -176,7 +176,7 @@ export default function HsGoals() {
         </div>
       )}
 
-      <WarningsPanel tasksWithWarnings={summary.tasksWithWarnings} />
+      <WarningsPanel tasksWithWarnings={summary.tasksWithWarnings} monthKey={monthKey} type="HS" />
     </section>
   );
 }

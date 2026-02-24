@@ -156,7 +156,7 @@ export default function BauGoals() {
         </div>
       )}
 
-      <WarningsPanel tasksWithWarnings={summary.tasksWithWarnings} />
+      <WarningsPanel tasksWithWarnings={summary.tasksWithWarnings} monthKey={monthKey} type="BAU" />
     </section>
   );
 }
