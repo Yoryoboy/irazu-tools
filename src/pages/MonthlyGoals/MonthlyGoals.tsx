@@ -1,7 +1,8 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { lazy, Suspense } from 'react';
 import BauGoals from './BauGoals/BauGoals';
+
+const HsGoals = lazy(() => import('./HsGoals/HsGoals'));
 
 export default function MonthlyGoals() {
   return (
@@ -16,12 +17,7 @@ export default function MonthlyGoals() {
       <Tabs defaultValue="bau" className="w-full">
         <TabsList>
           <TabsTrigger value="bau">BAU</TabsTrigger>
-          <TabsTrigger value="hs" disabled>
-            HS
-          </TabsTrigger>
-          <Badge variant="outline" className="ml-2">
-            HS coming soon
-          </Badge>
+          <TabsTrigger value="hs">HS</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bau" className="mt-4">
@@ -29,14 +25,9 @@ export default function MonthlyGoals() {
         </TabsContent>
 
         <TabsContent value="hs" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>HS Goals</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              HS goals will be enabled in a future iteration.
-            </CardContent>
-          </Card>
+          <Suspense fallback={<p className="text-sm text-muted-foreground">Loading HS goals...</p>}>
+            <HsGoals />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </main>
