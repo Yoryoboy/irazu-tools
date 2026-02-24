@@ -8,6 +8,7 @@ import { useGoalsConfig } from '../hooks/useGoalsConfig';
 import { GoalsConfigDialog } from '../components/GoalsConfigDialog';
 import { MemberPerformanceTable } from '../components/MemberPerformanceTable';
 import { MonthSelector } from '../components/MonthSelector';
+import { TasksLoadingIndicator } from '../components/TasksLoadingIndicator';
 import { WarningsPanel } from '../components/WarningsPanel';
 import { useBauGoals } from './BauGoals.hooks';
 
@@ -31,7 +32,7 @@ export default function BauGoals() {
   const { getMonthConfig, setMonthConfig, exportConfig, importConfig } = useGoalsConfig();
   const monthConfig = getMonthConfig(monthKey);
 
-  const { summary, loading, error } = useBauGoals(year, month, monthConfig);
+  const { summary, loading, error, fetchProgress } = useBauGoals(year, month, monthConfig);
 
   const membersForConfig = useMemo(() => {
     const memberById = new Map<number, { memberId: number; memberName: string }>();
@@ -139,7 +140,12 @@ export default function BauGoals() {
       </Card>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading tasks from ClickUp...</p>
+        <TasksLoadingIndicator
+          title="Loading BAU tasks"
+          description="We are still fetching all task pages for the selected month."
+          pagesFetched={fetchProgress.pagesFetched}
+          tasksFetched={fetchProgress.tasksFetched}
+        />
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           <MemberPerformanceTable

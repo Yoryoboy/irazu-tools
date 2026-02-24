@@ -3,6 +3,18 @@ import { CLICKUP_API_AKEY } from "../utils/config";
 import { Task } from "../types/Task";
 import { SearchParams } from "../types/SearchParams";
 
+export interface ClickUpFetchProgress {
+  pagesFetched: number;
+  tasksFetched: number;
+  done: boolean;
+}
+
+const EMPTY_PROGRESS: ClickUpFetchProgress = {
+  pagesFetched: 0,
+  tasksFetched: 0,
+  done: false,
+};
+
 export function useFetchClickUpTasks(
   listId: string,
   SearchParams: SearchParams | null
@@ -10,6 +22,7 @@ export function useFetchClickUpTasks(
   const [clickUpTasks, setClickUpTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState<ClickUpFetchProgress>(EMPTY_PROGRESS);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,6 +30,7 @@ export function useFetchClickUpTasks(
     const fetchTasks = async () => {
       setLoading(true);
       setError(null);
+      setProgress(EMPTY_PROGRESS);
 
       let allTasks: Task[] = [];
       let page = 0;
@@ -55,6 +69,14 @@ export function useFetchClickUpTasks(
           allTasks = [...allTasks, ...data.tasks];
           lastPage = data.last_page;
           page += 1;
+
+          if (isMounted) {
+            setProgress({
+              pagesFetched: page,
+              tasksFetched: allTasks.length,
+              done: false,
+            });
+          }
         } catch (requestError) {
           const normalizedError =
             requestError instanceof Error
@@ -75,6 +97,11 @@ export function useFetchClickUpTasks(
       if (isMounted) {
         setClickUpTasks(fetchFailed ? [] : allTasks);
         setLoading(false);
+        setProgress({
+          pagesFetched: page,
+          tasksFetched: fetchFailed ? 0 : allTasks.length,
+          done: true,
+        });
       }
     };
 
@@ -84,6 +111,7 @@ export function useFetchClickUpTasks(
       setClickUpTasks([]);
       setLoading(false);
       setError(null);
+      setProgress(EMPTY_PROGRESS);
     }
 
     return () => {
@@ -91,5 +119,5 @@ export function useFetchClickUpTasks(
     };
   }, [listId, SearchParams]);
 
-  return { clickUpTasks, loading, error };
+  return { clickUpTasks, loading, error, progress };
 }

@@ -7,6 +7,7 @@ import { CombinedProductionTable } from '../components/CombinedProductionTable';
 import { GoalsConfigDialog } from '../components/GoalsConfigDialog';
 import { MemberPerformanceTable } from '../components/MemberPerformanceTable';
 import { MonthSelector } from '../components/MonthSelector';
+import { TasksLoadingIndicator } from '../components/TasksLoadingIndicator';
 import { WarningsPanel } from '../components/WarningsPanel';
 import { ARGENTINA_TZ } from '../MonthlyGoals.constants';
 import { useGoalsConfig } from '../hooks/useGoalsConfig';
@@ -37,7 +38,7 @@ export default function HsGoals() {
   const { getMonthConfig, setMonthConfig, exportConfig, importConfig } = useGoalsConfig();
   const monthConfig = getMonthConfig(storageMonthKey);
 
-  const { summary, loading, error } = useHsGoals(year, month, monthConfig);
+  const { summary, loading, error, fetchProgress } = useHsGoals(year, month, monthConfig);
 
   const membersForConfig = useMemo(() => {
     const memberById = new Map<number, { memberId: number; memberName: string }>();
@@ -155,7 +156,13 @@ export default function HsGoals() {
       </Card>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading tasks from ClickUp...</p>
+        <TasksLoadingIndicator
+          title="Loading HS tasks"
+          description="We are scanning Asbuilt, Design, and Redesign completion dates in parallel."
+          pagesFetched={fetchProgress.totalPagesFetched}
+          tasksFetched={fetchProgress.totalTasksFetched}
+          sources={fetchProgress.sources}
+        />
       ) : (
         <div className="space-y-4">
           <div className="grid gap-4 xl:grid-cols-2">

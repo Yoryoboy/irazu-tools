@@ -8,7 +8,7 @@ import { getBauGoalsSearchParams } from './BauGoals.SearchParams';
 export function useBauGoals(year: number, month: number, monthConfig: MonthGoalsConfig) {
   const searchParams = useMemo(() => getBauGoalsSearchParams(year, month), [year, month]);
 
-  const { clickUpTasks, loading, error } = useFetchClickUpTasks(
+  const { clickUpTasks, loading, error, progress } = useFetchClickUpTasks(
     CLICKUP_LIST_IDS.cciBau,
     searchParams
   );
@@ -21,6 +21,7 @@ export function useBauGoals(year: number, month: number, monthConfig: MonthGoals
     summary,
     loading,
     error,
+    fetchProgress: progress,
     rawTasks: clickUpTasks,
   };
 }
