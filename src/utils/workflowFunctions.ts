@@ -18,7 +18,7 @@ export function getSubProjectID(projectType: string): number {
 
 export function buildWorkflowTaskPayload(
   mqmsTask: MQMSTask,
-  clickUpTaskId?: string
+  _clickUpTaskId?: string
 ): TaskCreateDto {
   const projectType = getProjectTypeFromMQMS(mqmsTask.PROJECT_TYPE);
   const subProjectID = getSubProjectID(projectType);
@@ -38,7 +38,7 @@ export function buildWorkflowTaskPayload(
   return {
     subProjectID,
     jobID: mqmsTask.EXTERNAL_ID,
-    verifierKeyID: clickUpTaskId || null,
+    verifierKeyID: mqmsTask.REQUEST_ID || null,
     estimatedClosingDate: null,
     secondaryFields: [
       { fieldName: 'PROJECT_TYPE', value: fullProjectType },
