@@ -8,7 +8,7 @@ Implement the High Split (HS) goal tracker tab in the Monthly Goals dashboard, m
 
 | Aspect              | BAU                                      | HS                                                                                                        |
 | ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **Metric**          | Design Points (single field)             | Miles (3 separate fields: Asbuilt, Design, Redesign)                                                      |
+| **Metric**          | Design Points (single field)             | Rounded Miles (3 separate fields: Asbuilt, Design, Redesign)                                              |
 | **Assignee**        | `task.assignees` (single source)         | Asbuilt/Redesign: `Assignee`, Design: `DESIGN ASSIGNEE` custom field                                      |
 | **QC**              | `QC PERFORMED BY` (single field)         | 3 fields: `PREASBUILT QC BY`, `DESIGN QC BY`, `REDESIGN QC BY`                                            |
 | **Completion Date** | `ACTUAL COMPLETION DATE` (single)        | 3 dates: `PREASBUILT ACTUAL COMPLETION DATE`, `ACTUAL COMPLETION DATE`, `REDESIGN ACTUAL COMPLETION DATE` |
@@ -41,8 +41,8 @@ Define constants for all HS-specific custom field names:
 - `FIELD_PREASBUILT_COMPLETION_DATE` = `'PREASBUILT ACTUAL COMPLETION DATE '` (note trailing space in ClickUp)
 - `FIELD_ACTUAL_COMPLETION_DATE` = `'ACTUAL COMPLETION DATE'` (Design completion)
 - `FIELD_REDESIGN_COMPLETION_DATE` = `'REDESIGN ACTUAL COMPLETION DATE'`
-- `FIELD_ASBUILT_MILES` = `'ASBUILT MILES'`
-- `FIELD_DESIGN_MILES` = `'DESIGN MILES'`
+- `FIELD_ASBUILT_MILES` = `'ASBUILT ROUNDED MILES'`
+- `FIELD_DESIGN_MILES` = `'DESIGN ROUNDED MILES'`
 - `FIELD_REDESIGN_MILES` = `'REDESIGN ROUNDED MILES'` ✅
 - `FIELD_DESIGN_ASSIGNEE` = `'DESIGN ASSIGNEE'`
 - `FIELD_PREASBUILT_QC_BY` = `'PREASBUILT QC BY'`
@@ -152,21 +152,21 @@ For each work type that has a completion date in the selected month:
 **Asbuilt validation:**
 
 - ✅ Has `PREASBUILT ACTUAL COMPLETION DATE` → Must have:
-  - `ASBUILT MILES` (not null/zero)
+  - `ASBUILT ROUNDED MILES` (must be `>= 1`; null/0/<1 are invalid)
   - `Assignee` (task.assignees not empty)
   - `PREASBUILT QC BY` (not empty)
 
 **Design validation:**
 
 - ✅ Has `ACTUAL COMPLETION DATE` → Must have:
-  - `DESIGN MILES` (not null/zero)
+  - `DESIGN ROUNDED MILES` (must be `>= 1`; null/0/<1 are invalid)
   - `DESIGN ASSIGNEE` custom field (not empty)
   - `DESIGN QC BY` (not empty)
 
 **Redesign validation:**
 
 - ✅ Has `REDESIGN ACTUAL COMPLETION DATE` → Must have:
-  - `REDESIGN ROUNDED MILES` (not null/zero)
+  - `REDESIGN ROUNDED MILES` (null is invalid; `0` is valid)
   - `Assignee` (task.assignees not empty)
   - `REDESIGN QC BY` (not empty)
 
@@ -192,7 +192,8 @@ Each warning should be descriptive and actionable:
 
 ```typescript
 // Missing field warnings
-"Missing ASBUILT MILES for Asbuilt work";
+"Missing ASBUILT ROUNDED MILES for Asbuilt work";
+"Missing DESIGN ROUNDED MILES for Design work";
 "Missing DESIGN ASSIGNEE for Design work";
 "Missing PREASBUILT QC BY for Asbuilt work";
 
@@ -226,7 +227,7 @@ function buildHsTaskWarnings(
   contributions.forEach((contrib) => {
     if (!contrib.completionDate) return; // Skip inactive work types
 
-    if (contrib.miles === null || contrib.miles === 0) {
+    if (!isMilesValidForWorkType(contrib.type, contrib.miles)) {
       warnings.push(`Missing ${contrib.type.toUpperCase()} MILES`);
     }
     if (contrib.assignees.length === 0) {
@@ -302,8 +303,8 @@ export { buildHsTaskWarnings };
 
 **Q9: Zero vs Null Miles**
 
-- Both `0` and `null` are **invalid** → Warning
-- Reason: Cannot bill 0 miles; minimum is 1 mile
+- **Asbuilt/Design:** value must be `>= 1`. `null`, `0`, and any value `< 1` are **invalid** → Warning
+- **Redesign:** `0` is **valid**. Only `null` is **invalid** → Warning
 
 **Q10: Assignee Sources**
 

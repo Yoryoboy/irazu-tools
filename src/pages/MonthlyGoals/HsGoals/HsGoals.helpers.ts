@@ -129,8 +129,44 @@ function getMilesValue(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function toMemberShares(users: User[], miles: number | null): MemberShare[] {
-  if (miles === null || miles <= 0 || users.length === 0) {
+function isMilesValidForWorkType(type: HsWorkType, miles: number | null): boolean {
+  if (miles === null) {
+    return false;
+  }
+
+  if (type === 'redesign') {
+    return true;
+  }
+
+  return miles >= 1;
+}
+
+function shouldAllocateShares(type: HsWorkType, miles: number | null): boolean {
+  if (miles === null) {
+    return false;
+  }
+
+  if (type === 'redesign') {
+    return miles > 0;
+  }
+
+  return miles >= 1;
+}
+
+function shouldCountMilesInTotals(type: HsWorkType, miles: number | null): boolean {
+  if (miles === null) {
+    return false;
+  }
+
+  if (type === 'redesign') {
+    return miles >= 0;
+  }
+
+  return miles >= 1;
+}
+
+function toMemberShares(users: User[], miles: number | null, type: HsWorkType): MemberShare[] {
+  if (!shouldAllocateShares(type, miles) || users.length === 0) {
     return [];
   }
 
@@ -212,15 +248,15 @@ function buildHsTaskWarnings(
   contributions.forEach(contribution => {
     const workTypeLabel = getWorkTypeLabel(contribution.type);
 
-    if (contribution.miles === null || contribution.miles <= 0) {
+    if (!isMilesValidForWorkType(contribution.type, contribution.miles)) {
       warnings.add(`Missing ${getMilesFieldForType(contribution.type)} for ${workTypeLabel} work`);
     }
 
-    if (contribution.designers.length === 0) {
+    if (contribution.assigneeCount === 0) {
       warnings.add(`Missing assignee for ${workTypeLabel} work`);
     }
 
-    if (contribution.qcReviewers.length === 0) {
+    if (contribution.qcReviewerCount === 0) {
       warnings.add(`Missing ${getQcFieldForType(contribution.type)} for ${workTypeLabel} work`);
     }
   });
@@ -399,8 +435,10 @@ export function parseHsGoalTasks(tasks: Task[], year: number, month: number): Hs
         type: 'asbuilt',
         completionDate: asbuiltCompletionDate,
         miles,
-        designers: toMemberShares(designers, miles),
-        qcReviewers: toMemberShares(qcReviewers, miles),
+        assigneeCount: designers.length,
+        qcReviewerCount: qcReviewers.length,
+        designers: toMemberShares(designers, miles, 'asbuilt'),
+        qcReviewers: toMemberShares(qcReviewers, miles, 'asbuilt'),
       });
     }
 
@@ -413,8 +451,10 @@ export function parseHsGoalTasks(tasks: Task[], year: number, month: number): Hs
         type: 'design',
         completionDate: designCompletionDate,
         miles,
-        designers: toMemberShares(designers, miles),
-        qcReviewers: toMemberShares(qcReviewers, miles),
+        assigneeCount: designers.length,
+        qcReviewerCount: qcReviewers.length,
+        designers: toMemberShares(designers, miles, 'design'),
+        qcReviewers: toMemberShares(qcReviewers, miles, 'design'),
       });
     }
 
@@ -427,8 +467,10 @@ export function parseHsGoalTasks(tasks: Task[], year: number, month: number): Hs
         type: 'redesign',
         completionDate: redesignCompletionDate,
         miles,
-        designers: toMemberShares(designers, miles),
-        qcReviewers: toMemberShares(qcReviewers, miles),
+        assigneeCount: designers.length,
+        qcReviewerCount: qcReviewers.length,
+        designers: toMemberShares(designers, miles, 'redesign'),
+        qcReviewers: toMemberShares(qcReviewers, miles, 'redesign'),
       });
     }
 
@@ -438,7 +480,7 @@ export function parseHsGoalTasks(tasks: Task[], year: number, month: number): Hs
 
     const warningsResult = buildHsTaskWarnings(task, contributions, allCompletionDates);
     const totalMiles = contributions.reduce((total, contribution) => {
-      if (contribution.miles === null || contribution.miles <= 0) {
+      if (!shouldCountMilesInTotals(contribution.type, contribution.miles)) {
         return total;
       }
 
@@ -491,7 +533,7 @@ export function computeHsSummary(
     totalTasks += 1;
 
     task.contributions.forEach(contribution => {
-      if (contribution.miles !== null && contribution.miles > 0) {
+      if (shouldCountMilesInTotals(contribution.type, contribution.miles)) {
         totalMiles += contribution.miles;
       }
 

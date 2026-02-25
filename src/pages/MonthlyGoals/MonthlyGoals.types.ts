@@ -37,6 +37,8 @@ export interface HsWorkContribution {
   type: HsWorkType;
   completionDate: Date | null;
   miles: number | null;
+  assigneeCount: number;
+  qcReviewerCount: number;
   designers: MemberShare[];
   qcReviewers: MemberShare[];
 }

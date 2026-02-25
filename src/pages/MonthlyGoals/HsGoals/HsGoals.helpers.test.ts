@@ -132,9 +132,56 @@ describe('HsGoals.helpers', () => {
     const summary = computeHsSummary(parsed, defaultConfig);
 
     expect(parsed).toHaveLength(1);
-    expect(parsed[0].warnings).toContain('Missing DESIGN MILES for Design work');
+    expect(parsed[0].warnings).toContain('Missing DESIGN ROUNDED MILES for Design work');
     expect(parsed[0].warnings).toContain('Missing assignee for Design work');
     expect(summary.totalTasks).toBe(1);
+    expect(summary.totalMiles).toBe(0);
+  });
+
+  it('treats redesign rounded miles as valid when it is zero', () => {
+    const task = createTask({
+      id: 'redesign-zero-valid',
+      name: 'Redesign Zero Valid',
+      status: { status: 'redesign sent' },
+      assignees: [designerA],
+      custom_fields: [
+        { name: FIELD_PROJECT_TYPE, value: 2 },
+        { name: FIELD_REDESIGN_COMPLETION_DATE, value: toTimestamp(2026, 1, 22) },
+        { name: FIELD_REDESIGN_MILES, value: 0 },
+        { name: FIELD_REDESIGN_QC_BY, value: [qcA] },
+      ],
+    });
+
+    const parsed = parseHsGoalTasks([task], 2026, 1);
+    const summary = computeHsSummary(parsed, defaultConfig);
+
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].warnings).toHaveLength(0);
+    expect(summary.totalTasks).toBe(1);
+    expect(summary.totalMiles).toBe(0);
+  });
+
+  it('warns when design rounded miles is below one', () => {
+    const task = createTask({
+      id: 'design-below-one',
+      name: 'Design Below One',
+      status: { status: 'sent' },
+      custom_fields: [
+        { name: FIELD_PROJECT_TYPE, value: 0 },
+        { name: FIELD_ACTUAL_COMPLETION_DATE, value: toTimestamp(2026, 1, 23) },
+        { name: FIELD_DESIGN_MILES, value: 0.5 },
+        { name: FIELD_DESIGN_ASSIGNEE, value: [designerB] },
+        { name: FIELD_DESIGN_QC_BY, value: [qcA] },
+      ],
+    });
+
+    const parsed = parseHsGoalTasks([task], 2026, 1);
+    const summary = computeHsSummary(parsed, defaultConfig);
+
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].warnings).toContain('Missing DESIGN ROUNDED MILES for Design work');
+    expect(parsed[0].warnings).not.toContain('Missing assignee for Design work');
+    expect(parsed[0].warnings).not.toContain('Missing DESIGN QC BY for Design work');
     expect(summary.totalMiles).toBe(0);
   });
 });
