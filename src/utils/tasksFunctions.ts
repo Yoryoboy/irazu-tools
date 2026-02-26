@@ -229,35 +229,62 @@ export async function fetchFilteredTasks(
   searchParams: SearchParams,
   apiKey: string
 ): Promise<Task[]> {
-  const query = new URLSearchParams();
-  Object.entries(searchParams).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach(item => query.append(key, item));
-    } else {
-      query.append(key, value);
-    }
-  });
-  const queryString = query.toString();
+  const baseSearchParams = Object.entries(searchParams).filter(([key]) => key !== 'page');
+  const allTasks: Task[] = [];
+  let page = 0;
+  let hasMorePages = true;
+  const MAX_PAGES = 1000;
 
   try {
-    const response = await fetch(
-      `https://api.clickup.com/api/v2/team/${teamId}/task?${queryString}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: apiKey,
-        },
-      }
-    );
+    while (hasMorePages && page < MAX_PAGES) {
+      const query = new URLSearchParams();
+      query.append('page', page.toString());
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Error fetching data: ${JSON.stringify(errorData)}`);
+      baseSearchParams.forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach(item => query.append(key, item));
+        } else {
+          query.append(key, value);
+        }
+      });
+
+      const response = await fetch(
+        `https://api.clickup.com/api/v2/team/${teamId}/task?${query.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: apiKey,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error fetching data: ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      const tasks = Array.isArray(data.tasks) ? (data.tasks as Task[]) : [];
+      allTasks.push(...tasks);
+
+      if (typeof data.last_page === 'boolean') {
+        hasMorePages = !data.last_page;
+      } else if (typeof data.has_more === 'boolean') {
+        hasMorePages = data.has_more;
+      } else {
+        hasMorePages = tasks.length > 0;
+      }
+
+      page += 1;
     }
 
-    const data = await response.json();
-    const { tasks } = data;
-    return tasks;
+    if (page >= MAX_PAGES) {
+      console.warn(
+        `Stopped pagination after ${MAX_PAGES} pages for team ${teamId}. Check API pagination response.`
+      );
+    }
+
+    return allTasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);
     throw error;
