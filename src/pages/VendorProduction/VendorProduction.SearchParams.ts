@@ -40,6 +40,7 @@ export function getAsbuiltSearchParamsForVendor(vendorId: string): SearchParams 
 export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
   return {
     page: '0',
+    'assignees[]': vendorId,
     'list_ids[]': CLICKUP_LIST_IDS.cciHs,
     include_closed: 'true',
     custom_fields: JSON.stringify([

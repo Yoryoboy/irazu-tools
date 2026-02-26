@@ -1,13 +1,11 @@
 import { useFilteredTasks } from '../../hooks/useFilteredTasks';
 import {
   getAsbuiltSearchParamsForVendor,
-  getBAUSearchParamsForVendor,
   getDesignSearchParamsForVendor,
   getRedesignSearchParamsForVendor,
 } from './VendorProduction.SearchParams';
 import VendorProductionTable from './VendorProductionTable';
 import { vendors } from './VendorProduction.vendors';
-import VendorBauProductionTable from './VendorBauProductionTable';
 import { useConsolidatedVendorTasks } from './useConsolidatedVendorTasks';
 import { useUpdateAllVendorTasks } from './useUpdateAllVendorTasks';
 import GlobalUpdateButton from './GlobalUpdateButton';
@@ -15,14 +13,14 @@ import GlobalUpdateButton from './GlobalUpdateButton';
 function VendorProduction() {
   const {
     anaisDelValleArchilaGonzalez,
-    beatrizLeal,
-    nathaly,
-    barbaraGarcia,
-    eliusmir,
-    carlos,
-    rosaAtempa,
-    ximena,
-    ccc,
+    // beatrizLeal,
+    // nathaly,
+    // barbaraGarcia,
+    // eliusmir,
+    // carlos,
+    // rosaAtempa,
+    // ximena,
+    // ccc,
   } = vendors;
 
   // Anais Archila
@@ -39,92 +37,76 @@ function VendorProduction() {
     getRedesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
   );
 
-  const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
-    getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
-  );
+  // const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
+  // );
 
   // Beatriz Leal
-
-  const { filteredTasks: asbuiltForBeatrizLeal } = useFilteredTasks(
-    getAsbuiltSearchParamsForVendor(beatrizLeal.id.toString())
-  );
-
-  const { filteredTasks: designForBeatrizLeal } = useFilteredTasks(
-    getDesignSearchParamsForVendor(beatrizLeal.id.toString())
-  );
-
-  const { filteredTasks: redesignForBeatrizLeal } = useFilteredTasks(
-    getRedesignSearchParamsForVendor(beatrizLeal.id.toString())
-  );
+  // const { filteredTasks: asbuiltForBeatrizLeal } = useFilteredTasks(
+  //   getAsbuiltSearchParamsForVendor(beatrizLeal.id.toString())
+  // );
+  // const { filteredTasks: designForBeatrizLeal } = useFilteredTasks(
+  //   getDesignSearchParamsForVendor(beatrizLeal.id.toString())
+  // );
+  // const { filteredTasks: redesignForBeatrizLeal } = useFilteredTasks(
+  //   getRedesignSearchParamsForVendor(beatrizLeal.id.toString())
+  // );
 
   // Nathaly
-  const { filteredTasks: asbuiltForNathaly } = useFilteredTasks(
-    getAsbuiltSearchParamsForVendor(nathaly.id.toString())
-  );
-
-  const { filteredTasks: designForNathaly } = useFilteredTasks(
-    getDesignSearchParamsForVendor(nathaly.id.toString())
-  );
-
-  const { filteredTasks: redesignForNathaly } = useFilteredTasks(
-    getRedesignSearchParamsForVendor(nathaly.id.toString())
-  );
+  // const { filteredTasks: asbuiltForNathaly } = useFilteredTasks(
+  //   getAsbuiltSearchParamsForVendor(nathaly.id.toString())
+  // );
+  // const { filteredTasks: designForNathaly } = useFilteredTasks(
+  //   getDesignSearchParamsForVendor(nathaly.id.toString())
+  // );
+  // const { filteredTasks: redesignForNathaly } = useFilteredTasks(
+  //   getRedesignSearchParamsForVendor(nathaly.id.toString())
+  // );
 
   // Barbara Garcia
-
-  const { filteredTasks: bauForBarbaraGarcia } = useFilteredTasks(
-    getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
-  );
+  // const { filteredTasks: bauForBarbaraGarcia } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(barbaraGarcia.id.toString())
+  // );
 
   // Eliusmir
-
-  const { filteredTasks: bauForEliusmir } = useFilteredTasks(
-    getBAUSearchParamsForVendor(eliusmir.id.toString())
-  );
+  // const { filteredTasks: bauForEliusmir } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(eliusmir.id.toString())
+  // );
 
   // Carlos
-
-  const { filteredTasks: bauForCarlos } = useFilteredTasks(
-    getBAUSearchParamsForVendor(carlos.id.toString())
-  );
+  // const { filteredTasks: bauForCarlos } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(carlos.id.toString())
+  // );
 
   // Rosa Atempa
-
-  const { filteredTasks: bauForRosaAtempa } = useFilteredTasks(
-    getBAUSearchParamsForVendor(rosaAtempa.id.toString())
-  );
+  // const { filteredTasks: bauForRosaAtempa } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(rosaAtempa.id.toString())
+  // );
 
   // Ximena
-
-  const { filteredTasks: asbuiltForXimena } = useFilteredTasks(
-    getAsbuiltSearchParamsForVendor(ximena.id.toString())
-  );
-
-  const { filteredTasks: designForXimena } = useFilteredTasks(
-    getDesignSearchParamsForVendor(ximena.id.toString())
-  );
-
-  const { filteredTasks: redesignForXimena } = useFilteredTasks(
-    getRedesignSearchParamsForVendor(ximena.id.toString())
-  );
+  // const { filteredTasks: asbuiltForXimena } = useFilteredTasks(
+  //   getAsbuiltSearchParamsForVendor(ximena.id.toString())
+  // );
+  // const { filteredTasks: designForXimena } = useFilteredTasks(
+  //   getDesignSearchParamsForVendor(ximena.id.toString())
+  // );
+  // const { filteredTasks: redesignForXimena } = useFilteredTasks(
+  //   getRedesignSearchParamsForVendor(ximena.id.toString())
+  // );
 
   // CCC
-
-  const { filteredTasks: asbuiltForCCC } = useFilteredTasks(
-    getAsbuiltSearchParamsForVendor(ccc.id.toString())
-  );
-
-  const { filteredTasks: designForCCC } = useFilteredTasks(
-    getDesignSearchParamsForVendor(ccc.id.toString())
-  );
-
-  const { filteredTasks: redesignForCCC } = useFilteredTasks(
-    getRedesignSearchParamsForVendor(ccc.id.toString())
-  );
-
-  const { filteredTasks: bauForCCC } = useFilteredTasks(
-    getBAUSearchParamsForVendor(ccc.id.toString())
-  );
+  // const { filteredTasks: asbuiltForCCC } = useFilteredTasks(
+  //   getAsbuiltSearchParamsForVendor(ccc.id.toString())
+  // );
+  // const { filteredTasks: designForCCC } = useFilteredTasks(
+  //   getDesignSearchParamsForVendor(ccc.id.toString())
+  // );
+  // const { filteredTasks: redesignForCCC } = useFilteredTasks(
+  //   getRedesignSearchParamsForVendor(ccc.id.toString())
+  // );
+  // const { filteredTasks: bauForCCC } = useFilteredTasks(
+  //   getBAUSearchParamsForVendor(ccc.id.toString())
+  // );
 
   // Consolidar todas las tareas usando el hook personalizado
   const allTasks = useConsolidatedVendorTasks({
@@ -132,40 +114,40 @@ function VendorProduction() {
       asbuilts: asbuiltForAnaisDelValleArchilaGonzalez,
       designs: designForAnaisDelValleArchilaGonzalez,
       redesigns: redesignForAnaisDelValleArchilaGonzalez,
-      bau: bauForAnaisDelValleArchilaGonzalez,
+      // bau: bauForAnaisDelValleArchilaGonzalez,
     },
     beatriz: {
-      asbuilts: asbuiltForBeatrizLeal,
-      designs: designForBeatrizLeal,
-      redesigns: redesignForBeatrizLeal,
+      // asbuilts: asbuiltForBeatrizLeal,
+      // designs: designForBeatrizLeal,
+      // redesigns: redesignForBeatrizLeal,
     },
     nathaly: {
-      asbuilts: asbuiltForNathaly,
-      designs: designForNathaly,
-      redesigns: redesignForNathaly,
+      // asbuilts: asbuiltForNathaly,
+      // designs: designForNathaly,
+      // redesigns: redesignForNathaly,
     },
     barbara: {
-      bau: bauForBarbaraGarcia,
+      // bau: bauForBarbaraGarcia,
     },
     eliusmir: {
-      bau: bauForEliusmir,
+      // bau: bauForEliusmir,
     },
     carlos: {
-      bau: bauForCarlos,
+      // bau: bauForCarlos,
     },
     rosa: {
-      bau: bauForRosaAtempa,
+      // bau: bauForRosaAtempa,
     },
     ximena: {
-      asbuilts: asbuiltForXimena,
-      designs: designForXimena,
-      redesigns: redesignForXimena,
+      // asbuilts: asbuiltForXimena,
+      // designs: designForXimena,
+      // redesigns: redesignForXimena,
     },
     ccc: {
-      asbuilts: asbuiltForCCC,
-      designs: designForCCC,
-      redesigns: redesignForCCC,
-      bau: bauForCCC,
+      // asbuilts: asbuiltForCCC,
+      // designs: designForCCC,
+      // redesigns: redesignForCCC,
+      // bau: bauForCCC,
     },
   });
 
@@ -180,17 +162,17 @@ function VendorProduction() {
         error={error}
         onUpdate={handleUpdateAllTasks}
       />
-      <VendorBauProductionTable
+      {/* <VendorBauProductionTable
         bau={bauForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
-      />
+      /> */}
       <VendorProductionTable
         asbuilts={asbuiltForAnaisDelValleArchilaGonzalez}
         designs={designForAnaisDelValleArchilaGonzalez}
         redesigns={redesignForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
       />
-      <VendorProductionTable
+      {/* <VendorProductionTable
         asbuilts={asbuiltForBeatrizLeal}
         designs={designForBeatrizLeal}
         redesigns={redesignForBeatrizLeal}
@@ -218,7 +200,7 @@ function VendorProduction() {
         designs={designForCCC}
         redesigns={redesignForCCC}
         vendor={ccc}
-      />
+      /> */}
     </main>
   );
 }
