@@ -15,7 +15,6 @@ export function getBauGoalsSearchParams(year: number, month: number): SearchPara
   const end = start.endOf('month');
 
   return {
-    'statuses[]': ['approved', 'sent'],
     include_closed: 'true',
     custom_fields: JSON.stringify([
       {

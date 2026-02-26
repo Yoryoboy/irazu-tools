@@ -2,7 +2,6 @@ import { SearchParams } from '../../../types/SearchParams';
 import { getCustomField } from '../../../utils/tasksFunctions';
 import { dayjs } from '../../../utils/dayjs';
 import { ARGENTINA_TZ } from '../MonthlyGoals.constants';
-import { HS_ACTIVE_STATUSES } from './HsGoals.constants';
 import {
   FIELD_ACTUAL_COMPLETION_DATE,
   FIELD_PREASBUILT_COMPLETION_DATE,
@@ -44,7 +43,6 @@ export function getHsGoalsSearchParams(year: number, month: number): HsGoalsSear
 
   const range = getMonthRange(year, month);
   const baseParams: SearchParams = {
-    'statuses[]': HS_ACTIVE_STATUSES,
     include_closed: 'true',
   };
 

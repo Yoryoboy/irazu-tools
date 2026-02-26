@@ -12,5 +12,3 @@ export const FIELD_DESIGN_ASSIGNEE = 'DESIGN ASSIGNEE';
 export const FIELD_PREASBUILT_QC_BY = 'PREASBUILT QC BY';
 export const FIELD_DESIGN_QC_BY = 'DESIGN QC BY';
 export const FIELD_REDESIGN_QC_BY = 'REDESIGN QC BY';
-
-export const HS_ACTIVE_STATUSES = ['approved', 'sent', 'redesign sent'];

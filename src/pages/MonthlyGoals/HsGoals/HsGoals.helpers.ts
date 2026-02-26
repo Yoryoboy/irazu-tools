@@ -166,7 +166,7 @@ function shouldCountMilesInTotals(type: HsWorkType, miles: number | null): boole
 }
 
 function toMemberShares(users: User[], miles: number | null, type: HsWorkType): MemberShare[] {
-  if (!shouldAllocateShares(type, miles) || users.length === 0) {
+  if (!shouldAllocateShares(type, miles) || users.length === 0 || miles === null) {
     return [];
   }
 
@@ -480,11 +480,13 @@ export function parseHsGoalTasks(tasks: Task[], year: number, month: number): Hs
 
     const warningsResult = buildHsTaskWarnings(task, contributions, allCompletionDates);
     const totalMiles = contributions.reduce((total, contribution) => {
-      if (!shouldCountMilesInTotals(contribution.type, contribution.miles)) {
+      const miles = contribution.miles;
+
+      if (!shouldCountMilesInTotals(contribution.type, miles) || miles === null) {
         return total;
       }
 
-      return total + contribution.miles;
+      return total + miles;
     }, 0);
 
     parsedTasks.push({
@@ -533,8 +535,10 @@ export function computeHsSummary(
     totalTasks += 1;
 
     task.contributions.forEach(contribution => {
-      if (shouldCountMilesInTotals(contribution.type, contribution.miles)) {
-        totalMiles += contribution.miles;
+      const miles = contribution.miles;
+
+      if (shouldCountMilesInTotals(contribution.type, miles) && miles !== null) {
+        totalMiles += miles;
       }
 
       addSharesToAccumulator(contribution.designers, task.id, designerAccumulator);
