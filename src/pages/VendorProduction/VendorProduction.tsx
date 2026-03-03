@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useFilteredTasks } from '../../hooks/useFilteredTasks';
 import {
   getAsbuiltSearchParamsForVendor,
@@ -11,6 +12,7 @@ import VendorBauProductionTable from './VendorBauProductionTable';
 import { useConsolidatedVendorTasks } from './useConsolidatedVendorTasks';
 import { useUpdateAllVendorTasks } from './useUpdateAllVendorTasks';
 import GlobalUpdateButton from './GlobalUpdateButton';
+import { filterUncheckedDesignTasks } from './VendorProduction.helpers';
 
 function VendorProduction() {
   const {
@@ -26,19 +28,19 @@ function VendorProduction() {
   } = vendors;
 
   // Anais Archila
-
   const { filteredTasks: asbuiltForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
     getAsbuiltSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
   );
-
   const { filteredTasks: designForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
     getDesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
   );
-
+  const uncheckedDesignForAnaisDelValleArchilaGonzalez = useMemo(
+    () => filterUncheckedDesignTasks(designForAnaisDelValleArchilaGonzalez),
+    [designForAnaisDelValleArchilaGonzalez]
+  );
   const { filteredTasks: redesignForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
     getRedesignSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
   );
-
   const { filteredTasks: bauForAnaisDelValleArchilaGonzalez } = useFilteredTasks(
     getBAUSearchParamsForVendor(anaisDelValleArchilaGonzalez.id.toString())
   );
@@ -50,6 +52,10 @@ function VendorProduction() {
   const { filteredTasks: designForBeatrizLeal } = useFilteredTasks(
     getDesignSearchParamsForVendor(beatrizLeal.id.toString())
   );
+  const uncheckedDesignForBeatrizLeal = useMemo(
+    () => filterUncheckedDesignTasks(designForBeatrizLeal),
+    [designForBeatrizLeal]
+  );
   const { filteredTasks: redesignForBeatrizLeal } = useFilteredTasks(
     getRedesignSearchParamsForVendor(beatrizLeal.id.toString())
   );
@@ -60,6 +66,10 @@ function VendorProduction() {
   );
   const { filteredTasks: designForNathaly } = useFilteredTasks(
     getDesignSearchParamsForVendor(nathaly.id.toString())
+  );
+  const uncheckedDesignForNathaly = useMemo(
+    () => filterUncheckedDesignTasks(designForNathaly),
+    [designForNathaly]
   );
   const { filteredTasks: redesignForNathaly } = useFilteredTasks(
     getRedesignSearchParamsForVendor(nathaly.id.toString())
@@ -92,6 +102,10 @@ function VendorProduction() {
   const { filteredTasks: designForXimena } = useFilteredTasks(
     getDesignSearchParamsForVendor(ximena.id.toString())
   );
+  const uncheckedDesignForXimena = useMemo(
+    () => filterUncheckedDesignTasks(designForXimena),
+    [designForXimena]
+  );
   const { filteredTasks: redesignForXimena } = useFilteredTasks(
     getRedesignSearchParamsForVendor(ximena.id.toString())
   );
@@ -103,6 +117,10 @@ function VendorProduction() {
   const { filteredTasks: designForCCC } = useFilteredTasks(
     getDesignSearchParamsForVendor(ccc.id.toString())
   );
+  const uncheckedDesignForCCC = useMemo(
+    () => filterUncheckedDesignTasks(designForCCC),
+    [designForCCC]
+  );
   const { filteredTasks: redesignForCCC } = useFilteredTasks(
     getRedesignSearchParamsForVendor(ccc.id.toString())
   );
@@ -110,22 +128,21 @@ function VendorProduction() {
     getBAUSearchParamsForVendor(ccc.id.toString())
   );
 
-  // Consolidar todas las tareas usando el hook personalizado
   const allTasks = useConsolidatedVendorTasks({
     anais: {
       asbuilts: asbuiltForAnaisDelValleArchilaGonzalez,
-      designs: designForAnaisDelValleArchilaGonzalez,
+      designs: uncheckedDesignForAnaisDelValleArchilaGonzalez,
       redesigns: redesignForAnaisDelValleArchilaGonzalez,
       bau: bauForAnaisDelValleArchilaGonzalez,
     },
     beatriz: {
       asbuilts: asbuiltForBeatrizLeal,
-      designs: designForBeatrizLeal,
+      designs: uncheckedDesignForBeatrizLeal,
       redesigns: redesignForBeatrizLeal,
     },
     nathaly: {
       asbuilts: asbuiltForNathaly,
-      designs: designForNathaly,
+      designs: uncheckedDesignForNathaly,
       redesigns: redesignForNathaly,
     },
     barbara: {
@@ -142,18 +159,17 @@ function VendorProduction() {
     },
     ximena: {
       asbuilts: asbuiltForXimena,
-      designs: designForXimena,
+      designs: uncheckedDesignForXimena,
       redesigns: redesignForXimena,
     },
     ccc: {
       asbuilts: asbuiltForCCC,
-      designs: designForCCC,
+      designs: uncheckedDesignForCCC,
       redesigns: redesignForCCC,
       bau: bauForCCC,
     },
   });
 
-  // Hook para manejar la actualización de todas las tareas
   const { loading, error, handleUpdateAllTasks } = useUpdateAllVendorTasks(allTasks);
 
   return (
@@ -170,19 +186,19 @@ function VendorProduction() {
       />
       <VendorProductionTable
         asbuilts={asbuiltForAnaisDelValleArchilaGonzalez}
-        designs={designForAnaisDelValleArchilaGonzalez}
+        designs={uncheckedDesignForAnaisDelValleArchilaGonzalez}
         redesigns={redesignForAnaisDelValleArchilaGonzalez}
         vendor={anaisDelValleArchilaGonzalez}
       />
       <VendorProductionTable
         asbuilts={asbuiltForBeatrizLeal}
-        designs={designForBeatrizLeal}
+        designs={uncheckedDesignForBeatrizLeal}
         redesigns={redesignForBeatrizLeal}
         vendor={beatrizLeal}
       />
       <VendorProductionTable
         asbuilts={asbuiltForNathaly}
-        designs={designForNathaly}
+        designs={uncheckedDesignForNathaly}
         redesigns={redesignForNathaly}
         vendor={nathaly}
       />
@@ -192,14 +208,14 @@ function VendorProduction() {
       <VendorBauProductionTable bau={bauForRosaAtempa} vendor={rosaAtempa} />
       <VendorProductionTable
         asbuilts={asbuiltForXimena}
-        designs={designForXimena}
+        designs={uncheckedDesignForXimena}
         redesigns={redesignForXimena}
         vendor={ximena}
       />
       <VendorBauProductionTable bau={bauForCCC} vendor={ccc} />
       <VendorProductionTable
         asbuilts={asbuiltForCCC}
-        designs={designForCCC}
+        designs={uncheckedDesignForCCC}
         redesigns={redesignForCCC}
         vendor={ccc}
       />

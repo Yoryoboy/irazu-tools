@@ -2,6 +2,9 @@ import { extractTaskFields, unifyProjects } from '../../utils/helperFunctions';
 import { CustomField, ExtractedTaskFieldValues, Task, TaskRow } from '../../types/Task';
 import { asbuiltFields, designFields, redesignFields } from './VendorProductionTable.config';
 import { codeMapping } from './VendorBauProductionTable.config';
+import { getCustomField } from '../../utils/tasksFunctions';
+
+const designCheckedField = getCustomField('DESIGN CHECKED');
 
 /**
  * Procesa tareas de tipo Asbuilt, Design o Redesign y les asigna un código de proyecto
@@ -77,4 +80,19 @@ export function processVendorProjectTasks(
   const redesignTasks = processProjectTasks(redesigns, redesignFields, 'CCI - REDESIGN');
 
   return unifyProjects(asbuiltTasks, designTasks, redesignTasks);
+}
+
+/**
+ * Filtra tareas de diseño no marcadas como revisadas.
+ * Se hace en frontend como workaround del error ITEMV2_003 de ClickUp
+ * cuando se combina DESIGN BILLING STATUS con DESIGN CHECKED IS NULL.
+ */
+export function filterUncheckedDesignTasks(designTasks: Task[]): Task[] {
+  return designTasks.filter((task) => {
+    const designCheckedValue = task.custom_fields?.find(
+      (field) => field.id === designCheckedField.id
+    )?.value;
+
+    return designCheckedValue === null || designCheckedValue === undefined;
+  });
 }

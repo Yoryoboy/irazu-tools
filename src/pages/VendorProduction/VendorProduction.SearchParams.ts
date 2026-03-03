@@ -3,7 +3,6 @@ import { CLICKUP_LIST_IDS } from '../../utils/config';
 import { SearchParams } from '../../types/SearchParams';
 
 const asbuiltChecked = getCustomField('ASBUILT CHECKED');
-const designChecked = getCustomField('DESIGN CHECKED');
 const redesignChecked = getCustomField('REDESIGN CHECKED');
 const bauChecked = getCustomField('BAU CHECKED');
 const asbuiltBillingStatusField = getCustomField('ASBUILT BILLING STATUS');
@@ -38,9 +37,15 @@ export function getAsbuiltSearchParamsForVendor(vendorId: string): SearchParams 
 }
 
 export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
+  // IMPORTANT:
+  // We intentionally do NOT send "DESIGN CHECKED IS NULL" to ClickUp here.
+  // That combination with DESIGN BILLING STATUS triggers intermittent
+  // ClickUp backend errors (500 ITEMV2_003), especially for "DESIGN BILLED".
+  // Strategy:
+  // 1) Query the smallest reliable server-side set (DESIGN ASSIGNEE + BILLING STATUS)
+  // 2) Apply DESIGN CHECKED null filtering in frontend (see filterUncheckedDesignTasks).
   return {
     page: '0',
-    'assignees[]': vendorId,
     'list_ids[]': CLICKUP_LIST_IDS.cciHs,
     include_closed: 'true',
     custom_fields: JSON.stringify([
@@ -56,10 +61,6 @@ export function getDesignSearchParamsForVendor(vendorId: string): SearchParams {
           designBillingStatusField.type_config?.options?.[0].id,
           designBillingStatusField.type_config?.options?.[1].id,
         ],
-      },
-      {
-        field_id: designChecked.id,
-        operator: 'IS NULL',
       },
     ]),
   };
