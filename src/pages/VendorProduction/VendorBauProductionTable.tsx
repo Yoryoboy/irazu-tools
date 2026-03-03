@@ -1,4 +1,4 @@
-import { Flex, Table, Collapse, Typography, Space, Badge } from 'antd';
+import { Flex, Table, Collapse, Typography, Space, Badge, Spin } from 'antd';
 import ProductionReportGenerator from './ProductionReportGenerator';
 import { CustomField, Task, TaskRow } from '../../types/Task';
 import { Vendor } from '../../types/Vendor';
@@ -8,9 +8,16 @@ import { codeMapping, columns } from './VendorBauProductionTable.config';
 interface Props {
   bau: Task[];
   vendor: Vendor;
+  statusLines?: string[];
+  isFetching?: boolean;
 }
 
-function VendorBauProductionTable({ bau, vendor }: Props) {
+function VendorBauProductionTable({
+  bau,
+  vendor,
+  statusLines = [],
+  isFetching = false,
+}: Props) {
   const bauFieldsValues = bau.map(task => {
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
@@ -57,8 +64,22 @@ function VendorBauProductionTable({ bau, vendor }: Props) {
       key: '1',
       label: (
         <Flex justify="space-between" align="center" style={{ width: '100%' }}>
-          <Typography.Text strong>Planilla de {vendor.username}</Typography.Text>
-          <Badge count={dataSource.length} showZero color="#108ee9" />
+          <Flex vertical>
+            <Typography.Text strong>Planilla de {vendor.username}</Typography.Text>
+            {statusLines.map((line, index) => (
+              <Typography.Text
+                key={`${vendor.id}-status-${index}`}
+                type="secondary"
+                style={{ fontSize: 12 }}
+              >
+                {line}
+              </Typography.Text>
+            ))}
+          </Flex>
+          <Space size="small">
+            <Badge count={dataSource.length} showZero color="#108ee9" />
+            {isFetching ? <Spin size="small" /> : null}
+          </Space>
         </Flex>
       ),
       children: <Table dataSource={dataSource} columns={columns} pagination={false} />,

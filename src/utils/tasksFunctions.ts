@@ -227,7 +227,8 @@ export const handleSyncAll = async (
 export async function fetchFilteredTasks(
   teamId: string,
   searchParams: SearchParams,
-  apiKey: string
+  apiKey: string,
+  onProgress?: (progress: FetchTasksProgress) => void
 ): Promise<Task[]> {
   const baseSearchParams = Object.entries(searchParams).filter(([key]) => key !== 'page');
   const allTasks: Task[] = [];
@@ -237,6 +238,14 @@ export async function fetchFilteredTasks(
 
   try {
     while (hasMorePages && page < MAX_PAGES) {
+      onProgress?.({
+        phase: 'requesting',
+        currentPage: page,
+        requestsCompleted: page,
+        fetchedTasks: allTasks.length,
+        hasMorePages,
+      });
+
       const query = new URLSearchParams();
       query.append('page', page.toString());
 
@@ -275,6 +284,14 @@ export async function fetchFilteredTasks(
         hasMorePages = tasks.length > 0;
       }
 
+      onProgress?.({
+        phase: 'requesting',
+        currentPage: page,
+        requestsCompleted: page + 1,
+        fetchedTasks: allTasks.length,
+        hasMorePages,
+      });
+
       page += 1;
     }
 
@@ -284,11 +301,27 @@ export async function fetchFilteredTasks(
       );
     }
 
+    onProgress?.({
+      phase: 'completed',
+      currentPage: Math.max(page - 1, 0),
+      requestsCompleted: page,
+      fetchedTasks: allTasks.length,
+      hasMorePages: false,
+    });
+
     return allTasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);
     throw error;
   }
+}
+
+export interface FetchTasksProgress {
+  phase: 'requesting' | 'completed';
+  currentPage: number;
+  requestsCompleted: number;
+  fetchedTasks: number;
+  hasMorePages: boolean;
 }
 
 export type CustomFieldSource = 'hs' | 'bau';
