@@ -27,7 +27,8 @@ export function createOnChangeHandler(setSearchParams: (params: SearchParams) =>
 }
 
 export function createHsOnChangeHandler(
-  setHsSearchParams: (params: SearchParams) => void,
+  setPreasbuiltSearchParams: (params: SearchParams) => void,
+  setDesignSearchParams: (params: SearchParams) => void,
   setRedesignSearchParams: (params: SearchParams) => void
 ) {
   return function onChange(dates: [Dayjs | null, Dayjs | null] | null) {
@@ -37,11 +38,23 @@ export function createHsOnChangeHandler(
     const startTimestamp = startDate.unix() * 1000;
     const endTimestamp = endDate.unix() * 1000;
 
+    const preasbuiltActualCompletionDateId = getCustomField(
+      'PREASBUILT ACTUAL COMPLETION DATE ',
+      'hs'
+    ).id;
     const actualCompletionDateId = getCustomField('ACTUAL COMPLETION DATE', 'hs').id;
     const redesignActualCompletionDateId = getCustomField(
       'REDESIGN ACTUAL COMPLETION DATE',
       'hs'
     ).id;
+    const preasbuiltCustomFields = [
+      {
+        field_id: preasbuiltActualCompletionDateId,
+        operator: 'RANGE',
+        value: [startTimestamp, endTimestamp],
+      },
+    ];
+
     const hsCustomFields = [
       {
         field_id: actualCompletionDateId,
@@ -58,13 +71,18 @@ export function createHsOnChangeHandler(
       },
     ];
 
-    setHsSearchParams({
-      'statuses[]': ['sent', 'approved'],
+    setPreasbuiltSearchParams({
+      include_closed: 'true',
+      custom_fields: JSON.stringify(preasbuiltCustomFields),
+    });
+
+    setDesignSearchParams({
+      include_closed: 'true',
       custom_fields: JSON.stringify(hsCustomFields),
     });
 
     setRedesignSearchParams({
-      'statuses[]': ['redesign sent', 'approved'],
+      include_closed: 'true',
       custom_fields: JSON.stringify(redesignCustomFields),
     });
   };

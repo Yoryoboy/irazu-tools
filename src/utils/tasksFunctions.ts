@@ -482,6 +482,7 @@ export function formatApprovedBauTasks(tasks: Task[]): ApprovedBauTasks[] {
       designers,
       id: task.id as string,
       name: task.name,
+      status: task.status?.status ?? '',
       receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
       completionDate: new Date(Number(completionDate)).toLocaleDateString(),
       customFields,
@@ -511,6 +512,7 @@ export function formatApprovedTrueNetTasks(tasks: Task[]): ApprovedBauTasks[] {
       designers,
       id: task.id as string,
       name: task.name,
+      status: task.status?.status ?? '',
       receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
       completionDate: new Date(Number(completionDate)).toLocaleDateString(),
       customFields,
@@ -518,37 +520,57 @@ export function formatApprovedTrueNetTasks(tasks: Task[]): ApprovedBauTasks[] {
   });
 }
 
-export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
-  return tasks.map(task => {
-    const designersFromAssignees = formatAssigneeNames(task?.assignees);
+export type HsIncomePhase = 'preasbuilt' | 'design' | 'redesign';
 
+const HS_PHASE_CONFIG: Record<
+  HsIncomePhase,
+  {
+    completionFieldName: string;
+    billableCodeNames: string[];
+    supportFieldNames: string[];
+    designerSource: 'assignee' | 'designAssignee';
+  }
+> = {
+  preasbuilt: {
+    completionFieldName: 'PREASBUILT ACTUAL COMPLETION DATE ',
+    billableCodeNames: ['ASBUILT ROUNDED MILES'],
+    supportFieldNames: ['PREASBUILT QC BY', 'ASBUILT BILLING STATUS'],
+    designerSource: 'assignee',
+  },
+  design: {
+    completionFieldName: 'ACTUAL COMPLETION DATE',
+    billableCodeNames: ['DESIGN ROUNDED MILES'],
+    supportFieldNames: ['DESIGN QC BY'],
+    designerSource: 'designAssignee',
+  },
+  redesign: {
+    completionFieldName: 'REDESIGN ACTUAL COMPLETION DATE',
+    billableCodeNames: ['REDESIGN TIME'],
+    supportFieldNames: ['REDESIGN QC BY'],
+    designerSource: 'assignee',
+  },
+};
+
+export function formatApprovedHsTasks(
+  tasks: Task[],
+  phase: HsIncomePhase
+): ApprovedBauTasks[] {
+  const { completionFieldName, billableCodeNames, supportFieldNames, designerSource } =
+    HS_PHASE_CONFIG[phase];
+
+  return tasks.map(task => {
     const designAssignee = task?.custom_fields?.find(field => field.name === 'DESIGN ASSIGNEE')
       ?.value as User[];
-    const designersFromCustomField = formatAssigneeNames(designAssignee);
-
-    const designers = designersFromAssignees || designersFromCustomField;
+    const designers =
+      designerSource === 'designAssignee'
+        ? formatAssigneeNames(designAssignee)
+        : formatAssigneeNames(task?.assignees);
+    const status = task.status?.status ?? '';
 
     const receivedDate = task?.custom_fields?.find(field => field.name === 'RECEIVED DATE')
       ?.value as string;
-
-    const isDesign = task?.custom_fields?.find(field => field.name === 'PROJECT TYPE')?.value === 0;
-
-    const completionDate = isDesign
-      ? (task?.custom_fields?.find(field => field.name === 'ACTUAL COMPLETION DATE')
-          ?.value as string)
-      : (task?.custom_fields?.find(field => field.name === 'REDESIGN ACTUAL COMPLETION DATE')
-          ?.value as string);
-
-    // Fields that represent billable codes (with prices)
-    const billableCodeNames = ['ASBUILT ROUNDED MILES', 'DESIGN ROUNDED MILES', 'REDESIGN TIME'];
-
-    // Fields needed for QC lookup and billing status
-    const supportFieldNames = [
-      'REDESIGN QC BY',
-      'PREASBUILT QC BY',
-      'DESIGN QC BY',
-      'ASBUILT BILLING STATUS',
-    ];
+    const completionDate = task?.custom_fields?.find(field => field.name === completionFieldName)
+      ?.value as string;
 
     const customFields = task?.custom_fields?.filter(
       field =>
@@ -560,6 +582,7 @@ export function formatApprovedHsTasks(tasks: Task[]): ApprovedBauTasks[] {
       designers,
       id: task.id as string,
       name: task.name,
+      status,
       receivedDate: new Date(Number(receivedDate)).toLocaleDateString(),
       completionDate: new Date(Number(completionDate)).toLocaleDateString(),
       customFields,
@@ -620,6 +643,7 @@ export function formatBauIncomeDataForExcel<T extends Record<string, number>>(
         id: task.id,
         name: task.name,
         designers: task.designers,
+        status: task.status,
         qcBy,
         designPoints,
         qcPoints,
@@ -683,6 +707,7 @@ export function formatHsIncomeDataForExcel<T extends Record<string, number>>(
         id: task.id,
         name: task.name,
         designers: task.designers,
+        status: task.status,
         qcBy,
         receivedDate: task.receivedDate ? new Date(task.receivedDate) : null,
         completionDate: task.completionDate ? new Date(task.completionDate) : null,

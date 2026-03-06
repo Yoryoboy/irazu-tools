@@ -292,6 +292,7 @@ export interface ApprovedBauTasks {
   designers: string;
   id: string;
   name: string;
+  status: string;
   receivedDate: string;
   completionDate: string;
   customFields: CustomField[];
@@ -301,6 +302,7 @@ export interface BauIncomeData {
   id: string;
   name: string;
   designers: string;
+  status?: string;
   qcBy?: string;
   designPoints?: number;
   qcPoints?: number;

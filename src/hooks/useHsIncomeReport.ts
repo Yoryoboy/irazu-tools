@@ -6,23 +6,53 @@ import { SearchParams } from '../types/SearchParams';
 import { Task, ApprovedBauTasks, BauIncomeData } from '../types/Task';
 
 interface UseHsIncomeReportReturn {
-  rawHsTasks: Task[];
+  rawPreasbuiltTasks: Task[];
+  rawDesignTasks: Task[];
   rawRedesignTasks: Task[];
   formattedTasks: ApprovedBauTasks[];
   incomeData: BauIncomeData[];
 }
 
+function dedupeTasksById(tasks: Task[]): Task[] {
+  const seenIds = new Set<string>();
+
+  return tasks.filter(task => {
+    if (!task.id || seenIds.has(task.id)) {
+      return false;
+    }
+
+    seenIds.add(task.id);
+    return true;
+  });
+}
+
 export function useHsIncomeReport(
   listId: string,
-  hsSearchParams: SearchParams | null,
+  preasbuiltSearchParams: SearchParams | null,
+  designSearchParams: SearchParams | null,
   redesignSearchParams: SearchParams | null
 ): UseHsIncomeReportReturn {
-  const { clickUpTasks: hsClickUpTasks } = useFetchClickUpTasks(listId, hsSearchParams);
+  const { clickUpTasks: preasbuiltClickUpTasks } = useFetchClickUpTasks(listId, preasbuiltSearchParams);
+  const { clickUpTasks: designClickUpTasks } = useFetchClickUpTasks(listId, designSearchParams);
   const { clickUpTasks: redesignClickUpTasks } = useFetchClickUpTasks(listId, redesignSearchParams);
 
+  const dedupedPreasbuiltTasks = useMemo(
+    () => dedupeTasksById(preasbuiltClickUpTasks),
+    [preasbuiltClickUpTasks]
+  );
+  const dedupedDesignTasks = useMemo(() => dedupeTasksById(designClickUpTasks), [designClickUpTasks]);
+  const dedupedRedesignTasks = useMemo(
+    () => dedupeTasksById(redesignClickUpTasks),
+    [redesignClickUpTasks]
+  );
+
   const formattedTasks = useMemo(
-    () => formatApprovedHsTasks([...hsClickUpTasks, ...redesignClickUpTasks]),
-    [hsClickUpTasks, redesignClickUpTasks]
+    () => [
+      ...formatApprovedHsTasks(dedupedPreasbuiltTasks, 'preasbuilt'),
+      ...formatApprovedHsTasks(dedupedDesignTasks, 'design'),
+      ...formatApprovedHsTasks(dedupedRedesignTasks, 'redesign'),
+    ],
+    [dedupedPreasbuiltTasks, dedupedDesignTasks, dedupedRedesignTasks]
   );
 
   const incomeData = useMemo(
@@ -31,7 +61,8 @@ export function useHsIncomeReport(
   );
 
   return {
-    rawHsTasks: hsClickUpTasks,
+    rawPreasbuiltTasks: preasbuiltClickUpTasks,
+    rawDesignTasks: designClickUpTasks,
     rawRedesignTasks: redesignClickUpTasks,
     formattedTasks,
     incomeData,

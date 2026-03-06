@@ -40,16 +40,26 @@ export const trueNetPrices = {
   'DE-ALL-CAP-106': 0.01,
 } as const;
 
-export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName: string) {
+interface IncomeExcelOptions {
+  includeStatus?: boolean;
+}
+
+export function generateBauIncomeExcel(
+  bauIncomeData: BauIncomeData[],
+  fileName: string,
+  options: IncomeExcelOptions = {}
+) {
+  const { includeStatus = false } = options;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Income', {
     views: [{ state: 'frozen', ySplit: 1 }],
   });
 
   // Define columns with proper widths and styles
-  worksheet.columns = [
+  const columns = [
     { header: 'ID', key: 'id', width: 15 },
     { header: 'Name', key: 'name', width: 30 },
+    ...(includeStatus ? [{ header: 'Status', key: 'status', width: 20 }] : []),
     { header: 'Designers', key: 'designers', width: 30 },
     { header: 'QC By', key: 'qcBy', width: 30 },
     { header: 'Design Points', key: 'designPoints', width: 15 },
@@ -61,12 +71,14 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
     { header: 'Price', key: 'price', width: 12 },
     { header: 'Total', key: 'total', width: 15 },
   ];
+  worksheet.columns = columns;
 
   // Add data rows
   bauIncomeData.forEach(row => {
     worksheet.addRow({
       id: row.id,
       name: row.name,
+      status: row.status,
       designers: row.designers,
       qcBy: row.qcBy,
       designPoints: row.designPoints,
@@ -133,7 +145,7 @@ export function generateBauIncomeExcel(bauIncomeData: BauIncomeData[], fileName:
   // Auto-filter for all columns
   worksheet.autoFilter = {
     from: { row: 1, column: 1 },
-    to: { row: 1, column: 12 },
+    to: { row: 1, column: columns.length },
   };
 
   workbook.xlsx.writeBuffer().then(data => {
