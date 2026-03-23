@@ -1,6 +1,7 @@
 import type { RouteObject } from "react-router-dom";
 import { DESIGNER_VIEW } from "../../utils/config";
 import { incomeReportsRoute } from "./incomeReports";
+import { monthlyGoalsRoute } from "./monthlyGoals";
 import { mqmsRoutes } from "./mqmsVerification";
 import { notFoundRoute } from "./notFound";
 import { taskSyncRoutes } from "./taskSync";
@@ -11,5 +12,6 @@ export const childRoutes: RouteObject[] = [
   ...(DESIGNER_VIEW ? [] : [vendorProductionRoute]),
   mqmsRoutes,
   ...(DESIGNER_VIEW ? [] : [incomeReportsRoute]),
+  ...(DESIGNER_VIEW ? [] : [monthlyGoalsRoute]),
   notFoundRoute,
 ];

@@ -3,17 +3,39 @@ import { CLICKUP_API_AKEY } from "../utils/config";
 import { Task } from "../types/Task";
 import { SearchParams } from "../types/SearchParams";
 
+export interface ClickUpFetchProgress {
+  pagesFetched: number;
+  tasksFetched: number;
+  done: boolean;
+}
+
+const EMPTY_PROGRESS: ClickUpFetchProgress = {
+  pagesFetched: 0,
+  tasksFetched: 0,
+  done: false,
+};
+
 export function useFetchClickUpTasks(
   listId: string,
   SearchParams: SearchParams | null
 ) {
   const [clickUpTasks, setClickUpTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState<ClickUpFetchProgress>(EMPTY_PROGRESS);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchTasks = async () => {
+      setLoading(true);
+      setError(null);
+      setProgress(EMPTY_PROGRESS);
+
       let allTasks: Task[] = [];
       let page = 0;
       let lastPage = false;
+      let fetchFailed = false;
 
       do {
         // Construcción manual de la query string
@@ -47,19 +69,55 @@ export function useFetchClickUpTasks(
           allTasks = [...allTasks, ...data.tasks];
           lastPage = data.last_page;
           page += 1;
-        } catch (error) {
-          console.error("Error fetching tasks:", error);
+
+          if (isMounted) {
+            setProgress({
+              pagesFetched: page,
+              tasksFetched: allTasks.length,
+              done: false,
+            });
+          }
+        } catch (requestError) {
+          const normalizedError =
+            requestError instanceof Error
+              ? requestError
+              : new Error("Unknown error fetching ClickUp tasks.");
+
+          console.error("Error fetching tasks:", normalizedError);
+
+          if (isMounted) {
+            setError(normalizedError);
+          }
+
+          fetchFailed = true;
           lastPage = true;
         }
       } while (!lastPage);
 
-      setClickUpTasks(allTasks);
+      if (isMounted) {
+        setClickUpTasks(fetchFailed ? [] : allTasks);
+        setLoading(false);
+        setProgress({
+          pagesFetched: page,
+          tasksFetched: fetchFailed ? 0 : allTasks.length,
+          done: true,
+        });
+      }
     };
 
     if (SearchParams) {
       fetchTasks();
+    } else {
+      setClickUpTasks([]);
+      setLoading(false);
+      setError(null);
+      setProgress(EMPTY_PROGRESS);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [listId, SearchParams]);
 
-  return { clickUpTasks };
+  return { clickUpTasks, loading, error, progress };
 }
